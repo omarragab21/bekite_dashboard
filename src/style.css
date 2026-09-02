@@ -1,0 +1,237 @@
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=Almarai:wght@300;400;700;800&family=Outfit:wght@400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Be Kite Color Palette */
+  --primary: #4f008c;
+  --primary-dark: #23113b;
+  --primary-light: #7c3aed;
+  --primary-hover: #370062;
+  --accent: #ffc700;
+  --accent-gold: #ffc700;
+  --accent-yellow: #ffce00;
+
+  /* Light Mode Variables */
+  --bg-main: #f5f5f7;
+  --bg-card: #ffffff;
+  --bg-sidebar: #ffffff;
+  --bg-topbar: #ffffff;
+  --text-main: #1f2937;
+  --text-muted: #6b7280;
+  --border-color: #e8e8e8;
+  --input-bg: #ffffff;
+  --input-border: #e5e7eb;
+  --table-header-bg: #f9fafb;
+  --table-border: #f3f4f6;
+  --table-hover: #faf5ff;
+}
+
+.dark {
+  /* Be Kite Dark Mode Palette */
+  --primary: #ffc700;
+  --primary-dark: #e6b400;
+  --primary-light: #ffd633;
+  --primary-hover: #ffd633;
+  --accent: #4f008c;
+
+  --bg-main: #150522;
+  --bg-card: #211036;
+  --bg-sidebar: #1c0a30;
+  --bg-topbar: #1c0a30;
+  --text-main: #ffffff;
+  --text-muted: #d3c5e2;
+  --border-color: #3c1d5b;
+  --input-bg: #1c0a30;
+  --input-border: #3c1d5b;
+  --table-header-bg: #23113b;
+  --table-border: #3c1d5b;
+  --table-hover: #291444;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Cairo', 'Almarai', sans-serif;
+  direction: rtl;
+  background: var(--bg-main);
+  color: var(--text-main);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #4f008c;
+  border-radius: 3px;
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: #150522;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #3c1d5b;
+}
+
+/* Global Utilities */
+.mb-6 {
+  margin-bottom: 1.5rem !important;
+}
+
+.mb-4 {
+  margin-bottom: 1rem !important;
+}
+
+.mt-4 {
+  margin-top: 1rem !important;
+}
+
+.flex-1 {
+  flex: 1 !important;
+}
+
+.text-right {
+  text-align: right !important;
+}
+
+.text-left {
+  text-align: left !important;
+}
+
+.text-center {
+  text-align: center !important;
+}
+
+.ltr-text {
+  direction: ltr !important;
+  font-family: 'Outfit', sans-serif;
+}
+
+/* Global Theme Overrides for Scoped/Common Components */
+.dark body {
+  background-color: var(--bg-main);
+  color: var(--text-main);
+}
+
+.dark .stat-card,
+.dark .chart-card,
+.dark .table-card,
+.dark .filters-card,
+.dark .table-container,
+.dark .modal-content,
+.dark .settings-content,
+.dark .logo-upload-container,
+.dark .view-all-btn,
+.dark .tab-link,
+.dark .section-card,
+.dark .data-table {
+  background-color: var(--bg-card) !important;
+  border-color: var(--border-color) !important;
+  color: var(--text-main) !important;
+}
+
+.dark .chart-title,
+.dark .stat-value,
+.dark .user-name,
+.dark .main-title,
+.dark .form-label,
+.dark .logo-ar,
+.dark .login-title,
+.dark .nav-label,
+.dark .breadcrumb-item.home,
+.dark .section-title,
+.dark h1,
+.dark h2,
+.dark h3,
+.dark h4,
+.dark h5,
+.dark h6 {
+  color: var(--text-main) !important;
+}
+
+/* Base text elements */
+.dark p,
+.dark label,
+.dark td,
+.dark th,
+.dark li,
+.dark strong,
+.dark b,
+.dark small {
+  color: var(--text-main) !important;
+}
+
+.dark .stat-label,
+.dark .chart-subtitle,
+.dark .text-muted,
+.dark .desc-text,
+.dark .user-email,
+.dark .breadcrumb-item,
+.dark .login-subtitle,
+.dark .info-row label,
+.dark .info-item label,
+.dark .upload-info span {
+  color: var(--text-muted) !important;
+}
+
+.dark .data-table th,
+.dark .orders-table th {
+  background-color: var(--table-header-bg) !important;
+  color: var(--text-main) !important;
+  border-bottom-color: var(--table-border) !important;
+}
+
+.dark .data-table td,
+.dark .orders-table td {
+  border-bottom-color: var(--table-border) !important;
+  color: var(--text-main) !important;
+}
+
+.dark .data-row:hover,
+.dark tr:hover td {
+  background-color: var(--table-hover) !important;
+}
+
+.dark .form-control,
+.dark .form-input,
+.dark input[type="text"],
+.dark input[type="email"],
+.dark input[type="password"],
+.dark input[type="number"],
+.dark textarea,
+.dark select {
+  background-color: var(--input-bg) !important;
+  border-color: var(--input-border) !important;
+  color: var(--text-main) !important;
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: var(--text-muted) !important;
+  opacity: 0.7;
+}
+
+.dark .dropdown-divider {
+  background-color: var(--border-color) !important;
+}
+
+.dark .order-badge,
+.dark .icon-box,
+.dark .breadcrumb svg {
+  background-color: var(--bg-main) !important;
+  color: var(--primary-light) !important;
+}

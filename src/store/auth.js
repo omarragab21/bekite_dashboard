@@ -1,0 +1,100 @@
+/**
+ * Auth Store - Customer Authentication
+ * 
+ * Simple, clean, reactive state for customer sessions.
+ * Token is stored under 'c_token' to avoid conflicts with admin token.
+ */
+import { reactive, computed } from 'vue';
+import api from '../config/axios';
+import { cartState } from './cart';
+
+const TOKEN_KEY = 'c_token';
+
+// ─── State ────────────────────────────────────────────────────────────────────
+export const authState = reactive({
+  token: localStorage.getItem(TOKEN_KEY) || null,
+  user: null,
+  loading: false,
+});
+
+// ─── Computed ─────────────────────────────────────────────────────────────────
+export const isLoggedIn = computed(() => !!authState.token);
+export const currentUser = computed(() => authState.user);
+
+// ─── Actions ──────────────────────────────────────────────────────────────────
+export const authActions = {
+  /**
+   * Run on app mount to restore user from existing token
+   */
+  async init() {
+    if (!authState.token) return;
+    try {
+      const res = await api.get('/frontend/user');
+      const rawData = res.data;
+      // Aggressive extraction: check all possible wrappers used by Laravel Resources
+      const finalUser = rawData.data || rawData.customer || rawData.user || rawData;
+      authState.user = finalUser;
+    } catch (err) {
+      // Token invalid or expired → clear it silently
+      if (err.response?.status === 401) {
+        this._clearSession();
+      }
+    }
+  },
+
+  /**
+   * Login with email & password
+   */
+  async login(credentials) {
+    authState.loading = true;
+    try {
+      const res = await api.post('/frontend/login', credentials);
+      this._setSession(res.data.token, res.data.customer);
+      return res.data;
+    } finally {
+      authState.loading = false;
+    }
+  },
+
+  /**
+   * Register a new customer
+   */
+  async register(data) {
+    authState.loading = true;
+    try {
+      const res = await api.post('/frontend/register', data);
+      this._setSession(res.data.token, res.data.customer);
+      return res.data;
+    } finally {
+      authState.loading = false;
+    }
+  },
+
+  /**
+   * Logout the current customer
+   */
+  async logout() {
+    try {
+      await api.post('/frontend/logout');
+    } catch (_) {
+      // Even if the server call fails, clear locally
+    }
+    this._clearSession();
+    window.location.href = '/';
+  },
+
+  // ─── Private Helpers ────────────────────────────────────────────────────────
+  _setSession(token, user) {
+    authState.token = token;
+    authState.user = user;
+    localStorage.setItem(TOKEN_KEY, token);
+  },
+
+  _clearSession() {
+    authState.token = null;
+    authState.user = null;
+    localStorage.removeItem(TOKEN_KEY);
+    // Clear cart and wishlist on logout
+    cartState.clear();
+  },
+};
