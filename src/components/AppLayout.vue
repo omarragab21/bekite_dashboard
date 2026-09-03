@@ -256,7 +256,8 @@ const currentRouteName = computed(() => {
     '/admin/products': 'المنتجات والأنظمة الرقمية',
     '/admin/categories': 'أقسام المنتجات الرقمية',
     '/admin/services': 'دليل الحلول والخدمات',
-    '/admin/service-requests': 'طلبات واستفسارات الخدمات (CRM Leads)',
+    '/admin/brands': 'علاماتنا والشركات التابعة (Venture Brands)',
+    '/admin/service-requests': 'طلبات واستفسارات العملاء (CRM Leads)',
     '/admin/careers': 'الوظائف والفرص المتاحة (Careers)',
     '/admin/knowledge-guides': 'الوظائف والفرص المتاحة (Careers)',
     '/admin/messages': 'رسائل التواصل',
@@ -423,12 +424,6 @@ const menuItems = computed(() => [
     ],
   },
   {
-    route: '/admin/service-requests',
-    label: 'خدمات',
-    icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>`,
-    badge: inquiriesCount.value > 0 ? `${inquiriesCount.value}` : null,
-  },
-  {
     label: 'منتجات',
     icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>`,
     children: [
@@ -437,14 +432,23 @@ const menuItems = computed(() => [
     ],
   },
   {
+    route: '/admin/brands',
+    label: 'علاماتنا',
+    icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>`,
+  },
+  {
     route: '/admin/careers',
     label: 'الوظائف',
     icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/><circle cx="12" cy="12" r="1"/></svg>`,
   },
   {
-    route: '/admin/messages',
-    label: 'الرسائل',
+    label: 'الرسائل والطلبات',
     icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>`,
+    badge: (unreadCount.value + inquiriesCount.value) > 0 ? `${unreadCount.value + inquiriesCount.value}` : null,
+    children: [
+      { route: '/admin/messages', label: 'رسائل التواصل' },
+      { route: '/admin/service-requests', label: 'طلبات العملاء (CRM)' },
+    ],
   },
 ]);
 

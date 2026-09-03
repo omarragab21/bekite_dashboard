@@ -4,7 +4,7 @@
     <div class="page-header">
       <div class="header-titles">
         <h1 class="page-title">إدارة الشواغر والفرص الوظيفية (Careers & Positions)</h1>
-        <p class="page-subtitle">نشر وإدارة الوظائف الشاغرة لدى Be Kite — مهندسي البرمجيات، مصممي واجهات المستخدم، ومحللي الأنظمة</p>
+        <p class="page-subtitle">نشر وإدارة الوظائف الشاغرة لدى Be Kite — مهندسي البرمجيات، مصممي واجهات المستخدم، والتسويق الرقمي</p>
       </div>
       <button class="btn-add" @click="openAddModal">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -15,150 +15,495 @@
       </button>
     </div>
 
-    <!-- Table -->
-    <div class="table-card">
-      <div class="table-responsive">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>المسمى الوظيفي</th>
-              <th>القسم / الفريق</th>
-              <th>نوع العمل والموقع</th>
-              <th>الخبرة المطلوبة</th>
-              <th>تاريخ النشر</th>
-              <th>الحالة</th>
-              <th class="text-center">الإجراءات</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-if="loading" class="state-row"><td colspan="7">جاري تحميل الشواغر الوظيفية...</td></tr>
-            <tr v-else-if="careers.length === 0" class="state-row"><td colspan="7">لا توجد وظائف مضافة حالياً</td></tr>
-            <template v-else>
-              <tr v-for="job in careers" :key="job.id" class="data-row">
-                <td>
-                  <div class="job-meta">
-                    <span class="job-title">{{ job.title }}</span>
-                    <span class="job-title-en ltr-text">{{ job.title_en }}</span>
-                  </div>
-                </td>
-                <td>
-                  <span class="dept-pill">{{ job.department }}</span>
-                </td>
-                <td>
-                  <div class="loc-type-wrap">
-                    <span class="type-text">{{ job.type }}</span>
-                    <span class="loc-text">{{ job.location }}</span>
-                  </div>
-                </td>
-                <td>
-                  <span class="exp-badge">{{ job.experience }}</span>
-                </td>
-                <td class="td-date">{{ job.created_at }}</td>
-                <td>
-                  <button
-                    class="status-toggle-btn"
-                    :class="job.is_active ? 'active' : 'inactive'"
-                    @click="toggleStatus(job)"
-                  >
-                    {{ job.is_active ? 'متاح للتقديم' : 'مغلق' }}
-                  </button>
-                </td>
-                <td>
-                  <div class="actions-cell">
-                    <button class="action-btn edit-btn" @click="openEditModal(job)" title="تعديل">
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-                      </svg>
-                    </button>
-                    <button class="action-btn delete-btn" @click="confirmDelete(job)" title="حذف">
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <polyline points="3 6 5 6 21 6"/>
-                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
-                      </svg>
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            </template>
-          </tbody>
-        </table>
+    <!-- KPI Stats Bar (Crisp SVGs with Unified Be Kite Theme) -->
+    <div class="stats-bar">
+      <div class="stat-card">
+        <div class="stat-icon icon-brand">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+          </svg>
+        </div>
+        <div class="stat-content">
+          <span class="stat-value">{{ careers.length }}</span>
+          <span class="stat-label">إجمالي الشواغر</span>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon icon-active">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+            <polyline points="22 4 12 14.01 9 11.01"/>
+          </svg>
+        </div>
+        <div class="stat-content">
+          <span class="stat-value">{{ activeCareersCount }}</span>
+          <span class="stat-label">متاح للتقديم حالياً</span>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon icon-brand">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="16 18 22 12 16 6"/>
+            <polyline points="8 6 2 12 8 18"/>
+          </svg>
+        </div>
+        <div class="stat-content">
+          <span class="stat-value">{{ engineeringCount }}</span>
+          <span class="stat-label">الهندسة والبرمجيات</span>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon icon-brand">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 20V10"/>
+            <path d="M18 20V4"/>
+            <path d="M6 20v-4"/>
+          </svg>
+        </div>
+        <div class="stat-content">
+          <span class="stat-value">{{ designGrowthCount }}</span>
+          <span class="stat-label">التصميم والنمو والمبيعات</span>
+        </div>
       </div>
     </div>
 
-    <!-- Modal -->
+    <!-- Filters & Search Bar -->
+    <div class="filters-row">
+      <div class="search-box">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="search-icon">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <input
+          type="text"
+          v-model="searchQuery"
+          placeholder="البحث في الشواغر بالمسمى الوظيفي، القسم، المهارات أو الموقع..."
+          class="search-input"
+        />
+      </div>
+
+      <div class="filter-dropdown">
+        <select v-model="selectedDepartment" class="filter-select">
+          <option value="">جميع الأقسام</option>
+          <option value="الهندسة والتطوير">الهندسة والتطوير (Engineering)</option>
+          <option value="التصميم والإبداع">التصميم والإبداع (Design)</option>
+          <option value="التسويق الرقمي">التسويق الرقمي (Marketing)</option>
+          <option value="تطوير الأعمال والمبيعات">تطوير الأعمال والمبيعات (Business)</option>
+        </select>
+      </div>
+
+      <div class="filter-dropdown">
+        <select v-model="selectedStatus" class="filter-select">
+          <option value="">جميع الحالات</option>
+          <option value="1">متاح للتقديم (Active)</option>
+          <option value="0">مغلق (Closed)</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div v-if="loading" class="loading-state">
+      <div class="spinner"></div>
+      <p>جاري تحميل الشواغر والفرص الوظيفية من الخادم...</p>
+    </div>
+
+    <!-- Empty State -->
+    <div v-else-if="filteredCareers.length === 0" class="empty-state">
+      <div class="empty-icon-wrap">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+          <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+        </svg>
+      </div>
+      <h3>لا توجد شواغر مطابقة</h3>
+      <p>لم يتم العثور على أي فرصة وظيفية تطابق معايير البحث والفلترة المحددة.</p>
+      <button class="btn-reset-filters" @click="resetFilters">إعادة ضبط الفلاتر</button>
+    </div>
+
+    <!-- Careers Cards Grid (Exact Same Design & Motion as Products & Projects) -->
+    <div v-else class="careers-cards-grid">
+      <div
+        v-for="job in filteredCareers"
+        :key="job.id"
+        class="career-card"
+      >
+        <!-- Top Branded Accent Bar (Unified Be Kite Brand) -->
+        <div class="career-top-bar"></div>
+
+        <div class="career-card-inner">
+          <!-- Card Header (Badge & Status) -->
+          <div class="career-header-flex">
+            <span class="career-badge-tag">
+              {{ job.badge || job.department_en || 'JOB OPENING' }}
+            </span>
+
+            <div class="career-status-chip" :class="job.is_active ? 'active' : 'inactive'">
+              <span class="status-dot"></span>
+              <span>{{ job.is_active ? 'متاح للتقديم' : 'مغلق' }}</span>
+            </div>
+          </div>
+
+          <!-- Artwork Image Showcase Frame -->
+          <div class="career-mockup-wrap" @click="openPreviewModal(job)" title="اضغط للمعاينة الحية للوظيفة">
+            <img
+              :src="job.image || job.heroImage || '/images/careers/job_hero_infinity.jpg'"
+              :alt="job.title"
+              class="career-mockup-img"
+              @error="onImgError"
+            />
+            <div class="mockup-overlay">
+              <span class="btn-overlay-preview">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+                </svg>
+                معاينة تفاصيل الوظيفة
+              </span>
+            </div>
+            <div class="department-ribbon">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+              </svg>
+              <span>{{ job.department }}</span>
+            </div>
+          </div>
+
+          <!-- Titles & Department (Single Line Clean Display) -->
+          <div class="career-titles-wrap">
+            <div class="career-cat-row">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+              </svg>
+              <span class="career-dept-label">{{ job.department }}</span>
+            </div>
+
+            <h3 class="career-card-title single-line" :title="job.title">{{ job.title }}</h3>
+
+            <span
+              v-if="job.title_en"
+              class="career-card-sub single-line"
+              :title="job.title_en"
+            >
+              {{ job.title_en }}
+            </span>
+          </div>
+
+          <!-- Subtitle Tagline -->
+          <p v-if="job.subtitle" class="career-tagline">
+            {{ job.subtitle }}
+          </p>
+
+          <!-- Description -->
+          <p class="career-card-desc">{{ job.description }}</p>
+
+          <!-- Meta Badges Row (Location, Type, Experience - Crisp SVGs) -->
+          <div class="career-badges-row">
+            <span class="career-badge-chip loc-badge" title="موقع العمل">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+              </svg>
+              <span>{{ job.location }}</span>
+            </span>
+            <span class="career-badge-chip type-badge" title="نوع الدوام">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+              </svg>
+              <span>{{ job.type }}</span>
+            </span>
+            <span class="career-badge-chip exp-badge" title="الخبرة المطلوبة">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+                <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+              </svg>
+              <span>{{ job.experience }}</span>
+            </span>
+          </div>
+
+          <!-- Skills / Requirements Tags -->
+          <div v-if="job.skills && job.skills.length" class="career-skills-row">
+            <span v-for="(skill, idx) in job.skills.slice(0, 4)" :key="idx" class="skill-tag">
+              #{{ skill }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Card Footer -->
+        <div class="career-card-footer">
+          <button
+            class="toggle-status-action"
+            :class="job.is_active ? 'btn-deactivate' : 'btn-activate'"
+            @click="toggleStatus(job)"
+            :title="job.is_active ? 'اضغط لإغلاق باب التقديم' : 'اضغط لإتاحة الشاغر للتقديم'"
+          >
+            {{ job.is_active ? 'إغلاق التقديم' : 'إتاحة الشاغر' }}
+          </button>
+
+          <div class="career-action-btns">
+            <button
+              class="action-icon-btn preview-btn"
+              @click="openPreviewModal(job)"
+              title="معاينة دراسة الشاغر الوظيفي"
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+              </svg>
+            </button>
+            <button
+              class="action-icon-btn edit-btn"
+              @click="openEditModal(job)"
+              title="تعديل بيانات الشاغر"
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+              </svg>
+            </button>
+            <button
+              class="action-icon-btn delete-btn"
+              @click="confirmDelete(job)"
+              title="حذف الشاغر"
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="3 6 5 6 21 6"/>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= ADD / EDIT CAREER MODAL ================= -->
     <div v-if="modalOpen" class="modal-overlay" @click.self="closeModal">
-      <div class="modal-card">
+      <div class="modal-card modal-large-card">
         <div class="modal-header">
-          <h2 class="modal-title">{{ isEdit ? 'تعديل الشاغر الوظيفي' : 'إضافة شاغر جديد' }}</h2>
-          <button class="close-btn" @click="closeModal">✕</button>
+          <div class="modal-title-wrap">
+            <h2 class="modal-title">{{ isEdit ? 'تعديل الشاغر الوظيفي' : 'إضافة شاغر وظيفي جديد (Job Opening)' }}</h2>
+            <span class="modal-subtitle">قم بتحديد صورة الشاغر، بيانات الدور الوظيفي، الشروط، والمهارات المطلوبة</span>
+          </div>
+          <button class="close-btn" @click="closeModal" title="إغلاق">✕</button>
         </div>
 
         <form @submit.prevent="saveJob" class="modal-body">
+          <!-- Image Selection & Upload Section (Direct Upload Only - No Presets) -->
+          <div class="form-section-card">
+            <h4 class="section-title">🖼️ صورة وخلفية الشاغر الوظيفي (Job Artwork) *</h4>
+            <div class="image-uploader-flex">
+              <div class="image-preview-frame">
+                <img
+                  :src="formData.image || formData.heroImage || '/images/careers/job_hero_infinity.jpg'"
+                  alt="Job Preview"
+                  class="preview-img"
+                  @error="onImgError"
+                />
+              </div>
+
+              <div class="image-inputs-col">
+                <p class="upload-hint">ارفع صورة للشاغر الوظيفي لتظهر كغلاف في الكارت والمعاينة:</p>
+                <div class="upload-controls-row">
+                  <label class="btn-file-upload">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+                    </svg>
+                    رفع صورة من الجهاز
+                    <input type="file" accept="image/*" @change="handleImageUpload" style="display: none;" />
+                  </label>
+                  <span class="or-separator">أو رابط مباشر:</span>
+                  <input
+                    type="text"
+                    v-model="formData.image"
+                    class="form-input ltr-text flex-1"
+                    placeholder="https://... أو /images/careers/..."
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Basic Data Grid -->
           <div class="form-grid-2">
             <div class="form-group">
               <label class="form-label">المسمى الوظيفي (بالعربية) *</label>
-              <input type="text" v-model="formData.title" class="form-input" required placeholder="مثال: مطور برمجيات أول (Laravel & Vue.js)" />
+              <input type="text" v-model="formData.title" class="form-input" required placeholder="مثال: مطور Full-Stack أول" />
             </div>
             <div class="form-group">
               <label class="form-label">المسمى الوظيفي (English) *</label>
-              <input type="text" v-model="formData.title_en" class="form-input ltr-text" required placeholder="Senior Full-Stack Engineer" />
+              <input type="text" v-model="formData.title_en" class="form-input ltr-text" required placeholder="Senior Full-Stack Developer" />
             </div>
           </div>
 
           <div class="form-grid-2">
             <div class="form-group">
-              <label class="form-label">القسم / الفريق</label>
-              <input type="text" v-model="formData.department" class="form-input" placeholder="الهندسة والتطوير البرمجي" />
+              <label class="form-label">القسم / الإدارة (بالعربية) *</label>
+              <select v-model="formData.department" class="form-input">
+                <option value="الهندسة والتطوير">الهندسة والتطوير (Engineering)</option>
+                <option value="التصميم والإبداع">التصميم والإبداع (Design)</option>
+                <option value="التسويق الرقمي">التسويق الرقمي (Marketing)</option>
+                <option value="تطوير الأعمال والمبيعات">تطوير الأعمال والمبيعات (Business Development)</option>
+              </select>
             </div>
             <div class="form-group">
-              <label class="form-label">المعرف البرمجي (Slug)</label>
-              <input type="text" v-model="formData.slug" class="form-input ltr-text" required placeholder="senior-fullstack-engineer" />
+              <label class="form-label">المعرف البرمجي للرابط (Slug) *</label>
+              <input type="text" v-model="formData.slug" class="form-input ltr-text" required placeholder="senior-full-stack-developer" />
             </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">شارة التخصص (Badge)</label>
+            <input type="text" v-model="formData.badge" class="form-input ltr-text" placeholder="TECH & ENGINEERING" />
           </div>
 
           <div class="form-grid-2">
             <div class="form-group">
-              <label class="form-label">نوع الدوام</label>
-              <input type="text" v-model="formData.type" class="form-input" placeholder="دوام كامل (مكتبي / هجين)" />
+              <label class="form-label">نوع الدوام *</label>
+              <input type="text" v-model="formData.type" class="form-input" placeholder="دوام كامل / دائم" />
             </div>
             <div class="form-group">
-              <label class="form-label">موقع العمل</label>
-              <input type="text" v-model="formData.location" class="form-input" placeholder="عمان - مجمع الملك حسين للأعمال" />
+              <label class="form-label">موقع العمل *</label>
+              <input type="text" v-model="formData.location" class="form-input" placeholder="الرياض، السعودية / عمان، الأردن — هجين" />
             </div>
           </div>
 
           <div class="form-group">
-            <label class="form-label">الخبرة المطلوبة</label>
-            <input type="text" v-model="formData.experience" class="form-input" placeholder="+4 سنوات خبرة عملية" />
+            <label class="form-label">الخبرة المطلوبة *</label>
+            <input type="text" v-model="formData.experience" class="form-input" placeholder="+3 سنوات خبرة (مثال: +4 سنوات خبرة عملية)" />
           </div>
 
           <div class="form-group">
-            <label class="form-label">الوصف الوظيفي والمسؤوليات</label>
-            <textarea v-model="formData.description" class="form-textarea" rows="3" placeholder="تفاصيل الدور الوظيفي والتحديات التقنية..."></textarea>
+            <label class="form-label">الشعار الترويجي / العنوان الفرعي (Subtitle)</label>
+            <input type="text" v-model="formData.subtitle" class="form-input" placeholder="عبارة تشويقية قصيرة تلخص الدور الوظيفي..." />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">الوصف والمسؤوليات (Description)</label>
+            <textarea v-model="formData.description" class="form-textarea" rows="3" placeholder="تفاصيل الدور الوظيفي والتحديات والمهام اليومية..."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">المهارات والتقنيات (مفصولة بفواصل)</label>
+            <input
+              type="text"
+              v-model="skillsInput"
+              class="form-input ltr-text"
+              placeholder="React, Node.js, TypeScript, PostgreSQL"
+            />
+            <small class="text-muted">أدخل المهارات مفصولة بفواصل ليتم عرضها كشارات هوياتية في الكارت.</small>
           </div>
 
           <div class="form-group checkbox-row">
             <label class="checkbox-label">
               <input type="checkbox" v-model="formData.is_active" :true-value="1" :false-value="0" />
-              <span>إتاحة الشاغر واستقبال طلبات التوظيف</span>
+              <span>إتاحة الشاغر واستقبال طلبات التوظيف فورا في الموقع</span>
             </label>
           </div>
 
           <div class="modal-footer">
             <button type="button" class="btn-cancel" @click="closeModal">إلغاء</button>
             <button type="submit" class="btn-save" :disabled="saving">
-              {{ saving ? 'جاري الحفظ...' : (isEdit ? 'تحديث الشاغر' : 'نشر الشاغر') }}
+              {{ saving ? 'جاري الحفظ...' : (isEdit ? 'تحديث الشاغر الوظيفي' : 'نشر الشاغر الوظيفي') }}
             </button>
           </div>
         </form>
+      </div>
+    </div>
+
+    <!-- ================= LIVE PREVIEW MODAL (Matching JobDetailsPage.jsx) ================= -->
+    <div v-if="previewModalOpen && previewJob" class="modal-overlay" @click.self="previewModalOpen = false">
+      <div class="modal-card modal-preview-card">
+        <div class="preview-hero-banner">
+          <div class="preview-hero-content">
+            <div class="preview-top-row">
+              <span class="preview-badge-pill">
+                ● {{ previewJob.badge || 'JOB OPENING' }}
+              </span>
+              <button class="close-preview-btn" @click="previewModalOpen = false">✕</button>
+            </div>
+
+            <h1 class="preview-job-title">{{ previewJob.title }}</h1>
+            <h3 class="preview-job-title-en ltr-text">{{ previewJob.title_en }}</h3>
+            <p class="preview-job-sub">{{ previewJob.subtitle || previewJob.description }}</p>
+
+            <div class="preview-meta-chips">
+              <span class="p-chip">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+                </svg>
+                <span>{{ previewJob.location }}</span>
+              </span>
+              <span class="p-chip">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                </svg>
+                <span>{{ previewJob.type }}</span>
+              </span>
+              <span class="p-chip">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+                  <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+                </svg>
+                <span>{{ previewJob.experience }}</span>
+              </span>
+            </div>
+          </div>
+
+          <div class="preview-hero-image-wrap">
+            <img
+              :src="previewJob.image || previewJob.heroImage || '/images/careers/job_hero_infinity.jpg'"
+              :alt="previewJob.title"
+              class="preview-hero-img"
+              @error="onImgError"
+            />
+          </div>
+        </div>
+
+        <div class="preview-body">
+          <div class="preview-section">
+            <h4 class="preview-sec-title">نبذة عن الدور والمهام (About the Role)</h4>
+            <p class="preview-desc-text">{{ previewJob.description }}</p>
+          </div>
+
+          <div v-if="previewJob.requirements && previewJob.requirements.length" class="preview-section">
+            <h4 class="preview-sec-title">المتطلبات والخبرات (Key Qualifications)</h4>
+            <ul class="preview-req-list">
+              <li v-for="(req, idx) in previewJob.requirements" :key="idx">
+                <span class="check-icon">✓</span>
+                <span>{{ req }}</span>
+              </li>
+            </ul>
+          </div>
+
+          <div v-if="previewJob.skills && previewJob.skills.length" class="preview-section">
+            <h4 class="preview-sec-title">المهارات والتقنيات المطلوبة</h4>
+            <div class="preview-skills-flex">
+              <span v-for="(s, idx) in previewJob.skills" :key="idx" class="preview-skill-badge">
+                {{ s }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="preview-footer">
+          <div class="footer-actions-flex">
+            <span class="status-indicator-badge" :class="previewJob.is_active ? 'active' : 'inactive'">
+              <span class="status-dot"></span>
+              <span>{{ previewJob.is_active ? 'الشاغر متاح للتقديم في الموقع' : 'الشاغر مغلق حالياً' }}</span>
+            </span>
+            <button class="btn-edit-from-preview" @click="editFromPreview(previewJob)">
+              ✏️ تعديل بيانات الشاغر
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { ContentService } from '../services/ContentService';
 import { useToast } from '../composables/useToast';
 
@@ -167,23 +512,100 @@ const { success, error: toastError } = useToast();
 const loading = ref(true);
 const saving = ref(false);
 const careers = ref([]);
+const searchQuery = ref('');
+const selectedDepartment = ref('');
+const selectedStatus = ref('');
 
+// Modals
 const modalOpen = ref(false);
 const isEdit = ref(false);
 const currentEditId = ref(null);
+const previewModalOpen = ref(false);
+const previewJob = ref(null);
 
-const formData = ref({
+const skillsInput = ref('');
+
+const defaultForm = () => ({
   title: '',
   title_en: '',
   department: 'الهندسة والتطوير',
+  department_en: 'Engineering',
   slug: '',
-  location: 'عمان - مجمع الملك حسين للأعمال',
-  type: 'دوام كامل',
-  experience: '+3 سنوات',
+  badge: 'TECH & ENGINEERING',
+  accent_color: '#4f008c',
+  image: '/images/careers/job_hero_infinity.jpg',
+  heroImage: '/images/careers/job_hero_infinity.jpg',
+  location: 'عمان، الأردن — هجين',
+  location_en: 'Amman, Jordan — Hybrid',
+  type: 'دوام كامل / دائم',
+  type_en: 'Full-time / Permanent',
+  experience: '+3 سنوات خبرة',
+  experience_en: 'Exp: 3+ Years',
+  subtitle: '',
   description: '',
+  skills: ['Vue.js', 'React', 'TypeScript'],
+  requirements: [],
   is_active: 1,
 });
 
+const formData = ref(defaultForm());
+
+// Computed Stats
+const activeCareersCount = computed(() => careers.value.filter(c => c.is_active).length);
+const engineeringCount = computed(() => careers.value.filter(c => c.department?.includes('الهندسة') || c.department_en === 'Engineering').length);
+const designGrowthCount = computed(() => careers.value.filter(c => !c.department?.includes('الهندسة')).length);
+
+// Filtered Careers
+const filteredCareers = computed(() => {
+  return careers.value.filter(job => {
+    // Search query
+    if (searchQuery.value.trim()) {
+      const q = searchQuery.value.toLowerCase().trim();
+      const matchTitle = job.title?.toLowerCase().includes(q) || job.title_en?.toLowerCase().includes(q);
+      const matchDept = job.department?.toLowerCase().includes(q) || job.department_en?.toLowerCase().includes(q);
+      const matchLoc = job.location?.toLowerCase().includes(q);
+      const matchSkills = (job.skills || []).some(s => s.toLowerCase().includes(q));
+      if (!matchTitle && !matchDept && !matchLoc && !matchSkills) return false;
+    }
+
+    // Department filter
+    if (selectedDepartment.value) {
+      if (job.department !== selectedDepartment.value) return false;
+    }
+
+    // Status filter
+    if (selectedStatus.value !== '') {
+      if (Number(job.is_active) !== Number(selectedStatus.value)) return false;
+    }
+
+    return true;
+  });
+});
+
+
+
+function resetFilters() {
+  searchQuery.value = '';
+  selectedDepartment.value = '';
+  selectedStatus.value = '';
+}
+
+function onImgError(e) {
+  e.target.src = '/images/careers/job_hero_infinity.jpg';
+}
+
+function handleImageUpload(e) {
+  const file = e.target.files?.[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (event) => {
+    formData.value.image = event.target.result;
+    formData.value.heroImage = event.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+// Fetch Careers
 const fetchCareers = async () => {
   loading.value = true;
   try {
@@ -196,12 +618,13 @@ const fetchCareers = async () => {
   }
 };
 
+// Actions
 const toggleStatus = async (job) => {
   const newStatus = job.is_active ? 0 : 1;
   try {
     await ContentService.updateCareer(job.id, { is_active: newStatus });
     job.is_active = newStatus;
-    success('تم تحديث حالة الشاغر');
+    success(newStatus ? 'تمت إتاحة الشاغر للتقديم' : 'تم إغلاق التقديم للشاغر');
   } catch (err) {
     console.error('Failed to update status', err);
     toastError('حدث خطأ أثناء تحديث الحالة');
@@ -211,17 +634,8 @@ const toggleStatus = async (job) => {
 const openAddModal = () => {
   isEdit.value = false;
   currentEditId.value = null;
-  formData.value = {
-    title: '',
-    title_en: '',
-    department: 'الهندسة والتطوير',
-    slug: '',
-    location: 'عمان - مجمع الملك حسين للأعمال',
-    type: 'دوام كامل',
-    experience: '+3 سنوات',
-    description: '',
-    is_active: 1,
-  };
+  formData.value = defaultForm();
+  skillsInput.value = formData.value.skills.join(', ');
   modalOpen.value = true;
 };
 
@@ -229,7 +643,19 @@ const openEditModal = (job) => {
   isEdit.value = true;
   currentEditId.value = job.id;
   formData.value = JSON.parse(JSON.stringify(job));
+  if (!formData.value.image) formData.value.image = formData.value.heroImage || '/images/careers/job_hero_infinity.jpg';
+  skillsInput.value = (formData.value.skills || []).join(', ');
   modalOpen.value = true;
+};
+
+const openPreviewModal = (job) => {
+  previewJob.value = job;
+  previewModalOpen.value = true;
+};
+
+const editFromPreview = (job) => {
+  previewModalOpen.value = false;
+  openEditModal(job);
 };
 
 const closeModal = () => {
@@ -239,6 +665,13 @@ const closeModal = () => {
 const saveJob = async () => {
   saving.value = true;
   try {
+    // Process skills
+    if (skillsInput.value.trim()) {
+      formData.value.skills = skillsInput.value.split(',').map(s => s.trim()).filter(Boolean);
+    } else {
+      formData.value.skills = [];
+    }
+
     if (isEdit.value) {
       const updated = await ContentService.updateCareer(currentEditId.value, formData.value);
       const idx = careers.value.findIndex(c => c.id === currentEditId.value);
@@ -308,147 +741,503 @@ onMounted(() => {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  background: linear-gradient(135deg, #4f008c, #7c3aed);
+  padding: 0.75rem 1.4rem;
+  background: #7c3aed;
   color: #fff;
   border: none;
-  padding: 0.65rem 1.1rem;
-  border-radius: 10px;
-  font-weight: 700;
-  font-size: 0.85rem;
+  border-radius: 12px;
+  font-size: 0.88rem;
+  font-weight: 800;
   cursor: pointer;
+  transition: all 0.2s ease;
   box-shadow: 0 4px 14px rgba(124, 58, 237, 0.3);
-  transition: transform 0.15s ease;
 }
-.btn-add:hover { transform: translateY(-2px); }
+.btn-add:hover {
+  background: #6d28d9;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(124, 58, 237, 0.4);
+}
 
-.table-card {
+/* Stats Bar */
+.stats-bar {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 1rem;
+}
+
+.stat-card {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: 16px;
-  overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
-}
-
-.table-responsive {
-  overflow-x: auto;
-}
-
-.data-table {
-  width: 100%;
-  border-collapse: collapse;
-  text-align: right;
-}
-
-.data-table th {
-  background: var(--table-header-bg);
-  color: var(--text-muted);
-  font-size: 0.78rem;
-  font-weight: 700;
-  padding: 0.85rem 1rem;
-  border-bottom: 1px solid var(--border-color);
-}
-
-.data-table td {
-  padding: 0.9rem 1rem;
-  border-bottom: 1px solid var(--border-color);
-  font-size: 0.85rem;
-  vertical-align: middle;
-}
-
-.job-meta {
+  padding: 1.15rem;
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.02);
 }
 
-.job-title { font-weight: 800; color: var(--text-main); }
-.job-title-en { font-size: 0.75rem; color: var(--text-muted); }
-
-.dept-pill {
-  font-size: 0.72rem;
-  font-weight: 700;
-  background: rgba(124, 58, 237, 0.1);
-  color: #7c3aed;
-  padding: 0.2rem 0.6rem;
-  border-radius: 6px;
-}
-
-.loc-type-wrap {
-  display: flex;
-  flex-direction: column;
-}
-.type-text { font-size: 0.8rem; font-weight: 600; color: var(--text-main); }
-.loc-text { font-size: 0.72rem; color: var(--text-muted); }
-
-.exp-badge {
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: #059669;
-}
-
-.td-date { font-size: 0.75rem; color: var(--text-muted); }
-
-.status-toggle-btn {
-  padding: 0.3rem 0.75rem;
-  border-radius: 8px;
-  font-size: 0.75rem;
-  font-weight: 700;
-  border: none;
-  cursor: pointer;
-}
-.status-toggle-btn.active { background: rgba(16, 185, 129, 0.12); color: #10b981; }
-.status-toggle-btn.inactive { background: rgba(239, 68, 68, 0.12); color: #ef4444; }
-
-.actions-cell {
+.stat-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 1.35rem;
+  flex-shrink: 0;
+}
+.icon-brand {
+  background: rgba(79, 0, 140, 0.08);
+  color: #7c3aed;
+  border: 1px solid rgba(124, 58, 237, 0.15);
+}
+.icon-active {
+  background: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.stat-content { display: flex; flex-direction: column; gap: 0.15rem; }
+.stat-value { font-size: 1.4rem; font-weight: 900; color: var(--text-main); }
+.stat-label { font-size: 0.78rem; font-weight: 700; color: var(--text-muted); }
+
+/* Filters */
+.filters-row {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.search-box {
+  flex: 1;
+  min-width: 280px;
+  position: relative;
+}
+
+.search-icon {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.75rem 2.8rem 0.75rem 1rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  color: var(--text-main);
+  font-size: 0.88rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.search-input:focus { border-color: #7c3aed; }
+
+.filter-dropdown { min-width: 190px; }
+.filter-select {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  color: var(--text-main);
+  font-size: 0.85rem;
+  outline: none;
+}
+
+/* ================= CAREERS CARDS GRID (Exact Match to Products & Projects) ================= */
+.careers-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 1.5rem;
+}
+
+.career-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  display: flex;
+  flex-direction: column;
+  transition: all 0.25s ease;
+  position: relative;
+}
+.career-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+.career-top-bar {
+  height: 5px;
+  width: 100%;
+  background: linear-gradient(90deg, #4f008c, #7c3aed);
+}
+
+.career-card-inner {
+  padding: 1.35rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  flex: 1;
+}
+
+.career-header-flex {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   gap: 0.5rem;
 }
 
-.action-btn {
+.career-badge-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #7c3aed;
+  background: rgba(124, 58, 237, 0.08);
+  border: 1px solid rgba(124, 58, 237, 0.22);
+}
+
+.career-status-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.2rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  white-space: nowrap !important;
+}
+.career-status-chip.active {
+  background: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+}
+.career-status-chip.inactive {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+}
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+.career-status-chip.active .status-dot {
+  background: #10b981;
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.25);
+  animation: pulse-green 2s infinite;
+}
+.career-status-chip.inactive .status-dot {
+  background: #ef4444;
+}
+
+@keyframes pulse-green {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5); }
+  70% { transform: scale(1); box-shadow: 0 0 0 4px rgba(16, 185, 129, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+
+/* Artwork Frame */
+.career-mockup-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #0f172a;
+  border: 1px solid var(--border-color);
+  cursor: pointer;
+}
+
+.career-mockup-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+.career-mockup-wrap:hover .career-mockup-img {
+  transform: scale(1.04);
+}
+
+.mockup-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+.career-mockup-wrap:hover .mockup-overlay {
+  opacity: 1;
+}
+
+.btn-overlay-preview {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.55rem 1rem;
+  border-radius: 999px;
+  background: #fff;
+  color: #0f172a;
+  font-size: 0.78rem;
+  font-weight: 800;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+}
+
+.department-ribbon {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: rgba(15, 23, 42, 0.85);
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 800;
+  padding: 0.25rem 0.65rem;
+  border-radius: 6px;
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+.department-ribbon svg { flex-shrink: 0; }
+
+/* Titles */
+.career-titles-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  overflow: hidden;
+}
+
+.career-cat-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  white-space: nowrap !important;
+}
+
+.career-dept-label {
+  white-space: nowrap !important;
+}
+
+.career-card-title {
+  font-size: 1.15rem;
+  font-weight: 900;
+  color: var(--text-main);
+  margin: 0;
+  line-height: 1.3;
+}
+
+.career-card-sub {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #7c3aed;
+}
+
+.single-line {
+  white-space: nowrap !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+}
+
+.career-tagline {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.career-card-desc {
+  font-size: 0.82rem;
+  line-height: 1.55;
+  color: var(--text-muted);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin: 0;
+}
+
+/* Badges Row */
+.career-badges-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  padding-top: 0.35rem;
+  border-top: 1px dashed var(--border-color);
+}
+
+.career-badge-chip {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.25rem 0.6rem;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+.career-badge-chip svg { flex-shrink: 0; }
+.loc-badge { background: rgba(59, 130, 246, 0.08); color: #2563eb; border-color: rgba(59, 130, 246, 0.18); }
+.type-badge { background: rgba(124, 58, 237, 0.08); color: #7c3aed; border-color: rgba(124, 58, 237, 0.18); }
+.exp-badge { background: rgba(16, 185, 129, 0.08); color: #10b981; border-color: rgba(16, 185, 129, 0.18); }
+
+.career-skills-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+.skill-tag {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  font-family: monospace;
+  background: var(--tag-bg, rgba(0,0,0,0.03));
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+}
+
+/* Card Footer */
+.career-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.85rem 1.35rem;
+  border-top: 1px solid var(--border-color);
+  background: var(--bg-main);
+}
+
+.toggle-status-action {
+  font-size: 0.74rem;
+  font-weight: 700;
+  padding: 0.35rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap !important;
+}
+.btn-deactivate {
+  background: rgba(239, 68, 68, 0.08);
+  color: #ef4444;
+  border-color: rgba(239, 68, 68, 0.2);
+}
+.btn-deactivate:hover { background: rgba(239, 68, 68, 0.15); }
+.btn-activate {
+  background: rgba(16, 185, 129, 0.08);
+  color: #10b981;
+  border-color: rgba(16, 185, 129, 0.2);
+}
+.btn-activate:hover { background: rgba(16, 185, 129, 0.15); }
+
+.career-action-btns {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.action-icon-btn {
   width: 32px;
   height: 32px;
   border-radius: 8px;
   border: 1px solid var(--border-color);
-  background: var(--bg-main);
+  background: var(--bg-card);
+  color: var(--text-muted);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  transition: all 0.15s ease;
 }
-.edit-btn:hover { color: #7c3aed; border-color: #7c3aed; }
-.delete-btn:hover { color: #ef4444; border-color: #ef4444; }
+.action-icon-btn:hover { color: var(--text-main); }
+.preview-btn:hover { color: #0284c7; border-color: #0284c7; background: rgba(2, 132, 199, 0.08); }
+.edit-btn:hover { color: #7c3aed; border-color: #7c3aed; background: rgba(124, 58, 237, 0.08); }
+.delete-btn:hover { color: #ef4444; border-color: #ef4444; background: rgba(239, 68, 68, 0.08); }
 
-.state-row td {
-  text-align: center;
-  padding: 2.5rem;
+/* Loading & Empty State */
+.loading-state, .empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem;
   color: var(--text-muted);
+  gap: 1rem;
 }
 
-/* Modal */
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(4px);
+.empty-icon-wrap {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: rgba(124, 58, 237, 0.08);
+  color: #7c3aed;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1.5rem;
-  z-index: 60;
+}
+
+.btn-reset-filters {
+  padding: 0.55rem 1rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-card);
+  color: var(--text-main);
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid rgba(124, 58, 237, 0.2);
+  border-top-color: #7c3aed;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ================= MODAL STYLES ================= */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
 }
 
 .modal-card {
   background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  border-radius: 18px;
+  border-radius: 20px;
   width: 100%;
-  max-width: 620px;
+  max-width: 600px;
   max-height: 90vh;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--border-color);
 }
+.modal-large-card { max-width: 860px; }
 
 .modal-header {
   padding: 1.25rem 1.5rem;
@@ -457,34 +1246,119 @@ onMounted(() => {
   align-items: center;
   justify-content: space-between;
 }
-
-.modal-title {
-  font-size: 1.15rem;
-  font-weight: 800;
-  color: var(--text-main);
-}
+.modal-title-wrap { display: flex; flex-direction: column; gap: 0.2rem; }
+.modal-title { font-size: 1.25rem; font-weight: 800; color: var(--text-main); }
+.modal-subtitle { font-size: 0.8rem; color: var(--text-muted); }
 
 .close-btn {
-  background: transparent;
-  border: none;
-  font-size: 1.2rem;
+  background: var(--bg-main);
+  border: 1px solid var(--border-color);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
   color: var(--text-muted);
   cursor: pointer;
+  transition: all 0.2s;
 }
+.close-btn:hover { color: var(--text-main); transform: rotate(90deg); }
 
 .modal-body {
-  padding: 1.25rem 1.5rem;
+  padding: 1.5rem;
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+/* Image Uploader Card in Modal */
+.form-section-card {
+  background: var(--bg-main);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 1.25rem;
   display: flex;
   flex-direction: column;
   gap: 1rem;
 }
+.section-title {
+  font-size: 0.92rem;
+  font-weight: 800;
+  color: var(--text-main);
+  margin: 0;
+}
 
+.image-uploader-flex {
+  display: flex;
+  gap: 1.25rem;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.image-preview-frame {
+  width: 220px;
+  aspect-ratio: 16 / 10;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #0f172a;
+  border: 1px solid var(--border-color);
+  flex-shrink: 0;
+}
+.preview-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.image-inputs-col {
+  flex: 1;
+  min-width: 260px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.upload-hint {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.upload-controls-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.btn-file-upload {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.55rem 0.9rem;
+  border-radius: 10px;
+  background: #7c3aed;
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: 0.2s;
+  white-space: nowrap;
+}
+.btn-file-upload:hover { background: #6d28d9; }
+.or-separator { font-size: 0.75rem; color: var(--text-muted); font-weight: 700; }
+
+/* Form Fields */
 .form-grid-2 {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1rem;
 }
+@media (max-width: 640px) { .form-grid-2 { grid-template-columns: 1fr; } }
 
 .form-group {
   display: flex;
@@ -502,46 +1376,262 @@ onMounted(() => {
   padding: 0.65rem 0.85rem;
   border-radius: 10px;
   border: 1px solid var(--border-color);
-  background: var(--input-bg);
+  background: var(--input-bg, var(--bg-card));
   color: var(--text-main);
   font-size: 0.85rem;
+  outline: none;
+  font-family: inherit;
+  transition: border-color 0.2s;
 }
+.form-input:focus, .form-textarea:focus { border-color: #7c3aed; }
+.form-textarea { resize: vertical; }
 
+.ltr-text { direction: ltr; text-align: left; }
+
+
+
+.checkbox-row { margin-top: 0.25rem; }
 .checkbox-label {
   display: flex;
   align-items: center;
-  gap: 0.4rem;
-  font-size: 0.82rem;
-  font-weight: 600;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-main);
   cursor: pointer;
 }
 
 .modal-footer {
+  padding: 1.25rem 1.5rem;
+  border-top: 1px solid var(--border-color);
   display: flex;
   align-items: center;
   justify-content: flex-end;
   gap: 0.75rem;
-  padding-top: 1rem;
-  border-top: 1px solid var(--border-color);
 }
 
 .btn-cancel {
   padding: 0.65rem 1.2rem;
   border-radius: 10px;
   border: 1px solid var(--border-color);
-  background: transparent;
-  color: var(--text-muted);
+  background: var(--bg-card);
+  color: var(--text-main);
+  font-size: 0.85rem;
   font-weight: 700;
+  cursor: pointer;
+}
+.btn-save {
+  padding: 0.65rem 1.5rem;
+  border-radius: 10px;
+  border: none;
+  background: #7c3aed;
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(124, 58, 237, 0.3);
+}
+.btn-save:disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* ================= LIVE PREVIEW MODAL ================= */
+.modal-preview-card {
+  max-width: 900px;
+  border: none;
+  background: #0f172a;
+  color: #fff;
+}
+
+.preview-hero-banner {
+  padding: 2.5rem 2rem;
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 2rem;
+  align-items: center;
+  position: relative;
+  background: linear-gradient(135deg, #150522 0%, #2e0854 50%, #4f008c 100%);
+}
+@media (max-width: 768px) { .preview-hero-banner { grid-template-columns: 1fr; padding: 1.5rem; } }
+
+.preview-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.8rem;
+}
+.preview-badge-pill {
+  padding: 0.3rem 0.8rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  color: #ffce00;
+  border: 1px solid rgba(255, 206, 0, 0.4);
+  background: rgba(255, 206, 0, 0.1);
+}
+.close-preview-btn {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: #fff;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
 }
 
-.btn-save {
-  padding: 0.65rem 1.4rem;
-  border-radius: 10px;
-  border: none;
-  background: linear-gradient(135deg, #4f008c, #7c3aed);
-  color: #fff;
-  font-weight: 700;
-  cursor: pointer;
+.preview-job-title {
+  font-size: 1.9rem;
+  font-weight: 900;
+  line-height: 1.25;
+  margin: 0 0 0.25rem 0;
 }
+.preview-job-title-en {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #ffce00;
+  margin: 0 0 0.8rem 0;
+}
+.preview-job-sub {
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.85);
+  margin: 0 0 1.2rem 0;
+}
+
+.preview-meta-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.p-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+.p-chip svg {
+  flex-shrink: 0;
+}
+
+.preview-hero-image-wrap {
+  aspect-ratio: 16 / 10;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+}
+.preview-hero-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.preview-body {
+  background: #ffffff;
+  color: #1e293b;
+  padding: 2rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.preview-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.preview-sec-title {
+  font-size: 1.05rem;
+  font-weight: 900;
+  color: #0f172a;
+  margin: 0;
+  border-bottom: 2px solid #f1f5f9;
+  padding-bottom: 0.4rem;
+}
+.preview-desc-text {
+  font-size: 0.88rem;
+  line-height: 1.7;
+  color: #475569;
+  margin: 0;
+}
+
+.preview-req-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.preview-req-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  font-size: 0.85rem;
+  color: #334155;
+  line-height: 1.5;
+}
+.check-icon {
+  color: #10b981;
+  font-weight: 900;
+  background: #d1fae5;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 0.75rem;
+}
+
+.preview-skills-flex {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.preview-skill-badge {
+  padding: 0.35rem 0.8rem;
+  border-radius: 8px;
+  background: #ede9fe;
+  color: #7c3aed;
+  font-size: 0.8rem;
+  font-weight: 800;
+  border: 1px solid #ddd6fe;
+}
+
+.preview-footer {
+  padding: 1.25rem 2rem;
+  background: #0f172a;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+.footer-actions-flex {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.status-indicator-badge {
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+.btn-edit-from-preview {
+  padding: 0.6rem 1.2rem;
+  border-radius: 10px;
+  background: #7c3aed;
+  color: #fff;
+  border: none;
+  font-size: 0.82rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.btn-edit-from-preview:hover { background: #6d28d9; }
 </style>

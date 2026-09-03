@@ -931,11 +931,14 @@ onMounted(fetchAll);
 .ltr-text { direction: ltr; text-align: left; }
 
 .status-badge {
-  display: inline-block;
-  padding: 0.15rem 0.45rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0.2rem 0.6rem;
   border-radius: 9999px;
   font-size: 0.68rem;
-  font-weight: 700;
+  font-weight: 800;
+  white-space: nowrap !important;
 }
 .status-new { background: #fee2e2; color: #dc2626; }
 .status-contacted { background: #fef3c7; color: #d97706; }

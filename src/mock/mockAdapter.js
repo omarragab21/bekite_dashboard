@@ -5,7 +5,7 @@
 
 import { initialMockData } from './mockData';
 
-const STORAGE_KEY = 'bekite_cms_v3_db';
+const STORAGE_KEY = 'bekite_cms_v9_db';
 
 class MockDB {
   constructor() {
@@ -18,7 +18,7 @@ class MockDB {
       if (stored) {
         const parsed = JSON.parse(stored);
         // Ensure essential Be Kite keys exist
-        if (parsed.projects && parsed.products && parsed.services && parsed.brands && parsed.careers && parsed.careers.length > 0 && parsed.messages && parsed.messages.length >= 7) {
+        if (parsed.projects && parsed.products && parsed.services && parsed.brands && parsed.brands.length >= 5 && parsed.careers && parsed.careers.length > 0 && parsed.messages && parsed.messages.length >= 7) {
           return parsed;
         }
       }

@@ -483,7 +483,206 @@ export const initialMockData = {
       order_index: 1,
       demo_url: 'https://demo.bekite.com/tijara',
       
-      // 1. What does it include?
+      // 1. Deep Case Study Sections matching Bekite Website 1:1
+      overview: {
+        pill: 'نظرة عامة',
+        pill_en: 'OVERVIEW',
+        title: 'ما هو نظام تجارة؟',
+        title_en: 'What Is Tijara?',
+        p1: 'تجارة هو نظام سحابي متطور لتشغيل المتاجر الإلكترونية الضخمة والمتوسطة، يجمع بين إدارة المخزون متعدد الفروع، مزامنة نقاط البيع، والتحليلات التنبؤية للمبيعات في بيئة برمجية واحدة متكاملة.',
+        p1_en: 'Tijara is a next-generation enterprise commerce platform built for high-growth merchants. It unifies multi-store catalog management, inventory routing, point-of-sale sync, and customer lifetime value analytics in one robust environment.',
+        p2: 'مبني على بنية سحابية حديثة تضمن سرعة تحميل فائقة، وجاهزية بنسبة 99.99%، وربطاً سلساً مع بوابات الدفع الإلكتروني وشركات الشحن اللوجستي في المنطقة.',
+        p2_en: 'Built on a cloud-native architecture, Tijara delivers lightning-fast checkout speeds, 99.99% uptime, and frictionless integrations with global payment gateways and regional shipping carriers.',
+        image: '/images/products/tijara_overview.png'
+      },
+
+      built_for: {
+        pill: 'لمن صُمم النظام',
+        pill_en: 'WHO IS IT FOR',
+        title: 'صُمم خصيصاً للشركات التي تبيع عبر الإنترنت',
+        title_en: 'Built for Businesses That Sell Online',
+        subtitle: 'مسارات عمل مخصصة لكل دور ومسؤولية في منظومة التجارة الإلكترونية الخاصة بك.',
+        subtitle_en: 'Tailored workflows for every role across your e-commerce organization.',
+        items: [
+          {
+            icon: 'shopping-cart',
+            title: 'المتاجر الإلكترونية',
+            title_en: 'Online Retailers',
+            desc: 'توسيع مبيعات متجرك متعدد الأقسام مع إدارة مرنة للمنتجات وفلترة سريعة وتجربة شراء استثنائية.',
+            desc_en: 'Scale your multi-category online store with high-velocity product listings, smart filters, and instant checkout.'
+          },
+          {
+            icon: 'truck',
+            title: 'فرق العمليات والتشغيل',
+            title_en: 'Operations Teams',
+            desc: 'أتمتة تجهيز الطلبات، بوالص الشحن، التوجيه التلقائي للمناديب، وإدارة المرتجعات بسهولة.',
+            desc_en: 'Streamline order fulfillment, warehouse picking slips, automated courier dispatch, and return workflows.'
+          },
+          {
+            icon: 'briefcase',
+            title: 'أصحاب الأعمال والمدراء',
+            title_en: 'Business Owners',
+            desc: 'رؤية تنفيذية كاملة ولحظية للمبيعات اليومية، هوامش الأرباح، وصحة المخزون في كافة الفروع.',
+            desc_en: 'Gain complete executive visibility over daily sales revenue, gross margins, and inventory health in real time.'
+          },
+          {
+            icon: 'target',
+            title: 'فرق التسويق والنمو',
+            title_en: 'Marketing Teams',
+            desc: 'إطلاق حملات الخصومات، كوبونات التخفيض الديناميكية، وبرامج ولاء العملاء لزيادة تكرار الشراء.',
+            desc_en: 'Launch targeted promo campaigns, dynamic discount codes, coupon engine, and customer retention programs.'
+          }
+        ]
+      },
+
+      what_it_does: {
+        pill: 'المزايا والقدرات',
+        pill_en: 'KEY CAPABILITIES',
+        title: 'ما الذي يقدمه نظام تجارة؟',
+        title_en: 'What It Does',
+        subtitle: 'كل ما تحتاجه لإدارة عمليات البيع والتجارة من البداية إلى النهاية.',
+        subtitle_en: 'Everything you need to run end-to-end retail operations.',
+        items: [
+          {
+            icon: 'layers',
+            title: 'إدارة الكتالوج والمنتجات',
+            title_en: 'Product Management',
+            desc: 'توحيد المنتجات والخيارات والأسعار عبر الموقع والتطبيق ومنصات البيع المتعددة.',
+            desc_en: 'Centralize catalog across web, mobile, and marketplaces with rich variants, pricing rules, and bundles.'
+          },
+          {
+            icon: 'file-check',
+            title: 'معالجة وتجهيز الطلبات',
+            title_en: 'Order Processing',
+            desc: 'أتمتة دورة الطلب من الدفع وحتى التسليم مع إصدار الفواتير وبوالص الشحن آلياً.',
+            desc_en: 'Automate order routing from placement to delivery with unified packing slips and invoice generation.'
+          },
+          {
+            icon: 'box',
+            title: 'مزامنة المخزون اللحظية',
+            title_en: 'Live Inventory Sync',
+            desc: 'حجز تلقائي للكميات عبر كافة المستودعات لمنع نفاد المخزون وتسهيل إعادة التوريد.',
+            desc_en: 'Real-time multi-warehouse stock reservation to prevent overselling and streamline restocking.'
+          },
+          {
+            icon: 'users',
+            title: 'إدارة علاقات العملاء CRM',
+            title_en: 'Customer Management',
+            desc: 'ملفات تفصيلية للعملاء مع سجل المشتريات، شرائح العملاء، وبرامج النقاط والمكافآت.',
+            desc_en: 'Comprehensive customer profiles with purchase history, loyalty tiers, and automated segmentation.'
+          },
+          {
+            icon: 'bar-chart',
+            title: 'التقارير والتحليلات المتقدمة',
+            title_en: 'Analytics & Reporting',
+            desc: 'متابعة حركة المبيعات، توقعات الإيرادات، معدلات الإرجاع، وتقارير التدقيق المالي.',
+            desc_en: 'Real-time sales velocity, revenue forecasts, return rates, and exportable financial audit sheets.'
+          },
+          {
+            icon: 'globe',
+            title: 'الربط متعدد القنوات Omnichannel',
+            title_en: 'Multi-Channel Support',
+            desc: 'مزامنة مبيعات الفروع ونقاط البيع POS مع قنوات البيع الإلكتروني في قاعدة بيانات واحدة.',
+            desc_en: 'Synchronize offline point-of-sale, social commerce storefronts, and third-party delivery channels.'
+          }
+        ]
+      },
+
+      // 2. See It in Action
+      action_main_image: '/images/products/tijara_action_main.png',
+      action_screens: [
+        { id: 1, image: '/images/products/tijara_action_1.png', title: 'Order Fulfillment Table', title_ar: 'جدول تجهيز الطلبات' },
+        { id: 2, image: '/images/products/tijara_action_2.png', title: 'Multi-Warehouse Inventory', title_ar: 'المخزون متعدد المستودعات' },
+        { id: 3, image: '/images/products/tijara_action_3.png', title: 'Live Analytics & Retention', title_ar: 'تحليلات المبيعات ونمو العملاء' }
+      ],
+
+      // 3. How It Works
+      how_it_works: {
+        pill: 'كيف يعمل',
+        pill_en: 'HOW IT WORKS',
+        title: 'سهل في البداية، قوي وقابل للتوسع',
+        title_en: 'Simple to Start, Powerful to Scale',
+        subtitle: 'من الإعداد الأولي وحتى التوسع متعدد الفروع في أربع خطوات بسيطة.',
+        subtitle_en: 'From initial setup to multi-branch expansion in four simple steps.',
+        steps: [
+          {
+            num: '01',
+            title: 'الإعداد والتهيئة',
+            title_en: 'Setup',
+            desc: 'تجهيز المتجر، استيراد المنتجات، وربط بوابات الدفع الإلكتروني.',
+            desc_en: 'Configure your store, import SKUs, and connect your payment gateways.'
+          },
+          {
+            num: '02',
+            title: 'الإدارة والتشغيل',
+            title_en: 'Manage',
+            desc: 'استقبال ومعالجة الطلبات ومزامنة المخزون عبر جميع قنوات البيع.',
+            desc_en: 'Process incoming orders and synchronize inventory across all sales channels.'
+          },
+          {
+            num: '03',
+            title: 'الأتمتة الذكية',
+            title_en: 'Automate',
+            desc: 'دع القواعد الذكية تتولى إصدار الفواتير والشحن وتنبيهات العملاء.',
+            desc_en: 'Let smart rules handle shipping dispatch, invoices, and customer notifications.'
+          },
+          {
+            num: '04',
+            title: 'النمو والتوسع',
+            title_en: 'Grow',
+            desc: 'استفد من التحليلات التنبؤية لتوسيع الفروع والوصول إلى أسواق جديدة.',
+            desc_en: 'Leverage predictive insights to expand catalog, branches, and regional reach.'
+          }
+        ]
+      },
+
+      // 4. Why Choose Tijara
+      why_choose: {
+        pill: 'المزايا التنافسية',
+        pill_en: 'ADVANTAGES',
+        title: 'لماذا تختار الشركات نظام تجارة؟',
+        title_en: 'Why Teams Choose Tijara',
+        subtitle: 'هندسة برمجية متطورة صُممت للأداء العالي والموثوقية والنمو السريع.',
+        subtitle_en: 'Engineered for performance, reliability, and growth.',
+        items: [
+          {
+            title: 'إطلاق سريع',
+            title_en: 'Fast Setup',
+            desc: 'ابدأ العمل خلال أيام معدودة عبر أدوات التهيئة الذكية ونقل البيانات التلقائي.',
+            desc_en: 'Go live in days with our intuitive onboarding wizards and zero-code migration tools.'
+          },
+          {
+            title: 'توسع حقيقي',
+            title_en: 'True Scalability',
+            desc: 'قدرة على معالجة ملايين المعاملات شهرياً بدون أي بطء في سرعة الدفع والشراء.',
+            desc_en: 'Handles millions of monthly transactions without degradation in checkout performance.'
+          },
+          {
+            title: 'أمان وخصوصية البيانات',
+            title_en: 'National Privacy',
+            desc: 'تشفير بمستوى البنوك واستضافة بيانات محلية متوافقة مع الأنظمة واللوائح.',
+            desc_en: 'Enterprise-grade encryption and local data residency adhering to regional compliance.'
+          },
+          {
+            title: 'دعم فني وضمان 24/7',
+            title_en: 'Dedicated 24/7 SLA',
+            desc: 'دعم هندسي مباشر مع ضمان استقرار وجاهزية النظام بنسبة 99.99%.',
+            desc_en: 'Direct engineering support and guaranteed 99.99% system availability.'
+          }
+        ]
+      },
+
+      // 5. Bottom CTA
+      bottom_cta: {
+        title: 'جاهز لاستكشاف نظام تجارة لمتجرك؟',
+        title_en: 'Ready to Explore Tijara?',
+        description: 'تواصل مع خبرائنا واحصل على عرض توضيحي مباشر ومخصص لعمليات متجرك الإلكتروني.',
+        description_en: 'Talk to our product specialists and get a tailored live demo for your e-commerce operations.',
+        button_text: 'طلب عرض توضيحي',
+        button_href: '/contact?subject=Tijara+Demo'
+      },
+
+      // Included Modules list
       modules: [
         {
           icon: 'package',
@@ -746,12 +945,84 @@ export const initialMockData = {
       category_name_en: 'Technology Solutions',
       title: 'تصميم وتطوير المواقع والمنصات',
       title_en: 'Web Design & Development',
+      title_highlight: 'ابنِ تجربة رقمية استثنائية تدعم نمو وتوسع أعمالك',
+      title_highlight_en: 'Build a Digital Experience That Supports Your Business Growth',
       badge: 'DEVELOPMENT',
       description: 'مواقع إلكترونية وتطبيقات ويب عالية الأداء ومخصصة بالكامل لتحقيق أهدافك التجارية بأحدث التقنيات.',
       description_en: 'High-performance websites and web applications tailored to your business goals with cutting-edge tech.',
+      hero_image: '/images/web_dev_hero_laptop.jpg',
       icon: 'code',
       icon_name: 'Code',
       technologies: ['React 18', 'Vue 3', 'Laravel 11', 'Next.js', 'TailwindCSS', 'PostgreSQL'],
+      tags: ['تصميم الواجهات', 'تطوير الويب', 'إدارة المحتوى'],
+      problem_section: {
+        badge: 'التحدي التجاري',
+        badge_en: 'THE CHALLENGE',
+        title: 'المشكلة التي تواجه الشركات',
+        title_en: 'The Business Problem',
+        subtitle: 'تعاني العديد من الشركات من مواقع قديمة وبطيئة تفشل في تحويل الزوار إلى عملاء أو مواكبة نمو الأعمال.',
+        subtitle_en: 'Many businesses struggle with outdated websites that fail to convert visitors or scale with business growth.',
+        items: [
+          { icon: 'AlertTriangle', title: 'حضور رقمي غير مواكب', title_en: 'Outdated Web Presence', description: 'مواقع نمطية أو بطيئة تفشل في عكس القيمة الحقيقية ومكانة علامتك التجارية.', description_en: 'A generic or slow website that fails to reflect brand authority.' },
+          { icon: 'AlertTriangle', title: 'تجربة مستخدم ضعيفة', title_en: 'Poor User Experience', description: 'تصفح معقد، وتوافق ضعيف مع الهواتف الذكية يدفع العملاء للمنافسين.', description_en: 'Confusing navigation and weak mobile responsiveness.' },
+          { icon: 'AlertTriangle', title: 'وظائف تقنية محدودة', title_en: 'Limited Functionality', description: 'أنظمة إدارة محتوى جامدة تعجز عن التوسع أو الربط مع واجهات الـ APIs.', description_en: 'Rigid CMS architecture that cannot scale or integrate with APIs.' },
+          { icon: 'AlertTriangle', title: 'هوية غير متناسقة', title_en: 'Inconsistent Brand Identity', description: 'عناصر بصرية مبعثرة تضعف ثقة العملاء وتقلل من معدلات الشراء.', description_en: 'Disjointed visual elements that reduce customer trust and conversions.' }
+        ]
+      },
+      solve_section: {
+        badge: 'منهجيتنا',
+        badge_en: 'OUR APPROACH',
+        title: 'كيف نحل هذه المشكلة',
+        title_en: 'How We Solve It',
+        heading: 'موقع مصمم خصيصاً لأهداف أعمالك وليس قالباً جاهزاً',
+        heading_en: 'A Website Designed Around Your Business, Not a Template',
+        description: 'تجمع عملية تطوير المواقع المخصصة لدينا بين التصميم الاستراتيجي لواجهات وتجربة المستخدم (UI/UX) وهندسة الواجهات والأنظمة المتطورة المصممة لأهدافك بدقة.',
+        description_en: 'Our custom web development process combines strategic UI/UX design, modern frontend architecture, and high-performance backend engineering.',
+        image: '/images/web_dev_responsive_devices.jpg',
+        cta_button: 'ناقش مشروعك معنا',
+        cta_button_en: 'Discuss Your Project'
+      },
+      deliver_section: {
+        title: 'ما نقدمه لك',
+        title_en: 'What We Deliver',
+        subtitle: 'حلول ويب شاملة ومتكاملة مصممة للسرعة والأمان والتوسع.',
+        subtitle_en: 'Comprehensive, end-to-end web solutions built for scale and speed.',
+        items: [
+          { icon: 'CheckCircle2', title: 'مواقع الشركات والمؤسسات', title_en: 'Corporate Websites', description: 'مواقع مخصصة تعكس ريادة شركتك في قطاعها وتجذب وتلهم العملاء والشركاء.', description_en: 'Custom-designed corporate websites that establish industry authority.' },
+          { icon: 'CheckCircle2', title: 'متاجر التجارة الإلكترونية', title_en: 'E-Commerce Websites', description: 'متاجر سريعة ومحسّنة للمبيعات مع بوابات دفع آمنة وإدارة ذكية للمخزون.', description_en: 'High-conversion online stores with secure checkout and inventory sync.' },
+          { icon: 'CheckCircle2', title: 'تطبيقات الويب المخصصة (SaaS)', title_en: 'Bespoke Web Applications', description: 'بوابات عملاء ومنصات برمجية سحابية متطورة مبنية لأعلى مستويات الكفاءة.', description_en: 'Tailored SaaS platforms and portals engineered for performance.' },
+          { icon: 'CheckCircle2', title: 'أنظمة إدارة المحتوى (CMS)', title_en: 'CMS Integration', description: 'تمكين فريقك من إدارة ونشر المحتوى بسلاسة مطلقة عبر أحدث أنظمة CMS.', description_en: 'Empower your team with intuitive headless or customized CMS setups.' },
+          { icon: 'CheckCircle2', title: 'تكامل الـ APIs والأنظمة', title_en: 'API Integration', description: 'ربط فوري مع أنظمة الـ CRM وبوابات الدفع الإلكتروني وأدوات الأتمتة.', description_en: 'Seamless integration with third-party CRM, ERP, and payment gateways.' },
+          { icon: 'CheckCircle2', title: 'تحسين السرعة ومحركات البحث', title_en: 'Performance Optimization', description: 'سرعة تحميل فائقة وبنية مهيأة لتصدر نتائج Google مع استقرار 99.9%.', description_en: 'Lightning-fast page loading speeds, SEO-optimized structure, and 99.9% uptime.' }
+        ]
+      },
+      process_section: {
+        badge: 'مراحل العمل',
+        badge_en: 'PROCESS',
+        title: 'كيف نعمل معك',
+        title_en: 'How We Work',
+        subtitle: 'مسار عمل مدروس وواضح من 5 خطوات يضمن الدقة والمرونة والتميز.',
+        subtitle_en: 'Our proven 5-step process delivers clarity, agility, and excellence.',
+        steps: [
+          { number: '01', title: 'الاستكشاف والتحليل', title_en: 'Discover', description: 'بحث شامل لقطاعك، وأهدافك التجارية، وسلوك جمهورك المستهدف.', description_en: 'Deep-dive research into your industry, business goals, and target users.' },
+          { number: '02', title: 'التخطيط والهيكلة', title_en: 'Plan', description: 'وضع الهيكل التقني، والمخططات الأولية (Wireframes)، وخطة العمل.', description_en: 'Technical architecture, wireframes, content strategy, and project roadmap.' },
+          { number: '03', title: 'التصميم والتجربة', title_en: 'Design', description: 'تصميم نماذج تفاعلية لواجهات وتجربة المستخدم وهندسة نظام التصميم.', description_en: 'Interactive UI/UX prototypes, responsive layouts, and design systems.' },
+          { number: '04', title: 'التطوير والبرمجة', title_en: 'Build', description: 'برمجة احترافية وكود نظيف واختبارات جودة شاملة ومستمرة.', description_en: 'Agile development with clean code, testing, and continuous feedback.' },
+          { number: '05', title: 'الإطلاق والتحسين', title_en: 'Launch & Improve', description: 'نشر الموقع، ومراقبة مؤشرات الأداء، والتحسين المستمر لمضاعفة النتائج.', description_en: 'Deployment, speed optimization, user analytics, and ongoing evolution.' }
+        ]
+      },
+      why_section: {
+        title: 'لماذا تختار بي كايت',
+        title_en: 'Why Be Kite',
+        subtitle: 'ما يجعل شراكتنا معك استثنائية وذات أثر ملموس.',
+        subtitle_en: 'What makes our partnership exceptional and impact-driven.',
+        items: [
+          { title: 'فهم عميق للأعمال', title_en: 'Business Understanding', description: 'نركز على العائد الاستثماري ونمو أعمالك وليس فقط التنفيذ التقني.', description_en: 'We focus on business metrics and ROI, not just technical implementation.' },
+          { title: 'تميز تجربة المستخدم', title_en: 'UX Excellence', description: 'كل تفاعل ونقرة مصممة بدقة لتحقيق أعلى معدل تحويل وتفاعل.', description_en: 'Every click, scroll, and interaction is engineered to maximize conversion.' },
+          { title: 'تكنولوجيا موثوقة', title_en: 'Reliable Technology', description: 'بناء على أحدث الأطر البرمجية مع معايير حماية وأمان فائقة.', description_en: 'Built on modern frameworks with secure, scalable, and clean architectures.' },
+          { title: 'شراكة ممتدة', title_en: 'Long-Term Partnership', description: 'نبقى معك بعد الإطلاق لتقديم الدعم الفني والتطوير المستمر.', description_en: 'We stay with you post-launch to provide continuous support and growth.' }
+        ]
+      },
       capabilities: [
         { title: 'واجهات مستخدم تفاعلية UI/UX', title_en: 'Interactive UI/UX', desc: 'تصاميم جذابة وسلسة مصممة للتحويل.' },
         { title: 'أداء فائق وسرعة تحميل', title_en: 'Blazing Fast Speed', desc: 'معمارية متطورة تضمن 99+ في مؤشرات Core Web Vitals.' },
@@ -768,12 +1039,84 @@ export const initialMockData = {
       category_name_en: 'Technology Solutions',
       title: 'تطوير تطبيقات الهواتف الذكية',
       title_en: 'Mobile App Development',
+      title_highlight: 'تطبيقات iOS وأندرويد تفاعلية وسريعة وقابلة للتوسع',
+      title_highlight_en: 'Intuitive & Scalable iOS and Android Mobile Applications',
       badge: 'MOBILE',
       description: 'تطبيقات أصلية وهجينة لنظامي iOS و Android تضمن تجربة مستخدم استثنائية وسرعة فائقة.',
       description_en: 'Native & cross-platform mobile apps for iOS and Android that deliver exceptional user experiences.',
+      hero_image: '/images/mobile_app_hero_mockup.jpg',
       icon: 'smartphone',
       icon_name: 'Smartphone',
       technologies: ['Flutter', 'React Native', 'Swift', 'Kotlin', 'Firebase', 'GraphQL'],
+      tags: ['تطبيقات iOS', 'تطبيقات أندرويد', 'فلاتر (Flutter)', 'رياكت نيتف'],
+      problem_section: {
+        badge: 'التحدي التجاري',
+        badge_en: 'THE CHALLENGE',
+        title: 'تحديات الموبايل التي تواجه الشركات',
+        title_en: 'Mobile Challenges Businesses Face',
+        subtitle: 'تعاني العديد من التطبيقات من بطء الاستجابة واستهلاك البطارية وضعف التوافق.',
+        subtitle_en: 'Many apps fail due to clunky navigation, high battery consumption, and poor compatibility.',
+        items: [
+          { icon: 'AlertTriangle', title: 'معدل تسرب مستخدمين مرتفع', title_en: 'High User Drop-Off', description: 'صعوبة التسجيل والبطء يجعلان أكثر من 70% يغادرون التطبيق.', description_en: 'Poor onboarding causes users to abandon apps within first week.' },
+          { icon: 'AlertTriangle', title: 'أخطاء التوافق والانهيارات', title_en: 'Fragmentation & Bugs', description: 'تفاوت الشاشات وكثرة المشاكل يضر بسمعة العلامة التجارية.', description_en: 'Inconsistent UI and frequent crashes damage brand reputation.' },
+          { icon: 'AlertTriangle', title: 'ضعف العمل بدون إنترنت', title_en: 'Weak Offline Capabilities', description: 'عدم حفظ البيانات محلياً يمنع العميل من إتمام الشراء.', description_en: 'Lack of offline sync stops users from completing actions.' },
+          { icon: 'AlertTriangle', title: 'بطء إطلاق التحديثات', title_en: 'Slow Feature Updates', description: 'كود قديم يجعل إطلاق الميزات الجديدة صعباً وبطيئاً.', description_en: 'Monolithic codebases make releasing updates painful.' }
+        ]
+      },
+      solve_section: {
+        badge: 'منهجيتنا',
+        badge_en: 'OUR APPROACH',
+        title: 'كيف نطور تطبيقات الموبايل',
+        title_en: 'How We Build Mobile Apps',
+        heading: 'تجارب استخدام سلسة، فائقة السرعة وآمنة تماماً',
+        heading_en: 'Engaging, Fast, and Secure Mobile Experiences',
+        description: 'يعتمد فريقنا على فلاتر وأحدث التقنيات لتقديم أداء 60 إطاراً في الثانية مع تكاملات سحابية آمنة.',
+        description_en: 'Our team leverages Flutter and Native tech to produce pixel-perfect UI and rock-solid security.',
+        image: '/images/mobile_app_hero_mockup.jpg',
+        cta_button: 'ناقش تطبيقك معنا',
+        cta_button_en: 'Discuss Your Mobile App'
+      },
+      deliver_section: {
+        title: 'ما نقدمه لك',
+        title_en: 'What We Deliver',
+        subtitle: 'دورة حياة كاملة لتطبيق الموبايل من الفكرة وحتى النشر.',
+        subtitle_en: 'Complete mobile app lifecycles from architecture to store publishing.',
+        items: [
+          { icon: 'CheckCircle2', title: 'تطبيقات iOS أصلية (Swift)', title_en: 'iOS Native Development', description: 'تطبيقات سريعة ومخصصة لمنظومة Apple وآيفون وآيباد.', description_en: 'Swift applications optimized for the Apple ecosystem.' },
+          { icon: 'CheckCircle2', title: 'تطبيقات أندرويد (Kotlin)', title_en: 'Android Native Development', description: 'تطبيقات عالية الاستجابة لكافة أجهزة وشاشات أندرويد.', description_en: 'Kotlin-based applications built for performance across all devices.' },
+          { icon: 'CheckCircle2', title: 'تطبيقات عبر المنصات (Flutter)', title_en: 'Cross-Platform (Flutter)', description: 'كود موحد يوفر 50% من وقت وتكلفة الإطلاق دون التنازل عن السرعة.', description_en: 'A single codebase delivering native iOS and Android apps faster.' },
+          { icon: 'CheckCircle2', title: 'إشعارات لحظية Push ذكية', title_en: 'Real-Time Notifications', description: 'محرك إشعارات ذكي لزيادة تفاعل وتكرار شراء العملاء.', description_en: 'Intelligent push notification engines that drive re-engagement.' },
+          { icon: 'CheckCircle2', title: 'بوابات الدفع والمحافظ', title_en: 'Payment & Wallet Integration', description: 'دعم Apple Pay و Google Pay والبطاقات لدفع سريع بنقرة واحدة.', description_en: 'Seamless Apple Pay, Google Pay, and digital wallets.' },
+          { icon: 'CheckCircle2', title: 'النشر على المتاجر و ASO', title_en: 'Store Publishing & ASO', description: 'إدارة كاملة لاشتراطات آبل وجوجل وضمان الاعتماد السريع.', description_en: 'Complete compliance management and rapid approval handling.' }
+        ]
+      },
+      process_section: {
+        badge: 'مراحل العمل',
+        badge_en: 'PROCESS',
+        title: 'دورة تطوير تطبيقات الموبايل',
+        title_en: 'Mobile Development Lifecycle',
+        subtitle: 'هندسة دقيقة مع اختبارات مستمرة على أجهزة حقيقية.',
+        subtitle_en: 'Structured engineering with continuous testing on real devices.',
+        steps: [
+          { number: '01', title: 'دراسة رحلة المستخدم', title_en: 'User Journey Discovery', description: 'تحديد الميزات الأساسية ومسار استخدام العميل.', description_en: 'Mapping user personas and core features.' },
+          { number: '02', title: 'التصميم الأولي والمخططات', title_en: 'Mobile Wireframing', description: 'نماذج أولية تفاعلية على Figma.', description_en: 'Touch-optimized prototypes and interactive Figma previews.' },
+          { number: '03', title: 'المعمارية وربط الـ APIs', title_en: 'Architecture & API Setup', description: 'واجهات برمجة سريعة ونظام حفظ البيانات محلياً.', description_en: 'High-speed REST/GraphQL APIs and offline caching.' },
+          { number: '04', title: 'البرمجة واختبارات الأجهزة', title_en: 'Development & QA', description: 'اختبارات مكثفة على أكثر من 20 جهازاً حقيقياً.', description_en: 'Builds tested on 20+ real Android and iOS devices.' },
+          { number: '05', title: 'النشر والدعم المستمر', title_en: 'Store Launch & Scaling', description: 'إطلاق على المتاجر ومتابعة مؤشرات الاستقرار.', description_en: 'Store publishing, crash monitoring, and analytics.' }
+        ]
+      },
+      why_section: {
+        title: 'لماذا بي كايت لتطبيقات الهاتف',
+        title_en: 'Why Choose Be Kite for Mobile',
+        subtitle: 'نبني تطبيقات يحب المستخدمون الاحتفاظ بها على شاشاتهم الرئيسية.',
+        subtitle_en: 'We build mobile apps that users love to keep on their home screen.',
+        items: [
+          { title: 'أداء 60 إطاراً في الثانية', title_en: '60 FPS Performance', description: 'حركات دقيقة وتفاعلات فورية تشعرك بالفخامة والسرعة.', description_en: 'Fluid micro-interactions and smooth transitions.' },
+          { title: 'عمل سلس بدون إنترنت', title_en: 'Offline-First Reliability', description: 'حفظ محلي ذكي يضمن استمرار التطبيق حتى مع انقطاع الشبكة.', description_en: 'Smart local caching ensures your app works smoothly.' },
+          { title: 'امتثال 100% للمتاجر', title_en: 'App Store Compliance', description: 'توافق كامل مع لوائح وسياسات Apple و Google لاعتماد فوري.', description_en: '100% adherence to Apple & Google review guidelines.' },
+          { title: 'صيانة دورية وتحديثات', title_en: 'Continuous Maintenance', description: 'مواكبة سريعة لإصدارات أنظمة التشغيل وحماية متجددة.', description_en: 'Regular OS updates, security patches, and monitoring.' }
+        ]
+      },
       capabilities: [
         { title: 'تطبيقات iOS و Android', title_en: 'iOS & Android Native/Hybrid', desc: 'نشر على App Store و Google Play.' },
         { title: 'إشعارات لحظية متقدمة Push', title_en: 'Rich Push Notifications', desc: 'استهداف ذكي وتفاعل لحظي مع المستخدمين.' },
@@ -999,22 +1342,68 @@ export const initialMockData = {
     {
       id: 3,
       slug: 'fintech-concept',
-      name: 'مشروع الفينتك | FinTech Venture',
+      name: 'مشروع تقنية مالية | FinTech Concept',
       name_en: 'FinTech Concept',
       subtitle: 'حلول مالية ومدفوعات ذكية للشركات الناشئة',
       subtitle_en: 'Smart Corporate Payments & Financial Infrastructure',
-      badge: 'COMING SOON',
-      badge_en: 'COMING SOON',
-      description: 'منظومة مالية متطورة قيد التطوير تهدف إلى تسهيل المدفوعات والتمويل السريع للمؤسسات الصغيرة والمتوسطة.',
+      badge: 'قيد التجهيز والإعداد',
+      badge_en: 'In Pipeline',
+      description: 'منظومة مالية متطورة قيد التجهيز تهدف إلى تسهيل المدفوعات والتمويل السريع للمؤسسات الصغيرة والمتوسطة.',
       description_en: 'Next-generation financial technology and corporate payment infrastructure in ideation & engineering pipeline.',
-      tags: ['FinTech', 'قيد التطوير والبحث'],
-      tags_en: ['FinTech', 'In Pipeline'],
+      tags: ['FinTech', 'تقنية مالية', 'قيد التجهيز'],
+      tags_en: ['FinTech', 'Payments', 'In Pipeline'],
       brand_color: '#0284c7',
       accent_color: '#0369a1',
+      layout: 'image-left',
+      pipeline_status: 'قيد التجهيز والإعداد',
       is_coming_soon: 1,
       is_active: 1,
       order_index: 3,
       created_at: '2026-01-01',
+    },
+    {
+      id: 4,
+      slug: 'edtech-venture',
+      name: 'منصة تكنولوجيا التعليم | EdTech Venture',
+      name_en: 'EdTech Venture',
+      subtitle: 'تجارب تعليمية تفاعلية مدعومة بالذكاء الاصطناعي',
+      subtitle_en: 'Interactive Learning Powered by Adaptive AI',
+      badge: 'أبحاث ودراسة السوق',
+      badge_en: 'Research & Ideation',
+      description: 'منصة تعليمية متطورة تهدف إلى إضفاء الطابع الشخصي على رحلة الطالب وتسهيل وصول المعرفة الأكاديمية والمهنية.',
+      description_en: 'An advanced educational venture focused on personalized adaptive learning and skills acceleration.',
+      tags: ['EdTech', 'تعليم رقمي', 'أبحاث ودراسة السوق'],
+      tags_en: ['EdTech', 'E-Learning', 'Research & Ideation'],
+      brand_color: '#059669',
+      accent_color: '#047857',
+      layout: 'image-right',
+      pipeline_status: 'أبحاث ودراسة السوق',
+      is_coming_soon: 1,
+      is_active: 1,
+      order_index: 4,
+      created_at: '2026-02-01',
+    },
+    {
+      id: 5,
+      slug: 'ai-productivity-app',
+      name: 'تطبيق إنتاجية بالذكاء الاصطناعي | AI Productivity',
+      name_en: 'AI Productivity App',
+      subtitle: 'مساعد تنفيذي فائق الذكاء لفرق العمل الرقمية',
+      subtitle_en: 'Autonomous Executive Assistant for High-Growth Teams',
+      badge: 'النمذجة الأولية والبرمجة',
+      badge_en: 'Prototyping & Dev',
+      description: 'تطبيق للمستهلكين والشركات يدمج نماذج الذكاء الاصطناعي التوليدية لأتمتة المهام اليومية والجدولة وإدارة المعرفة المؤسسية.',
+      description_en: 'An intelligent workplace companion streamlining multi-modal workflows, automated scheduling, and team intelligence.',
+      tags: ['AI App', 'ذكاء اصطناعي', 'النمذجة الأولية'],
+      tags_en: ['AI', 'Productivity', 'Prototyping & Dev'],
+      brand_color: '#8b5cf6',
+      accent_color: '#7c3aed',
+      layout: 'image-left',
+      pipeline_status: 'النمذجة الأولية والبرمجة',
+      is_coming_soon: 1,
+      is_active: 1,
+      order_index: 5,
+      created_at: '2026-02-15',
     },
   ],
 
@@ -1187,17 +1576,23 @@ export const initialMockData = {
       slug: 'senior-full-stack-developer',
       title: 'مطور Full-Stack أول',
       title_en: 'Senior Full-Stack Developer',
+      badge: 'TECH & ENGINEERING',
+      badge_en: 'TECH & ENGINEERING',
+      accent_color: '#4f008c',
+      image: '/images/careers/job_hero_infinity.jpg',
+      heroImage: '/images/careers/job_hero_infinity.jpg',
       department: 'الهندسة والتطوير',
       department_en: 'Engineering',
       location: 'الرياض، السعودية / عمان، الأردن — هجين',
       location_en: 'Riyadh, Saudi Arabia / Amman, Jordan — Hybrid',
       type: 'دوام كامل / دائم',
       type_en: 'Full-time / Permanent',
-      experience: 'الخبرة: +5 سنوات',
+      experience: '+5 سنوات خبرة',
       experience_en: 'Exp: 5+ Years',
+      subtitle: 'تصميم وبناء ونشر تطبيقات الجيل القادم وتوسيع منصاتنا السحابية.',
       description: 'تصميم وتطوير ونشر تطبيقات سريعة ومتطورة من الجيل القادم. قيادة الميزات البرمجية كعنصر محوري في الفريق لتسريع نمو عملائنا.',
       description_en: 'Design, build, and deploy next-generation modern agile applications. Drive features end-to-end as part of the core team to accelerate client growth.',
-      salary_range: '2,200 - 3,000 JOD / 14,000 - 18,000 SAR',
+      skills: ['React & Next.js', 'Node.js', 'TypeScript', 'PostgreSQL'],
       requirements: [
         '5+ years of professional full-stack software development experience with React and Node.js.',
         'Extensive experience with modern frontend frameworks (React, Next.js, Vue 3) and TypeScript.',
@@ -1212,17 +1607,23 @@ export const initialMockData = {
       slug: 'flutter-developer',
       title: 'مطور تطبيقات Flutter',
       title_en: 'Flutter Developer',
+      badge: 'MOBILE ENGINEERING',
+      badge_en: 'MOBILE ENGINEERING',
+      accent_color: '#4f008c',
+      image: '/images/careers/careers_collaboration.jpg',
+      heroImage: '/images/careers/careers_collaboration.jpg',
       department: 'الهندسة والتطوير',
       department_en: 'Engineering',
       location: 'الرياض، السعودية — حضوري',
       location_en: 'Riyadh, Saudi Arabia — On-site',
       type: 'دوام كامل / دائم',
       type_en: 'Full-time / Permanent',
-      experience: 'الخبرة: +3 سنوات',
+      experience: '+3 سنوات خبرة',
       experience_en: 'Exp: 3+ Years',
+      subtitle: 'بناء وتطوير تطبيقات أصلية فائقة السلاسة لمنظومتي iOS و Android.',
       description: 'تطوير وإطلاق تطبيقات هاتف ذكية لأنظمة iOS و Android بأداء فائق السرعة، واجهات عصرية، وهندسة برمجية نظيفة وقوية.',
       description_en: 'Build and ship cross-platform native iOS & Android applications with buttery smooth performance, state-of-the-art UI, and resilient clean architecture.',
-      salary_range: '1,800 - 2,400 JOD / 11,000 - 15,000 SAR',
+      skills: ['Flutter & Dart', 'iOS / Android', 'BLoC / Riverpod', 'Clean Arch'],
       requirements: [
         '3+ years of Flutter development with published apps on App Store and Google Play.',
         'Deep understanding of BLoC or Riverpod state management and Clean Architecture.',
@@ -1237,17 +1638,23 @@ export const initialMockData = {
       slug: 'ux-ui-designer',
       title: 'مصمم تجربة وواجهة المستخدم (UX/UI)',
       title_en: 'UX/UI Designer',
+      badge: 'DESIGN & PRODUCT',
+      badge_en: 'DESIGN & PRODUCT',
+      accent_color: '#4f008c',
+      image: '/images/careers/careers_experimentation.jpg',
+      heroImage: '/images/careers/careers_experimentation.jpg',
       department: 'التصميم والإبداع',
       department_en: 'Design',
       location: 'عمان، الأردن — هجين',
       location_en: 'Amman, Jordan — Hybrid',
       type: 'دوام كامل / دائم',
       type_en: 'Full-time / Permanent',
-      experience: 'الخبرة: +3 سنوات',
+      experience: '+3 سنوات خبرة',
       experience_en: 'Exp: 3+ Years',
+      subtitle: 'تحويل الأنظمة والعمليات المعقدة إلى واجهات مستخدم مذهلة وسلسة.',
       description: 'تحويل الأنظمة المعقدة إلى منتجات وتجارب رقمية وتطبيقات مذهلة وسلسة تمنح المستخدمين تجربة استثنائية وفاخرة.',
       description_en: 'Transform complex workflows into clean, intuitive, and world-class digital products, web experiences, and mobile UI systems that wow users.',
-      salary_range: '1,500 - 2,000 JOD / 9,000 - 12,000 SAR',
+      skills: ['Figma Mastery', 'Design Systems', 'Prototyping', 'User Research'],
       requirements: [
         '3+ years designing complex SaaS platforms, responsive web apps, and mobile interfaces.',
         'Expert proficiency in Figma, design systems, auto-layout, and interactive prototyping.',
@@ -1262,17 +1669,23 @@ export const initialMockData = {
       slug: 'digital-marketing-specialist',
       title: 'أخصائي تسويق رقمي ونمو',
       title_en: 'Digital Marketing Specialist',
+      badge: 'GROWTH & MARKETING',
+      badge_en: 'GROWTH & MARKETING',
+      accent_color: '#4f008c',
+      image: '/images/careers/careers_growth.jpg',
+      heroImage: '/images/careers/careers_growth.jpg',
       department: 'التسويق الرقمي',
       department_en: 'Marketing',
       location: 'الرياض، السعودية — عن بعد',
       location_en: 'Riyadh, Saudi Arabia — Remote',
       type: 'دوام كامل / دائم',
       type_en: 'Full-time / Permanent',
-      experience: 'الخبرة: +2 سنوات',
+      experience: '+2 سنوات خبرة',
       experience_en: 'Exp: 2+ Years',
+      subtitle: 'قيادة حملات الأداء الممولة وتحسين محركات البحث والنمو الرقمي.',
       description: 'قيادة الحملات الإعلانية الممولة المركزة على التحويلات، تحسين محركات البحث SEO، وتجارب النمو التي تحقق عوائد استثمارية قياسية.',
       description_en: 'Lead conversion-focused paid ad campaigns, search engine optimization, content strategies, and growth experiments that generate high ROI.',
-      salary_range: '1,400 - 1,900 JOD / 8,500 - 11,500 SAR',
+      skills: ['Meta & Google Ads', 'SEO & Analytics', 'CRO Optimization', 'Data Analysis'],
       requirements: [
         '2+ years managing performance marketing campaigns across Meta, Google Ads, and TikTok.',
         'Proven track record in technical SEO, conversion rate optimization (CRO), and Google Analytics 4.',
@@ -1287,17 +1700,23 @@ export const initialMockData = {
       slug: 'business-development-executive',
       title: 'مسؤول تطوير أعمال ومبيعات',
       title_en: 'Business Development Executive',
+      badge: 'BUSINESS & SALES',
+      badge_en: 'BUSINESS & SALES',
+      accent_color: '#4f008c',
+      image: '/images/careers/careers_ownership.jpg',
+      heroImage: '/images/careers/careers_ownership.jpg',
       department: 'تطوير الأعمال والمبيعات',
       department_en: 'Business Development',
       location: 'عمان، الأردن — هجين',
       location_en: 'Amman, Jordan — Hybrid',
       type: 'دوام كامل / دائم',
       type_en: 'Full-time / Permanent',
-      experience: 'الخبرة: +3 سنوات',
+      experience: '+3 سنوات خبرة',
       experience_en: 'Exp: 3+ Years',
+      subtitle: 'توسيع قاعدة شركاء Be Kite وبناء صفقات استراتيجية كبرى.',
       description: 'توسيع قاعدة شركاء وعملاء Be Kite في المملكة العربية السعودية والأردن ومنطقة الشرق الأوسط من خلال بناء شراكات استراتيجية طويلة الأمد.',
       description_en: 'Expand Be Kite’s client ecosystem across Saudi Arabia, Jordan, and the MENA region by building long-term strategic relationships and closing deals.',
-      salary_range: '1,600 - 2,200 JOD + Commission / 10,000 - 14,000 SAR + Commission',
+      skills: ['B2B Sales', 'Enterprise Deals', 'Strategic Partnerships', 'Negotiation'],
       requirements: [
         '3+ years in B2B software sales, technology services, or digital agency business development.',
         'Demonstrated success in prospecting, managing complex enterprise sales cycles, and closing high-ticket deals.',

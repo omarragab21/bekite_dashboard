@@ -92,110 +92,171 @@
       </div>
     </div>
 
-    <!-- Products Table -->
-    <div class="table-card">
-      <div class="table-responsive">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th class="th-drag"></th>
-              <th>المنتج والنظام</th>
-              <th>القطاع والتصنيف</th>
-              <th>الموديولات والشاشات</th>
-              <th>قدرات التوسع والمشاريع</th>
-              <th>الحالة</th>
-              <th class="text-center">الإجراءات</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-if="loading" class="state-row"><td colspan="7">جاري تحميل المنتجات الرقمية...</td></tr>
-            <tr v-else-if="filteredProducts.length === 0" class="state-row"><td colspan="7">لا توجد أنظمة مطابقة للبحث</td></tr>
-            <template v-else>
-              <tr
-                v-for="product in filteredProducts"
-                :key="product.id"
-                class="data-row"
-                :class="{ 'row-dragging': draggedId === product.id }"
-                draggable="true"
-                @dragstart="onDragStart(product)"
-                @dragover.prevent="onDragOver(product)"
-                @drop.prevent="onDrop(product)"
-              >
-                <td class="td-drag">
-                  <span class="drag-handle">⋮⋮</span>
-                </td>
-                <td>
-                  <div class="product-cell">
-                    <div class="prod-color-indicator" :style="{ background: product.accent_color || '#7c3aed' }"></div>
-                    <div class="product-meta">
-                      <div class="title-with-badge">
-                        <span class="product-name">{{ product.name }}</span>
-                        <span v-if="product.is_featured" class="featured-badge">★ مميز</span>
-                      </div>
-                      <span class="product-subtitle">{{ product.subtitle }}</span>
-                    </div>
-                  </div>
-                </td>
-                <td>
-                  <span class="cat-tag">{{ getCategoryLabel(product.category) }}</span>
-                </td>
-                <td>
-                  <div class="channels-cell-wrap">
-                    <span class="channel-badge" title="موديولات ومكونات النظام">
-                      🧩 {{ (product.modules || []).length }} موديول
-                    </span>
-                    <span v-if="(product.gallery || []).length > 0" class="channel-badge badge-cyan" title="معرض شاشات الواجهات">
-                      📸 {{ (product.gallery || []).length }} شاشات
-                    </span>
-                  </div>
-                </td>
-                <td>
-                  <div class="channels-cell-wrap">
-                    <span class="channel-badge badge-amber" title="مستويات التوسع السحابي">
-                      📈 3 باقات توسع
-                    </span>
-                    <span v-if="(product.related_projects || []).length > 0" class="channel-badge badge-purple" title="مشاريع مبنية على النظام">
-                      💼 {{ (product.related_projects || []).length }} مشروع مرتبط
-                    </span>
-                  </div>
-                </td>
-                <td>
-                  <button
-                    class="status-toggle-btn"
-                    :class="product.is_active ? 'active' : 'inactive'"
-                    @click="toggleProductStatus(product)"
-                  >
-                    {{ product.is_active ? 'مفعل' : 'معطل' }}
-                  </button>
-                </td>
-                <td>
-                  <div class="actions-cell">
-                    <!-- Quick Preview Button -->
-                    <button class="action-btn preview-btn" @click="openQuickPreview(product)" title="معاينة المنتج الشاملة">
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
-                      </svg>
-                    </button>
-                    <!-- Edit Button -->
-                    <button class="action-btn edit-btn" @click="openEditModal(product)" title="تعديل">
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-                      </svg>
-                    </button>
-                    <!-- Delete Button -->
-                    <button class="action-btn delete-btn" @click="confirmDelete(product)" title="حذف">
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <polyline points="3 6 5 6 21 6"/>
-                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
-                      </svg>
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            </template>
-          </tbody>
-        </table>
+    <!-- Products Cards Grid (Same Style as Projects & Brands) -->
+    <div v-if="loading" class="loading-state">
+      <div class="spinner"></div>
+      <p>جاري تحميل المنتجات والأنظمة الرقمية من الخادم...</p>
+    </div>
+
+    <div v-else-if="filteredProducts.length === 0" class="empty-state">
+      <div class="empty-icon-wrap">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/>
+        </svg>
+      </div>
+      <h3>لا توجد أنظمة مطابقة</h3>
+      <p>لم يتم العثور على أي منتج رقمي يطابق معايير البحث والفلترة الحالية.</p>
+      <button class="btn-reset-filters" @click="resetFilters">إعادة ضبط الفلاتر</button>
+    </div>
+
+    <div v-else class="products-cards-grid">
+      <div
+        v-for="product in filteredProducts"
+        :key="product.id"
+        class="product-card"
+        :class="{ 'card-dragging': draggedId === product.id }"
+        draggable="true"
+        @dragstart="onDragStart(product)"
+        @dragover.prevent="onDragOver(product)"
+        @drop.prevent="onDrop(product)"
+      >
+        <!-- Top Branded Accent Bar -->
+        <div class="product-top-bar" :style="{ background: product.accent_color || '#7c3aed' }"></div>
+
+        <div class="product-card-inner">
+          <!-- Card Header (Badge & Status) -->
+          <div class="product-header-flex">
+            <span
+              class="product-badge-tag"
+              :style="{
+                color: product.accent_color || '#7c3aed',
+                backgroundColor: getAlphaColor(product.accent_color, '15'),
+                borderColor: getAlphaColor(product.accent_color, '35')
+              }"
+            >
+              {{ product.badge || getCategoryLabel(product.category) || 'SAAS PLATFORM' }}
+            </span>
+
+            <div class="product-status-chip" :class="product.is_active ? 'active' : 'inactive'">
+              <span class="status-dot"></span>
+              <span>{{ product.is_active ? 'مفعل' : 'معطل' }}</span>
+            </div>
+          </div>
+
+          <!-- Mockup Image Preview -->
+          <div class="product-mockup-wrap" @click="openQuickPreview(product)" title="اضغط للمعاينة الحية الشاملة">
+            <img
+              :src="product.laptop_mockup || product.image || '/images/products/tijara_hero.png'"
+              :alt="product.name"
+              class="product-mockup-img"
+              @error="onImgError"
+            />
+            <div class="mockup-overlay">
+              <span class="btn-overlay-preview">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+                </svg>
+                معاينة دراسة حالة المنتج
+              </span>
+            </div>
+            <div v-if="product.is_featured" class="featured-ribbon">
+              <span>★ مميز</span>
+            </div>
+          </div>
+
+          <!-- Titles & Category -->
+          <div class="product-titles-wrap">
+            <div class="product-cat-row">
+              <span class="product-cat-label">📦 {{ getCategoryLabel(product.category) }}</span>
+              <span class="meta-sep">·</span>
+              <span class="product-slug-tag ltr-text">/{{ product.slug }}</span>
+            </div>
+
+            <h3 class="product-card-title">{{ product.name }}</h3>
+
+            <span
+              v-if="product.name_en && product.name_en.trim().toLowerCase() !== product.name.trim().toLowerCase()"
+              class="product-card-sub"
+              :style="{ color: product.accent_color || '#7c3aed' }"
+            >
+              {{ product.name_en }}
+            </span>
+          </div>
+
+          <!-- Subtitle Tagline -->
+          <p v-if="product.subtitle" class="product-tagline" :style="{ color: product.accent_color || '#7c3aed' }">
+            {{ product.subtitle }}
+          </p>
+
+          <!-- Description -->
+          <p class="product-card-desc">{{ product.description || 'نظام سحابي رقمي متكامل يوفر حلولاً مؤتمتة وإدارة شاملة للعمليات التجارية.' }}</p>
+
+          <!-- Modules, Screens & Scale Badges -->
+          <div class="product-badges-row">
+            <span class="prod-badge-chip module-badge" title="موديولات ومكونات النظام">
+              🧩 {{ (product.modules || []).length }} موديول
+            </span>
+            <span v-if="(product.gallery || []).length > 0" class="prod-badge-chip gallery-badge" title="معرض شاشات الواجهات">
+              📸 {{ (product.gallery || []).length }} شاشات
+            </span>
+            <span class="prod-badge-chip tier-badge" title="مستويات التوسع السحابي">
+              📈 3 باقات توسع
+            </span>
+            <span v-if="(product.related_projects || []).length > 0" class="prod-badge-chip related-badge" title="مشاريع مبنية على النظام">
+              💼 {{ (product.related_projects || []).length }} مشاريع
+            </span>
+          </div>
+
+          <!-- Pricing / License Meta -->
+          <div v-if="product.pricing_model || product.price" class="product-pricing-row">
+            <span class="price-val">{{ product.price ? product.price + ' $' : 'ترخيص مخصص' }}</span>
+            <span class="price-type">/ {{ product.pricing_model || 'اشتراك سنوي أو شراء' }}</span>
+          </div>
+        </div>
+
+        <!-- Footer Actions Bar -->
+        <div class="product-card-footer">
+          <button
+            class="toggle-status-action"
+            :class="product.is_active ? 'btn-deactivate' : 'btn-activate'"
+            @click="toggleProductStatus(product)"
+            :title="product.is_active ? 'اضغط لتعطيل المنتج' : 'اضغط للتفعيل والنشر'"
+          >
+            {{ product.is_active ? 'إيقاف مؤقت' : 'تفعيل المنتج' }}
+          </button>
+
+          <div class="product-action-btns">
+            <button
+              class="action-icon-btn preview-btn"
+              @click="openQuickPreview(product)"
+              title="معاينة المنتج الشاملة (9 أقسام)"
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+              </svg>
+            </button>
+            <button
+              class="action-icon-btn edit-btn"
+              @click="openEditModal(product)"
+              title="تعديل بيانات وموديولات المنتج"
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+              </svg>
+            </button>
+            <button
+              class="action-icon-btn delete-btn"
+              @click="confirmDelete(product)"
+              title="حذف المنتج"
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="3 6 5 6 21 6"/>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+              </svg>
+            </button>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -218,54 +279,54 @@
             :class="{ active: activeTab === 'general' }"
             @click="activeTab = 'general'"
           >
-            📋 البيانات الأساسية
+            📋 البيانات ونظرة عامة
           </button>
           <button
             type="button"
             class="tab-btn"
-            :class="{ active: activeTab === 'modules' }"
-            @click="activeTab = 'modules'"
+            :class="{ active: activeTab === 'built_for' }"
+            @click="activeTab = 'built_for'"
           >
-            🧩 ماذا يتضمن؟ ({{ (formData.modules || []).length }})
+            👥 لمن صُمم النظام (Built For)
           </button>
           <button
             type="button"
             class="tab-btn"
-            :class="{ active: activeTab === 'gallery' }"
-            @click="activeTab = 'gallery'"
+            :class="{ active: activeTab === 'capabilities' }"
+            @click="activeTab = 'capabilities'"
           >
-            📸 واجهات النظام ({{ (formData.gallery || []).length }})
+            ⚡ المزايا والقدرات (What It Does)
           </button>
           <button
             type="button"
             class="tab-btn"
-            :class="{ active: activeTab === 'scalability' }"
-            @click="activeTab = 'scalability'"
+            :class="{ active: activeTab === 'showcase' }"
+            @click="activeTab = 'showcase'"
           >
-            📈 التوسع السحابي
+            📸 استعراض النظام (See In Action)
           </button>
           <button
             type="button"
             class="tab-btn"
-            :class="{ active: activeTab === 'editions' }"
-            @click="activeTab = 'editions'"
+            :class="{ active: activeTab === 'workflow' }"
+            @click="activeTab = 'workflow'"
           >
-            🏢 الباقات والقطاعات ({{ (formData.editions || []).length }})
+            🔄 خطوات العمل والمزايا
           </button>
           <button
             type="button"
             class="tab-btn"
-            :class="{ active: activeTab === 'projects' }"
-            @click="activeTab = 'projects'"
+            :class="{ active: activeTab === 'advanced' }"
+            @click="activeTab = 'advanced'"
           >
-            💼 المشاريع المعتمدة ({{ (formData.related_projects || []).length }})
+            📈 التوسع والباقات والربط
           </button>
         </div>
 
         <form @submit.prevent="saveProduct" class="modal-form-wrap">
           <div class="modal-tab-content-scroll">
             
-            <!-- ================= TAB 1: General Info ================= -->
+            <!-- ================= TAB 1: General Info & Overview ================= -->
             <div v-show="activeTab === 'general'" class="tab-pane">
               <div class="form-grid-2">
                 <div class="form-group">
@@ -309,43 +370,6 @@
                 </div>
               </div>
 
-              <div class="form-grid-2">
-                <div class="form-group">
-                  <label class="form-label">شارة النظام (Badge Ar)</label>
-                  <input type="text" v-model="formData.badge" class="form-input" placeholder="إدارة التجارة الإلكترونية والـ POS" />
-                </div>
-                <div class="form-group">
-                  <label class="form-label">رابط المعاينة المباشرة (Demo URL)</label>
-                  <input type="text" v-model="formData.demo_url" class="form-input ltr-text" placeholder="https://demo.bekite.com/tijara" />
-                </div>
-              </div>
-
-              <!-- Main Mockup Upload -->
-              <div class="form-group">
-                <label class="form-label">صورة النظام الرئيسية / Mockup</label>
-                <div class="dropzone-box" @click="$refs.mainImgInput.click()">
-                  <input
-                    ref="mainImgInput"
-                    type="file"
-                    style="display:none;"
-                    accept="image/*"
-                    @change="handleSingleImageUpload($event, 'image')"
-                  />
-                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="dropzone-icon">
-                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>
-                  </svg>
-                  <span class="dropzone-title">انقر لرفع صورة النظام الرئيسية أو الموك آب</span>
-                  <span class="dropzone-hint">PNG, JPG, WebP بدقة عالية</span>
-                </div>
-                <div class="or-divider">أو ضع رابط مباشر للصورة</div>
-                <input type="text" v-model="formData.image" class="form-input ltr-text" placeholder="https://example.com/images/tijara_mockup.png" />
-                
-                <div v-if="formData.image" class="single-preview-wrap">
-                  <img :src="formData.image" alt="Product Mockup Preview" @error="onImgError" />
-                  <button type="button" class="btn-del-mini" @click="formData.image = ''">إزالة الصورة ✕</button>
-                </div>
-              </div>
-
               <div class="form-group">
                 <label class="form-label">الوصف التفصيلي للمنظومة (بالعربية)</label>
                 <textarea v-model="formData.description" class="form-textarea" rows="3" placeholder="شرح شامل للمنظومة وإمكانياتها وقيمتها للعملاء..."></textarea>
@@ -353,10 +377,32 @@
 
               <div class="form-group">
                 <label class="form-label">الوصف التفصيلي (English)</label>
-                <textarea v-model="formData.description_en" class="form-textarea ltr-text" rows="3" placeholder="Full product summary and capabilities in English..."></textarea>
+                <textarea v-model="formData.description_en" class="form-textarea ltr-text" rows="2" placeholder="Full product summary and capabilities in English..."></textarea>
               </div>
 
-              <div class="form-grid-2">
+              <!-- Overview Section (ما هو نظام تجارة؟) -->
+              <div v-if="formData.overview" class="form-sub-card mt-4">
+                <div class="sub-card-header">
+                  <span class="sub-card-title">📖 قسم نظرة عامة (Overview - "ما هو نظام تجارة؟")</span>
+                  <span class="sub-card-badge">يظهر في موقع Be Kite</span>
+                </div>
+                <div class="form-grid-2">
+                  <div class="form-group">
+                    <label class="form-label">الفقرة الأولى (Overview Paragraph 1) *</label>
+                    <textarea v-model="formData.overview.p1" class="form-textarea" rows="3" placeholder="تجارة هو نظام سحابي متطور لتشغيل المتاجر الإلكترونية..."></textarea>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">الفقرة الثانية (Overview Paragraph 2) *</label>
+                    <textarea v-model="formData.overview.p2" class="form-textarea" rows="3" placeholder="مبني على بنية سحابية حديثة تضمن سرعة تحميل فائقة..."></textarea>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">صورة التابلت الاستعراضية (Overview Tablet Image URL)</label>
+                  <input type="text" v-model="formData.overview.image" class="form-input ltr-text" placeholder="/images/products/tijara_overview.png" />
+                </div>
+              </div>
+
+              <div class="form-grid-2 mt-4">
                 <label class="checkbox-label">
                   <input type="checkbox" v-model="formData.is_featured" :true-value="1" :false-value="0" />
                   <span>تمييز المنتج في الصفحة الرئيسية (Featured Product)</span>
@@ -368,244 +414,280 @@
               </div>
             </div>
 
-            <!-- ================= TAB 2: What Does It Include ================= -->
-            <div v-show="activeTab === 'modules'" class="tab-pane">
+            <!-- ================= TAB 2: Built For ================= -->
+            <div v-show="activeTab === 'built_for'" class="tab-pane">
               <div class="section-notice">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
                 </svg>
-                <span>أضف وحدات وموديولات النظام (What Does It Include) مع الأيقونة والعنوان والشرح التفصيلي لمهام الموديول.</span>
+                <span>قسم لمن صُمم النظام (Built For Businesses That Sell Online) — بطاقات الأدوار الأربعة المخصصة لكل دور في منظومة التجارة الإلكترونية.</span>
               </div>
 
-              <div class="modules-dynamic-list">
-                <div v-for="(mod, mIdx) in formData.modules" :key="mIdx" class="module-edit-card">
-                  <div class="module-card-header">
-                    <span class="module-num-badge">موديول {{ mIdx + 1 }}</span>
-                    <button type="button" class="btn-del-sm" @click="removeModule(mIdx)" title="حذف الموديول">✕ حذف</button>
-                  </div>
-
-                  <div class="form-grid-3">
-                    <div class="form-group">
-                      <label class="form-label">الأيقونة (Icon)</label>
-                      <select v-model="mod.icon" class="form-input">
-                        <option value="package">📦 منتجات ومخزون (package)</option>
-                        <option value="shopping-cart">🛒 معالجة الطلبات (shopping-cart)</option>
-                        <option value="credit-card">💳 بوابات الدفع وPOS (credit-card)</option>
-                        <option value="truck">🚚 شحن ولوجستيات (truck)</option>
-                        <option value="bar-chart">📊 تحليلات ومؤشرات (bar-chart)</option>
-                        <option value="users">👥 عملاء وولاء (users)</option>
-                        <option value="shield">🛡️ أمان وحماية (shield)</option>
-                        <option value="cpu">⚡ أتمتة وذكاء (cpu)</option>
-                        <option value="smartphone">📱 تطبيق جوال (smartphone)</option>
-                        <option value="globe">🌐 تكاملات وسحابة (globe)</option>
-                      </select>
-                    </div>
-                    <div class="form-group">
-                      <label class="form-label">اسم الموديول (بالعربية) *</label>
-                      <input type="text" v-model="mod.title" class="form-input" placeholder="مثال: إدارة المنتجات والمخزون المتقدم" required />
-                    </div>
-                    <div class="form-group">
-                      <label class="form-label">اسم الموديول (English)</label>
-                      <input type="text" v-model="mod.title_en" class="form-input ltr-text" placeholder="e.g. Multi-Warehouse Inventory Control" />
-                    </div>
-                  </div>
-
-                  <div class="form-grid-2">
-                    <div class="form-group">
-                      <label class="form-label">شرح ما يتضمنه الموديول (بالعربية)</label>
-                      <textarea v-model="mod.description" class="form-textarea" rows="2" placeholder="إدارة شاملة للمتغيرات، الباركود، وتنبيهات انخفاض المخزون..."></textarea>
-                    </div>
-                    <div class="form-group">
-                      <label class="form-label">Module Details (English)</label>
-                      <textarea v-model="mod.description_en" class="form-textarea ltr-text" rows="2" placeholder="Complete variants, barcode generation, low stock alerts..."></textarea>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <button type="button" class="btn-add-dashed" @click="addModule">
-                + إضافة موديول جديد للنظام (Add Included Module)
-              </button>
-            </div>
-
-            <!-- ================= TAB 3: See It In Action (Gallery) ================= -->
-            <div v-show="activeTab === 'gallery'" class="tab-pane">
-              <div class="section-notice">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
-                </svg>
-                <span>معرض شاشات وواجهات النظام (See It In Action) — ارفع عدة لقطات شاشة للشاشات الرئيسية ولوحات التحكم وتطبيق الجوال.</span>
-              </div>
-
-              <!-- Multi Upload Dropzone -->
-              <div class="dropzone-box" @click="$refs.galleryMultiInput.click()">
-                <input
-                  ref="galleryMultiInput"
-                  type="file"
-                  multiple
-                  style="display:none;"
-                  accept="image/*"
-                  @change="handleGalleryMultiUpload"
-                />
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="dropzone-icon">
-                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>
-                </svg>
-                <span class="dropzone-title">انقر أو اسحب لرفع لقطات شاشة متعددة دفعة واحدة</span>
-                <span class="dropzone-hint">يمكنك تحديد عدة صور من لوحة التحكم، نقاط البيع، أو الجوال</span>
-              </div>
-
-              <div class="or-divider">أو أضف صورة جديدة بالرابط</div>
-
-              <!-- Add Gallery Item by URL -->
-              <div class="add-gallery-item-bar">
-                <input type="text" v-model="newGalleryUrl" placeholder="https://example.com/screenshot.png" class="form-input flex-1 ltr-text" />
-                <input type="text" v-model="newGalleryTitle" placeholder="عنوان الشاشة (مثال: لوحة التحكم الرئيسية)" class="form-input flex-1" />
-                <select v-model="newGalleryDevice" class="form-input w-auto">
-                  <option value="Desktop Dashboard">🖥️ سطح المكتب (Desktop)</option>
-                  <option value="POS & Tablet">📟 نقاط البيع (POS)</option>
-                  <option value="Mobile App">📱 تطبيق الجوال (Mobile)</option>
-                  <option value="Warehouse Barcode">📦 مستودعات وباركود</option>
-                </select>
-                <button type="button" class="btn-sm-primary" @click="addGalleryItemFromUrl">+ إضافة</button>
-              </div>
-
-              <!-- Gallery Grid Preview -->
-              <div v-if="(formData.gallery || []).length > 0" class="screenshots-grid-preview">
-                <div v-for="(item, gIdx) in formData.gallery" :key="gIdx" class="screenshot-card-preview">
-                  <div class="screenshot-img-box">
-                    <img :src="item.image || item.url || item" :alt="item.title || 'Screenshot'" @error="onImgError" />
-                    <button type="button" class="btn-del-screenshot" @click="removeGalleryItem(gIdx)" title="حذف الشاشة">✕</button>
-                  </div>
-                  <div class="screenshot-info">
-                    <input type="text" v-model="item.title" class="form-input-mini" placeholder="عنوان الشاشة..." />
-                    <span class="screenshot-device-tag">{{ item.device || 'Desktop Dashboard' }}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- ================= TAB 4: Scalability ================= -->
-            <div v-show="activeTab === 'scalability'" class="tab-pane">
-              <div class="section-notice">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
-                </svg>
-                <span>مستويات التوسع السحابي (Scalable from Startup to Enterprise Scale) — خصائص وقدرات كل باقة حسب حجم عمل العميل.</span>
-              </div>
-
-              <div class="scalability-tiers-list">
-                <div v-for="(tierItem, tIdx) in formData.scalability" :key="tIdx" class="scalability-tier-card" :class="tierItem.tier">
-                  <div class="tier-card-badge">
-                    <span>{{ tierItem.tier === 'startup' ? '🚀' : (tierItem.tier === 'growth' ? '📈' : '🏢') }}</span>
-                    <strong>{{ tierItem.title }}</strong>
-                  </div>
-
-                  <div class="form-grid-2">
-                    <div class="form-group">
-                      <label class="form-label">العنوان والمستوى (Ar)</label>
-                      <input type="text" v-model="tierItem.title" class="form-input" />
-                    </div>
-                    <div class="form-group">
-                      <label class="form-label">Tier Title (En)</label>
-                      <input type="text" v-model="tierItem.title_en" class="form-input ltr-text" />
-                    </div>
-                  </div>
-
+              <div v-if="formData.built_for" class="built-for-editor">
+                <div class="form-grid-2 mb-4">
                   <div class="form-group">
-                    <label class="form-label">أبرز ميزة / الوعد الأساسي (Key Highlight)</label>
-                    <input type="text" v-model="tierItem.highlight" class="form-input" placeholder="مثال: إطلاق سريع في 48 ساعة أو بنية مخصصة SLA 99.99%" />
+                    <label class="form-label">عنوان القسم الرئيسي</label>
+                    <input type="text" v-model="formData.built_for.title" class="form-input" placeholder="صُمم خصيصاً للشركات التي تبيع عبر الإنترنت" />
                   </div>
-
-                  <div class="form-grid-2">
-                    <div class="form-group">
-                      <label class="form-label">المواصفات والقدرات (بالعربية)</label>
-                      <textarea v-model="tierItem.specs" class="form-textarea" rows="2" placeholder="عدد الطلبات، الفروع، بوابات الدفع، الدعم الفني..."></textarea>
-                    </div>
-                    <div class="form-group">
-                      <label class="form-label">Technical Specs (English)</label>
-                      <textarea v-model="tierItem.specs_en" class="form-textarea ltr-text" rows="2" placeholder="Order limits, POS branches, SLAs, custom APIs..."></textarea>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- ================= TAB 5: Brands & Editions ================= -->
-            <div v-show="activeTab === 'editions'" class="tab-pane">
-              <div class="section-notice">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
-                </svg>
-                <span>الباقات والقطاعات التابعة للمنظومة (Industry Brands & Editions) — مثل تجارة للأزياء والتجزئة، تجارة للمطاعم، أو تجارة للبيع بالجملة B2B.</span>
-              </div>
-
-              <div class="editions-dynamic-list">
-                <div v-for="(ed, eIdx) in formData.editions" :key="eIdx" class="edition-edit-card">
-                  <div class="module-card-header">
-                    <span class="module-num-badge">قطاع / باقة {{ eIdx + 1 }}</span>
-                    <button type="button" class="btn-del-sm" @click="removeEdition(eIdx)">✕ حذف</button>
-                  </div>
-
-                  <div class="form-grid-3">
-                    <div class="form-group">
-                      <label class="form-label">الأيقونة</label>
-                      <select v-model="ed.icon" class="form-input">
-                        <option value="shopping-bag">🛍️ أزياء وتجزئة (shopping-bag)</option>
-                        <option value="utensils">🍽️ مطاعم ومقاهي (utensils)</option>
-                        <option value="briefcase">💼 بيع بالجملة B2B (briefcase)</option>
-                        <option value="cpu">💻 إلكترونيات وأجهزة (cpu)</option>
-                        <option value="activity">🏥 عيادات ومراكز طبية (activity)</option>
-                        <option value="book-open">📚 تعليم وأكاديميات (book-open)</option>
-                      </select>
-                    </div>
-                    <div class="form-group">
-                      <label class="form-label">اسم الباقة / القطاع (Ar) *</label>
-                      <input type="text" v-model="ed.name" class="form-input" placeholder="مثال: تجارة للأزياء والتجزئة" required />
-                    </div>
-                    <div class="form-group">
-                      <label class="form-label">Edition Name (En)</label>
-                      <input type="text" v-model="ed.name_en" class="form-input ltr-text" placeholder="e.g. Tijara Fashion & Retail" />
-                    </div>
-                  </div>
-
                   <div class="form-group">
-                    <label class="form-label">الميزات المخصصة لهذا القطاع</label>
-                    <textarea v-model="ed.description" class="form-textarea" rows="2" placeholder="مصفوفة المقاسات والألوان، طباعة الباركود، تكامل التبديل..."></textarea>
+                    <label class="form-label">العنوان الفرعي للقسم</label>
+                    <input type="text" v-model="formData.built_for.subtitle" class="form-input" placeholder="مسارات عمل مخصصة لكل دور ومسؤولية..." />
+                  </div>
+                </div>
+
+                <div class="built-for-grid-editor">
+                  <div v-for="(item, bIdx) in formData.built_for.items" :key="bIdx" class="persona-edit-card">
+                    <div class="persona-card-header">
+                      <span class="persona-num">الدور {{ bIdx + 1 }}: {{ item.title }}</span>
+                      <span class="persona-icon-badge">
+                        {{ item.icon === 'shopping-cart' ? '🛒' : (item.icon === 'truck' ? '🚚' : (item.icon === 'briefcase' ? '💼' : '🎯')) }}
+                      </span>
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">عنوان الدور / الفئة *</label>
+                      <input type="text" v-model="item.title" class="form-input" placeholder="مثال: المتاجر الإلكترونية" />
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">شرح القيمة المضافة لهذا الدور *</label>
+                      <textarea v-model="item.desc" class="form-textarea" rows="2" placeholder="توسيع مبيعات متجرك متعدد الأقسام..."></textarea>
+                    </div>
                   </div>
                 </div>
               </div>
-
-              <button type="button" class="btn-add-dashed" @click="addEdition">
-                + إضافة قطاع / باقة فرعية تابعة للنظام (Add Industry Edition)
-              </button>
             </div>
 
-            <!-- ================= TAB 6: Powered Projects ================= -->
-            <div v-show="activeTab === 'projects'" class="tab-pane">
+            <!-- ================= TAB 3: Key Capabilities (What It Does) ================= -->
+            <div v-show="activeTab === 'capabilities'" class="tab-pane">
               <div class="section-notice">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
                 </svg>
-                <span>المشاريع ودراسات الحالة المعتمدة على هذا النظام (Powered Projects) — اختر المشاريع التي تم بناؤها باستخدام هذه المنظومة.</span>
+                <span>المزايا والقدرات التشغيلية (What It Does / Key Capabilities) — القدرات الستة الأساسية لنظام تجارة من الكتالوج إلى التوسع متعدد القنوات.</span>
               </div>
 
-              <div class="projects-select-grid">
-                <div
-                  v-for="proj in allPortfolioProjects"
-                  :key="proj.id || proj.slug"
-                  class="project-select-card"
-                  :class="{ selected: isProjectSelected(proj.slug || proj.id) }"
-                  @click="toggleRelatedProject(proj.slug || proj.id)"
-                >
-                  <div class="project-card-chk">
-                    <input type="checkbox" :checked="isProjectSelected(proj.slug || proj.id)" />
+              <div v-if="formData.what_it_does" class="capabilities-editor">
+                <div class="form-grid-2 mb-4">
+                  <div class="form-group">
+                    <label class="form-label">عنوان قسم القدرات</label>
+                    <input type="text" v-model="formData.what_it_does.title" class="form-input" placeholder="ما الذي يقدمه نظام تجارة؟" />
                   </div>
-                  <div class="project-card-thumb">
-                    <img :src="proj.web_image || proj.image || '/images/default_project.jpg'" alt="" @error="onImgError" />
+                  <div class="form-group">
+                    <label class="form-label">العنوان الفرعي</label>
+                    <input type="text" v-model="formData.what_it_does.subtitle" class="form-input" placeholder="كل ما تحتاجه لإدارة عمليات البيع والتجارة..." />
                   </div>
-                  <div class="project-card-body">
-                    <span class="proj-title-text">{{ proj.title }}</span>
-                    <span class="proj-client-text">{{ proj.client_name }}</span>
+                </div>
+
+                <div class="capabilities-grid-editor">
+                  <div v-for="(cap, cIdx) in formData.what_it_does.items" :key="cIdx" class="cap-edit-card">
+                    <div class="cap-card-header">
+                      <span class="cap-num">ميزة {{ cIdx + 1 }}</span>
+                      <button type="button" class="btn-del-mini" @click="formData.what_it_does.items.splice(cIdx, 1)">✕</button>
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">اسم القدرة / الميزة *</label>
+                      <input type="text" v-model="cap.title" class="form-input" placeholder="مثال: إدارة الكتالوج والمنتجات" />
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">شرح الميزة *</label>
+                      <textarea v-model="cap.desc" class="form-textarea" rows="2" placeholder="توحيد المنتجات والخيارات والأسعار..."></textarea>
+                    </div>
+                  </div>
+                </div>
+
+                <button type="button" class="btn-add-dashed mt-3" @click="formData.what_it_does.items.push({ icon: 'layers', title: '', desc: '' })">
+                  + إضافة قدرة تشغيلية جديدة
+                </button>
+              </div>
+            </div>
+
+            <!-- ================= TAB 4: See It In Action (Showcase) ================= -->
+            <div v-show="activeTab === 'showcase'" class="tab-pane">
+              <div class="section-notice">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
+                </svg>
+                <span>استعراض النظام أثناء العمل (See It In Action) — الشاشة الرئيسية الكبيرة + شاشات المعاينة التفاعلية الثلاثة (Order Fulfillment, Multi-Warehouse Inventory, Live Analytics).</span>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">الصورة الرئيسية لشاشة النظام (Main Action Showcase Image) *</label>
+                <input type="text" v-model="formData.action_main_image" class="form-input ltr-text" placeholder="/images/products/tijara_action_main.png" />
+                <div v-if="formData.action_main_image" class="single-preview-wrap mt-2">
+                  <img :src="formData.action_main_image" alt="Main Showcase Preview" @error="onImgError" />
+                </div>
+              </div>
+
+              <div class="sub-section-title mt-4">
+                <span>📸 الشاشات الفرعية الثلاثة التفاعلية (Action Screens)</span>
+              </div>
+
+              <div class="action-screens-grid-editor">
+                <div v-for="(screen, sIdx) in (formData.action_screens || [])" :key="sIdx" class="action-screen-card">
+                  <div class="screen-card-header">
+                    <span class="screen-num">شاشة {{ sIdx + 1 }}: {{ screen.title_ar || screen.title }}</span>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">عنوان الشاشة (العربية)</label>
+                    <input type="text" v-model="screen.title_ar" class="form-input" placeholder="مثال: جدول تجهيز الطلبات" />
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">عنوان الشاشة (English)</label>
+                    <input type="text" v-model="screen.title" class="form-input ltr-text" placeholder="Order Fulfillment Table" />
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">رابط صورة الشاشة</label>
+                    <input type="text" v-model="screen.image" class="form-input ltr-text" placeholder="/images/products/tijara_action_1.png" />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ================= TAB 5: How It Works & Why Choose ================= -->
+            <div v-show="activeTab === 'workflow'" class="tab-pane">
+              <!-- How It Works -->
+              <div class="sub-card-section">
+                <div class="sub-card-header">
+                  <span class="sub-card-title">🔄 كيف يعمل النظام (How It Works - 4 Simple Steps)</span>
+                </div>
+                <div v-if="formData.how_it_works" class="steps-grid-editor">
+                  <div v-for="(st, stIdx) in formData.how_it_works.steps" :key="stIdx" class="step-edit-card">
+                    <span class="step-badge-num">{{ st.num }}</span>
+                    <div class="form-group">
+                      <label class="form-label">عنوان الخطوة *</label>
+                      <input type="text" v-model="st.title" class="form-input" placeholder="مثال: الإعداد والتهيئة" />
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">شرح الخطوة *</label>
+                      <textarea v-model="st.desc" class="form-textarea" rows="2" placeholder="تجهيز المتجر واستيراد المنتجات..."></textarea>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Why Choose Tijara -->
+              <div class="sub-card-section mt-4">
+                <div class="sub-card-header">
+                  <span class="sub-card-title">🏆 المزايا التنافسية (Why Teams Choose Tijara - 4 Cards)</span>
+                </div>
+                <div v-if="formData.why_choose" class="why-choose-grid-editor">
+                  <div v-for="(why, wIdx) in formData.why_choose.items" :key="wIdx" class="why-edit-card">
+                    <div class="form-group">
+                      <label class="form-label">ميزة {{ wIdx + 1 }} - العنوان *</label>
+                      <input type="text" v-model="why.title" class="form-input" placeholder="مثال: إطلاق سريع" />
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">الشرح والتفاصيل *</label>
+                      <textarea v-model="why.desc" class="form-textarea" rows="2" placeholder="ابدأ العمل خلال أيام معدودة..."></textarea>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Bottom CTA -->
+              <div class="sub-card-section mt-4">
+                <div class="sub-card-header">
+                  <span class="sub-card-title">📣 دعوة اتخاذ إجراء (Bottom CTA Banner)</span>
+                </div>
+                <div v-if="formData.bottom_cta" class="form-grid-2">
+                  <div class="form-group">
+                    <label class="form-label">عنوان البانر</label>
+                    <input type="text" v-model="formData.bottom_cta.title" class="form-input" placeholder="جاهز لاستكشاف نظام تجارة لمتجرك؟" />
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">نص زر الطلب</label>
+                    <input type="text" v-model="formData.bottom_cta.button_text" class="form-input" placeholder="طلب عرض توضيحي" />
+                  </div>
+                  <div class="form-group" style="grid-column: 1 / -1;">
+                    <label class="form-label">الوصف التشجيعي للبانر</label>
+                    <textarea v-model="formData.bottom_cta.description" class="form-textarea" rows="2" placeholder="تواصل مع خبرائنا واحصل على عرض توضيحي..."></textarea>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ================= TAB 6: Scalability & Editions & Projects ================= -->
+            <div v-show="activeTab === 'advanced'" class="tab-pane">
+              <div class="section-notice">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
+                </svg>
+                <span>مستويات التوسع السحابي، الباقات القطاعية، والمشاريع المعتمدة على هذا المنتج.</span>
+              </div>
+
+              <!-- Scalability Tiers -->
+              <div class="sub-card-section mb-4">
+                <div class="sub-card-header">
+                  <span class="sub-card-title">📈 مستويات التوسع (Scalability Tiers)</span>
+                </div>
+                <div class="scale-edit-list">
+                  <div v-for="(tier, tIdx) in formData.scalability" :key="tIdx" class="scale-edit-card">
+                    <div class="form-grid-2">
+                      <div class="form-group">
+                        <label class="form-label">اسم المستوى</label>
+                        <input type="text" v-model="tier.title" class="form-input" />
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label">الميزة البارزة</label>
+                        <input type="text" v-model="tier.highlight" class="form-input" />
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">المواصفات والقدرة</label>
+                      <input type="text" v-model="tier.specs" class="form-input" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Editions -->
+              <div class="sub-card-section mb-4">
+                <div class="sub-card-header">
+                  <span class="sub-card-title">🏢 الباقات والقطاعات التابعة للمنتج</span>
+                  <button type="button" class="btn-add-sm" @click="addEdition">+ إضافة باقة</button>
+                </div>
+                <div class="editions-edit-list">
+                  <div v-for="(ed, eIdx) in formData.editions" :key="eIdx" class="edition-edit-card">
+                    <div class="edition-card-header">
+                      <span class="ed-title">باقة {{ eIdx + 1 }}: {{ ed.name }}</span>
+                      <button type="button" class="btn-del-mini" @click="removeEdition(eIdx)">✕</button>
+                    </div>
+                    <div class="form-grid-2">
+                      <div class="form-group">
+                        <label class="form-label">اسم الباقة بالعربية</label>
+                        <input type="text" v-model="ed.name" class="form-input" />
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label">شرح الباقة</label>
+                        <input type="text" v-model="ed.description" class="form-input" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Related Projects -->
+              <div class="sub-card-section">
+                <div class="sub-card-header">
+                  <span class="sub-card-title">💼 المشاريع ودراسات الحالة المعتمدة على هذا النظام</span>
+                </div>
+                <div class="projects-select-grid">
+                  <div
+                    v-for="proj in allPortfolioProjects"
+                    :key="proj.id || proj.slug"
+                    class="project-select-card"
+                    :class="{ selected: isProjectSelected(proj.slug || proj.id) }"
+                    @click="toggleRelatedProject(proj.slug || proj.id)"
+                  >
+                    <div class="project-card-chk">
+                      <input type="checkbox" :checked="isProjectSelected(proj.slug || proj.id)" />
+                    </div>
+                    <div class="project-card-thumb">
+                      <img :src="proj.web_image || proj.image || '/images/default_project.jpg'" alt="" @error="onImgError" />
+                    </div>
+                    <div class="project-card-body">
+                      <span class="proj-title-text">{{ proj.title }}</span>
+                      <span class="proj-client-text">{{ proj.client_name }}</span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -629,7 +711,7 @@
                 <span>الخطوة السابقة</span>
               </button>
               <button
-                v-if="activeTab !== 'projects'"
+                v-if="activeTab !== 'advanced'"
                 type="button"
                 class="btn-nav-step btn-nav-next"
                 @click="goToNextTab"
@@ -654,65 +736,133 @@
       </div>
     </div>
 
-    <!-- ================= QUICK PRODUCT PREVIEW MODAL ================= -->
+    <!-- ================= QUICK PRODUCT PREVIEW MODAL (1:1 WITH BEKITE WEBSITE) ================= -->
     <div v-if="previewModalOpen && previewProduct" class="modal-overlay" @click.self="previewModalOpen = false">
-      <div class="modal-card modal-preview-card">
-        <!-- Hero Header -->
-        <div class="preview-hero-header" :style="{ background: `linear-gradient(135deg, ${previewProduct.accent_color || '#7c3aed'}, #18032a)` }">
+      <div class="modal-card modal-preview-card modal-preview-case-study">
+        <!-- 1. Hero Header Section -->
+        <div class="preview-hero-header" :style="{ background: `linear-gradient(135deg, ${previewProduct.accent_color || '#9333ea'}, #18032a)` }">
           <button class="preview-close-btn" @click="previewModalOpen = false">✕</button>
           
           <div class="preview-hero-content">
-            <span class="preview-client-badge">{{ previewProduct.badge || getCategoryLabel(previewProduct.category) }}</span>
+            <span class="preview-client-badge">{{ previewProduct.badge || 'نظام إدارة التجارة الإلكترونية والـ POS' }}</span>
             <h2 class="preview-hero-title">{{ previewProduct.name }}</h2>
-            <p v-if="previewProduct.name_en" class="preview-hero-sub ltr-text">{{ previewProduct.name_en }} — {{ previewProduct.subtitle_en }}</p>
+            <p v-if="previewProduct.subtitle" class="preview-hero-sub">{{ previewProduct.subtitle }}</p>
+            <p v-if="previewProduct.description" class="preview-hero-desc">{{ previewProduct.description }}</p>
             
             <div class="preview-meta-chips">
-              <span class="preview-chip">{{ previewProduct.subtitle }}</span>
-              <span class="preview-chip status-chip" :class="previewProduct.is_active ? 'active' : 'inactive'">
-                {{ previewProduct.is_active ? 'منظومة مفعلة' : 'مسودة' }}
-              </span>
               <a v-if="previewProduct.demo_url" :href="previewProduct.demo_url" target="_blank" class="preview-demo-chip">
-                معاينة المنظومة الحية ↗
+                طلب عرض توضيحي حي ↗
               </a>
+              <span class="preview-chip status-chip" :class="previewProduct.is_active ? 'active' : 'inactive'">
+                {{ previewProduct.is_active ? 'منظومة مفعلة ونشطة' : 'مسودة' }}
+              </span>
             </div>
+          </div>
+
+          <div v-if="previewProduct.laptop_mockup || previewProduct.image" class="preview-hero-mockup-wrap">
+            <img :src="previewProduct.laptop_mockup || previewProduct.image" :alt="previewProduct.name" @error="onImgError" />
           </div>
         </div>
 
         <div class="preview-body">
-          <!-- Description -->
-          <div v-if="previewProduct.description" class="preview-section">
-            <h3 class="preview-sec-title">نبذة عن المنظومة</h3>
-            <p class="preview-desc-text">{{ previewProduct.description }}</p>
-          </div>
-
-          <!-- 1. What does it include -->
-          <div v-if="(previewProduct.modules || []).length > 0" class="preview-section">
-            <h3 class="preview-sec-title">🧩 ماذا يتضمن النظام؟ (What Does It Include)</h3>
-            <div class="preview-modules-grid">
-              <div v-for="(mod, mIdx) in previewProduct.modules" :key="mIdx" class="preview-mod-card">
-                <div class="mod-icon-badge">
-                  {{ getIconSymbol(mod.icon) }}
-                </div>
-                <div class="mod-texts">
-                  <h4 class="mod-title">{{ mod.title }}</h4>
-                  <p class="mod-desc">{{ mod.description }}</p>
-                </div>
+          <!-- 2. Overview Section (ما هو نظام تجارة؟) -->
+          <div v-if="previewProduct.overview" class="preview-section overview-preview-section">
+            <div class="section-pill-tag">{{ previewProduct.overview.pill || 'نظرة عامة' }}</div>
+            <h3 class="preview-sec-title">{{ previewProduct.overview.title || 'ما هو نظام تجارة؟' }}</h3>
+            
+            <div class="overview-content-grid">
+              <div class="overview-text-col">
+                <p v-if="previewProduct.overview.p1" class="overview-p">{{ previewProduct.overview.p1 }}</p>
+                <p v-if="previewProduct.overview.p2" class="overview-p mt-3">{{ previewProduct.overview.p2 }}</p>
+              </div>
+              <div v-if="previewProduct.overview.image" class="overview-image-col">
+                <img :src="previewProduct.overview.image" alt="Overview Display" @error="onImgError" />
               </div>
             </div>
           </div>
 
-          <!-- 2. See It In Action (Screenshots Gallery) -->
-          <div v-if="(previewProduct.gallery || []).length > 0" class="preview-section">
-            <h3 class="preview-sec-title">📸 واجهات النظام والشاشات (See It In Action)</h3>
-            <div class="preview-gallery-grid">
-              <div v-for="(gItem, gIdx) in previewProduct.gallery" :key="gIdx" class="preview-gallery-item">
-                <img :src="gItem.image || gItem.url || gItem" :alt="gItem.title || 'Screenshot'" @error="onImgError" />
-                <span v-if="gItem.title" class="preview-gallery-caption">{{ gItem.title }}</span>
+          <!-- 3. Built For Businesses That Sell Online Section -->
+          <div v-if="previewProduct.built_for?.items?.length" class="preview-section">
+            <div class="section-pill-tag">{{ previewProduct.built_for.pill || 'لمن صُمم النظام' }}</div>
+            <h3 class="preview-sec-title">{{ previewProduct.built_for.title || 'صُمم خصيصاً للشركات التي تبيع عبر الإنترنت' }}</h3>
+            <p v-if="previewProduct.built_for.subtitle" class="preview-sec-sub">{{ previewProduct.built_for.subtitle }}</p>
+
+            <div class="preview-built-for-grid">
+              <div v-for="(item, bIdx) in previewProduct.built_for.items" :key="bIdx" class="built-for-card">
+                <div class="built-for-icon">
+                  {{ item.icon === 'shopping-cart' ? '🛒' : (item.icon === 'truck' ? '🚚' : (item.icon === 'briefcase' ? '💼' : '🎯')) }}
+                </div>
+                <h4 class="built-for-card-title">{{ item.title }}</h4>
+                <p class="built-for-card-desc">{{ item.desc }}</p>
               </div>
             </div>
           </div>
 
-          <!-- 3. Scalability Tiers -->
+          <!-- 4. Key Capabilities (What It Does) Section -->
+          <div v-if="previewProduct.what_it_does?.items?.length" class="preview-section">
+            <div class="section-pill-tag">{{ previewProduct.what_it_does.pill || 'المزايا والقدرات' }}</div>
+            <h3 class="preview-sec-title">{{ previewProduct.what_it_does.title || 'ما الذي يقدمه نظام تجارة؟' }}</h3>
+            <p v-if="previewProduct.what_it_does.subtitle" class="preview-sec-sub">{{ previewProduct.what_it_does.subtitle }}</p>
+
+            <div class="preview-capabilities-grid">
+              <div v-for="(cap, cIdx) in previewProduct.what_it_does.items" :key="cIdx" class="capability-card">
+                <div class="cap-icon-box">
+                  {{ getIconSymbol(cap.icon) }}
+                </div>
+                <h4 class="cap-title">{{ cap.title }}</h4>
+                <p class="cap-desc">{{ cap.desc }}</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. See It In Action Section -->
+          <div v-if="previewProduct.action_main_image || previewProduct.action_screens?.length" class="preview-section">
+            <div class="section-pill-tag">استعراض النظام</div>
+            <h3 class="preview-sec-title">شاهد النظام أثناء العمل (See It In Action)</h3>
+            
+            <div v-if="previewProduct.action_main_image" class="preview-action-main-img">
+              <img :src="previewProduct.action_main_image" alt="Main Action Screen" @error="onImgError" />
+            </div>
+
+            <div v-if="previewProduct.action_screens?.length" class="preview-action-screens-grid mt-4">
+              <div v-for="(screen, sIdx) in previewProduct.action_screens" :key="sIdx" class="action-screen-preview-card">
+                <div class="screen-preview-thumb">
+                  <img :src="screen.image" :alt="screen.title" @error="onImgError" />
+                </div>
+                <span class="screen-preview-title">{{ screen.title_ar || screen.title }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 6. How It Works Section -->
+          <div v-if="previewProduct.how_it_works?.steps?.length" class="preview-section">
+            <div class="section-pill-tag">{{ previewProduct.how_it_works.pill || 'كيف يعمل' }}</div>
+            <h3 class="preview-sec-title">{{ previewProduct.how_it_works.title || 'سهل في البداية، قوي وقابل للتوسع' }}</h3>
+            <p v-if="previewProduct.how_it_works.subtitle" class="preview-sec-sub">{{ previewProduct.how_it_works.subtitle }}</p>
+
+            <div class="preview-steps-grid">
+              <div v-for="(st, stIdx) in previewProduct.how_it_works.steps" :key="stIdx" class="preview-step-card">
+                <span class="step-num-pill">{{ st.num }}</span>
+                <h4 class="step-title">{{ st.title }}</h4>
+                <p class="step-desc">{{ st.desc }}</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 7. Why Teams Choose Tijara Section -->
+          <div v-if="previewProduct.why_choose?.items?.length" class="preview-section">
+            <div class="section-pill-tag">{{ previewProduct.why_choose.pill || 'المزايا التنافسية' }}</div>
+            <h3 class="preview-sec-title">{{ previewProduct.why_choose.title || 'لماذا تختار الشركات نظام تجارة؟' }}</h3>
+
+            <div class="preview-why-grid">
+              <div v-for="(why, wIdx) in previewProduct.why_choose.items" :key="wIdx" class="preview-why-card">
+                <h4 class="why-card-title">✓ {{ why.title }}</h4>
+                <p class="why-card-desc">{{ why.desc }}</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 8. Scalability Tiers -->
           <div v-if="(previewProduct.scalability || []).length > 0" class="preview-section">
             <h3 class="preview-sec-title">📈 مستويات التوسع (Startup to Enterprise Scale)</h3>
             <div class="preview-scalability-grid">
@@ -749,6 +899,15 @@
                 <span>🌟 {{ getProjectTitle(projSlug) }}</span>
               </div>
             </div>
+          </div>
+
+          <!-- 9. Bottom CTA Section -->
+          <div v-if="previewProduct.bottom_cta" class="preview-bottom-cta-banner" :style="{ background: `linear-gradient(135deg, ${previewProduct.accent_color || '#9333ea'}, #18032a)` }">
+            <h3 class="cta-banner-title">{{ previewProduct.bottom_cta.title }}</h3>
+            <p class="cta-banner-desc">{{ previewProduct.bottom_cta.description }}</p>
+            <a :href="previewProduct.demo_url || '#'" target="_blank" class="cta-banner-btn">
+              {{ previewProduct.bottom_cta.button_text || 'طلب عرض توضيحي' }}
+            </a>
           </div>
         </div>
 
@@ -797,23 +956,194 @@ const newGalleryDevice = ref('Desktop Dashboard');
 
 // Default initial form state
 const defaultForm = () => ({
-  name: '',
-  name_en: '',
-  subtitle: '',
-  subtitle_en: '',
-  slug: '',
+  name: 'تجارة | Tijara',
+  name_en: 'Tijara',
+  subtitle: 'النظام الذكي لإدارة المتاجر والتجارة الإلكترونية المتكاملة',
+  subtitle_en: 'The Smart Omnichannel E-Commerce & Retail Platform',
+  slug: 'tijara',
   category: 'ecommerce',
   category_id: 1,
   badge: 'إدارة التجارة الإلكترونية والـ POS',
   badge_en: 'E-COMMERCE ENGINE',
   accent_color: '#9333ea',
-  image: '',
-  laptop_mockup: '',
-  demo_url: '',
-  description: '',
-  description_en: '',
+  image: 'https://images.unsplash.com/photo-1556742049-0a67e557b683?w=1200&q=80',
+  laptop_mockup: '/images/products/tijara.png',
+  demo_url: 'https://demo.bekite.com/tijara',
+  description: 'منصة موحدة وشاملة مصممة لإدارة كافة عمليات المتجر الإلكتروني ونقاط البيع — المنتجات، الطلبات، المخزون المتعدد، وعلاقات العملاء من خلال لوحة تحكم ذكية واحدة مع دعم التوسع للمؤسسات الكبرى.',
+  description_en: 'An all-in-one platform built to manage your online store and retail operations in a unified high-performance dashboard.',
   features: ['إدارة المنتجات والمخازن', 'معالجة الطلبات اللحظي', 'بوابات الدفع والـ POS'],
   features_en: [],
+
+  // Deep Case Study Sections matching Bekite Website 1:1
+  overview: {
+    pill: 'نظرة عامة',
+    pill_en: 'OVERVIEW',
+    title: 'ما هو نظام تجارة؟',
+    title_en: 'What Is Tijara?',
+    p1: 'تجارة هو نظام سحابي متطور لتشغيل المتاجر الإلكترونية الضخمة والمتوسطة، يجمع بين إدارة المخزون متعدد الفروع، مزامنة نقاط البيع، والتحليلات التنبؤية للمبيعات في بيئة برمجية واحدة متكاملة.',
+    p2: 'مبني على بنية سحابية حديثة تضمن سرعة تحميل فائقة، وجاهزية بنسبة 99.99%، وربطاً سلساً مع بوابات الدفع الإلكتروني وشركات الشحن اللوجستي في المنطقة.',
+    image: '/images/products/tijara_overview.png'
+  },
+
+  built_for: {
+    pill: 'لمن صُمم النظام',
+    pill_en: 'WHO IS IT FOR',
+    title: 'صُمم خصيصاً للشركات التي تبيع عبر الإنترنت',
+    title_en: 'Built for Businesses That Sell Online',
+    subtitle: 'مسارات عمل مخصصة لكل دور ومسؤولية في منظومة التجارة الإلكترونية الخاصة بك.',
+    items: [
+      {
+        icon: 'shopping-cart',
+        title: 'المتاجر الإلكترونية',
+        title_en: 'Online Retailers',
+        desc: 'توسيع مبيعات متجرك متعدد الأقسام مع إدارة مرنة للمنتجات وفلترة سريعة وتجربة شراء استثنائية.'
+      },
+      {
+        icon: 'truck',
+        title: 'فرق العمليات والتشغيل',
+        title_en: 'Operations Teams',
+        desc: 'أتمتة تجهيز الطلبات، بوالص الشحن، التوجيه التلقائي للمناديب، وإدارة المرتجعات بسهولة.'
+      },
+      {
+        icon: 'briefcase',
+        title: 'أصحاب الأعمال والمدراء',
+        title_en: 'Business Owners',
+        desc: 'رؤية تنفيذية كاملة ولحظية للمبيعات اليومية، هوامش الأرباح، وصحة المخزون في كافة الفروع.'
+      },
+      {
+        icon: 'target',
+        title: 'فرق التسويق والنمو',
+        title_en: 'Marketing Teams',
+        desc: 'إطلاق حملات الخصومات، كوبونات التخفيض الديناميكية، وبرامج ولاء العملاء لزيادة تكرار الشراء.'
+      }
+    ]
+  },
+
+  what_it_does: {
+    pill: 'المزايا والقدرات',
+    pill_en: 'KEY CAPABILITIES',
+    title: 'ما الذي يقدمه نظام تجارة؟',
+    title_en: 'What It Does',
+    subtitle: 'كل ما تحتاجه لإدارة عمليات البيع والتجارة من البداية إلى النهاية.',
+    items: [
+      {
+        icon: 'layers',
+        title: 'إدارة الكتالوج والمنتجات',
+        title_en: 'Product Management',
+        desc: 'توحيد المنتجات والخيارات والأسعار عبر الموقع والتطبيق ومنصات البيع المتعددة.'
+      },
+      {
+        icon: 'file-check',
+        title: 'معالجة وتجهيز الطلبات',
+        title_en: 'Order Processing',
+        desc: 'أتمتة دورة الطلب من الدفع وحتى التسليم مع إصدار الفواتير وبوالص الشحن آلياً.'
+      },
+      {
+        icon: 'box',
+        title: 'مزامنة المخزون اللحظية',
+        title_en: 'Live Inventory Sync',
+        desc: 'حجز تلقائي للكميات عبر كافة المستودعات لمنع نفاد المخزون وتسهيل إعادة التوريد.'
+      },
+      {
+        icon: 'users',
+        title: 'إدارة علاقات العملاء CRM',
+        title_en: 'Customer Management',
+        desc: 'ملفات تفصيلية للعملاء مع سجل المشتريات، شرائح العملاء، وبرامج النقاط والمكافآت.'
+      },
+      {
+        icon: 'bar-chart',
+        title: 'التقارير والتحليلات المتقدمة',
+        title_en: 'Analytics & Reporting',
+        desc: 'متابعة حركة المبيعات، توقعات الإيرادات، معدلات الإرجاع، وتقارير التدقيق المالي.'
+      },
+      {
+        icon: 'globe',
+        title: 'الربط متعدد القنوات Omnichannel',
+        title_en: 'Multi-Channel Support',
+        desc: 'مزامنة مبيعات الفروع ونقاط البيع POS مع قنوات البيع الإلكتروني في قاعدة بيانات واحدة.'
+      }
+    ]
+  },
+
+  action_main_image: '/images/products/tijara_action_main.png',
+  action_screens: [
+    { id: 1, image: '/images/products/tijara_action_1.png', title: 'Order Fulfillment Table', title_ar: 'جدول تجهيز ومسار الطلبات' },
+    { id: 2, image: '/images/products/tijara_action_2.png', title: 'Multi-Warehouse Inventory', title_ar: 'إدارة المخزون متعدد المستودعات' },
+    { id: 3, image: '/images/products/tijara_action_3.png', title: 'Live Analytics & Retention', title_ar: 'التحليلات اللحظية ونمو العملاء' }
+  ],
+
+  how_it_works: {
+    pill: 'كيف يعمل',
+    pill_en: 'HOW IT WORKS',
+    title: 'سهل في البداية، قوي وقابل للتوسع',
+    title_en: 'Simple to Start, Powerful to Scale',
+    subtitle: 'من الإعداد الأولي وحتى التوسع متعدد الفروع في أربع خطوات بسيطة.',
+    steps: [
+      {
+        num: '01',
+        title: 'الإعداد والتهيئة',
+        title_en: 'Setup',
+        desc: 'تجهيز المتجر، استيراد المنتجات، وربط بوابات الدفع الإلكتروني.'
+      },
+      {
+        num: '02',
+        title: 'الإدارة والتشغيل',
+        title_en: 'Manage',
+        desc: 'استقبال ومعالجة الطلبات ومزامنة المخزون عبر جميع قنوات البيع.'
+      },
+      {
+        num: '03',
+        title: 'الأتمتة الذكية',
+        title_en: 'Automate',
+        desc: 'دع القواعد الذكية تتولى إصدار الفواتير والشحن وتنبيهات العملاء.'
+      },
+      {
+        num: '04',
+        title: 'النمو والتوسع',
+        title_en: 'Grow',
+        desc: 'استفد من التحليلات التنبؤية لتوسيع الفروع والوصول إلى أسواق جديدة.'
+      }
+    ]
+  },
+
+  why_choose: {
+    pill: 'المزايا التنافسية',
+    pill_en: 'ADVANTAGES',
+    title: 'لماذا تختار الشركات نظام تجارة؟',
+    title_en: 'Why Teams Choose Tijara',
+    subtitle: 'هندسة برمجية متطورة صُممت للأداء العالي والموثوقية والنمو السريع.',
+    items: [
+      {
+        title: 'إطلاق سريع',
+        title_en: 'Fast Setup',
+        desc: 'ابدأ العمل خلال أيام معدودة عبر أدوات التهيئة الذكية ونقل البيانات التلقائي.'
+      },
+      {
+        title: 'توسع حقيقي',
+        title_en: 'True Scalability',
+        desc: 'قدرة على معالجة ملايين المعاملات شهرياً بدون أي بطء في سرعة الدفع والشراء.'
+      },
+      {
+        title: 'أمان وخصوصية البيانات',
+        title_en: 'National Privacy',
+        desc: 'تشفير بمستوى البنوك واستضافة بيانات محلية متوافقة مع الأنظمة واللوائح.'
+      },
+      {
+        title: 'دعم فني وضمان 24/7',
+        title_en: 'Dedicated 24/7 SLA',
+        desc: 'دعم هندسي مباشر مع ضمان استقرار وجاهزية النظام بنسبة 99.99%.'
+      }
+    ]
+  },
+
+  bottom_cta: {
+    title: 'جاهز لاستكشاف نظام تجارة لمتجرك؟',
+    title_en: 'Ready to Explore Tijara?',
+    description: 'تواصل مع خبرائنا واحصل على عرض توضيحي مباشر ومخصص لعمليات متجرك الإلكتروني.',
+    button_text: 'طلب عرض توضيحي',
+    button_href: '/contact?subject=Tijara+Demo'
+  },
+
   modules: [
     {
       icon: 'package',
@@ -873,7 +1203,7 @@ const defaultForm = () => ({
 const formData = ref(defaultForm());
 
 // Tab Sequence
-const tabList = ['general', 'modules', 'gallery', 'scalability', 'editions', 'projects'];
+const tabList = ['general', 'built_for', 'capabilities', 'showcase', 'workflow', 'advanced'];
 
 function goToNextTab() {
   const curIdx = tabList.indexOf(activeTab.value);
@@ -1066,6 +1396,17 @@ function toggleRelatedProject(slugOrId) {
   }
 }
 
+const getAlphaColor = (hex, alpha = '18') => {
+  if (!hex || !hex.startsWith('#')) return '#7c3aed18';
+  return `${hex}${alpha}`;
+};
+
+function resetFilters() {
+  searchQuery.value = '';
+  selectedCategory.value = '';
+  selectedStatus.value = '';
+}
+
 // Quick Preview
 function openQuickPreview(product) {
   previewProduct.value = product;
@@ -1092,9 +1433,19 @@ function openEditModal(product) {
   activeTab.value = 'general';
   formData.value = JSON.parse(JSON.stringify(product));
   
+  const def = defaultForm();
+  if (!formData.value.overview) formData.value.overview = def.overview;
+  if (!formData.value.built_for) formData.value.built_for = def.built_for;
+  if (!formData.value.what_it_does) formData.value.what_it_does = def.what_it_does;
+  if (!formData.value.action_main_image) formData.value.action_main_image = def.action_main_image;
+  if (!formData.value.action_screens) formData.value.action_screens = def.action_screens;
+  if (!formData.value.how_it_works) formData.value.how_it_works = def.how_it_works;
+  if (!formData.value.why_choose) formData.value.why_choose = def.why_choose;
+  if (!formData.value.bottom_cta) formData.value.bottom_cta = def.bottom_cta;
+
   if (!formData.value.modules) formData.value.modules = [];
   if (!formData.value.gallery) formData.value.gallery = [];
-  if (!formData.value.scalability) formData.value.scalability = defaultForm().scalability;
+  if (!formData.value.scalability) formData.value.scalability = def.scalability;
   if (!formData.value.editions) formData.value.editions = [];
   if (!formData.value.related_projects) formData.value.related_projects = [];
 
@@ -1328,125 +1679,312 @@ onMounted(() => {
   outline: none;
 }
 
-/* Table */
-.table-card {
+/* ================= PRODUCTS CARDS GRID (Same Aesthetic as Projects & Brands) ================= */
+.products-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 1.5rem;
+}
+
+.product-card {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
-  border-radius: 16px;
+  border-radius: 20px;
   overflow: hidden;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.03);
-}
-.table-responsive { overflow-x: auto; }
-.data-table {
-  width: 100%;
-  border-collapse: collapse;
-  text-align: right;
-}
-.data-table th {
-  background: var(--table-header-bg);
-  padding: 0.9rem 1.1rem;
-  font-size: 0.8rem;
-  font-weight: 800;
-  color: var(--text-muted);
-  border-bottom: 1px solid var(--border-color);
-}
-.data-table td {
-  padding: 0.9rem 1.1rem;
-  border-bottom: 1px solid var(--border-color);
-  font-size: 0.85rem;
-  vertical-align: middle;
-}
-.data-row:hover { background: var(--table-row-hover); }
-.th-drag, .td-drag { width: 35px; text-align: center; }
-.drag-handle { color: var(--text-muted); cursor: grab; font-size: 1rem; }
-
-/* Product Cell */
-.product-cell {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-.prod-color-indicator {
-  width: 12px;
-  height: 38px;
-  border-radius: 6px;
-  flex-shrink: 0;
-}
-.product-meta {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
   display: flex;
   flex-direction: column;
+  transition: all 0.25s ease;
+  position: relative;
 }
-.title-with-badge {
+.product-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+.product-card.card-dragging {
+  opacity: 0.5;
+  border: 2px dashed #7c3aed;
+}
+
+.product-top-bar {
+  height: 5px;
+  width: 100%;
+}
+
+.product-card-inner {
+  padding: 1.35rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  flex: 1;
+}
+
+.product-header-flex {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 0.5rem;
 }
-.product-name {
+
+.product-badge-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
   font-weight: 800;
-  color: var(--text-main);
-  font-size: 0.95rem;
-}
-.product-subtitle {
-  font-size: 0.76rem;
-  color: var(--text-muted);
-}
-.featured-badge {
-  background: rgba(245, 158, 11, 0.15);
-  color: #f59e0b;
-  font-size: 0.68rem;
-  font-weight: 800;
-  padding: 0.15rem 0.45rem;
-  border-radius: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border: 1px solid;
 }
 
-.cat-tag {
-  background: var(--tag-bg);
-  color: var(--text-main);
-  font-size: 0.75rem;
-  font-weight: 700;
-  padding: 0.25rem 0.65rem;
-  border-radius: 8px;
-}
-
-.channels-cell-wrap {
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-}
-.channel-badge {
+.product-status-chip {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
-  background: rgba(147, 51, 234, 0.1);
-  color: #9333ea;
-  font-size: 0.75rem;
+  padding: 0.2rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
   font-weight: 700;
-  padding: 0.2rem 0.55rem;
-  border-radius: 6px;
-  width: fit-content;
 }
-.badge-cyan { background: rgba(6, 182, 212, 0.1); color: #0891b2; }
-.badge-amber { background: rgba(245, 158, 11, 0.1); color: #d97706; }
-.badge-purple { background: rgba(124, 58, 237, 0.12); color: #7c3aed; }
+.product-status-chip.active {
+  background: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+}
+.product-status-chip.inactive {
+  background: rgba(156, 163, 175, 0.15);
+  color: #6b7280;
+}
 
-.status-toggle-btn {
-  padding: 0.35rem 0.85rem;
-  border-radius: 20px;
-  border: none;
-  font-size: 0.75rem;
-  font-weight: 800;
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.product-status-chip.active .status-dot {
+  background: #10b981;
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.25);
+}
+.product-status-chip.inactive .status-dot {
+  background: #9ca3af;
+}
+
+/* Mockup Frame */
+.product-mockup-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #0f172a;
+  border: 1px solid var(--border-color);
   cursor: pointer;
 }
-.status-toggle-btn.active { background: rgba(16, 185, 129, 0.12); color: #10b981; }
-.status-toggle-btn.inactive { background: rgba(239, 68, 68, 0.12); color: #ef4444; }
 
-.actions-cell {
+.product-mockup-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+.product-mockup-wrap:hover .product-mockup-img {
+  transform: scale(1.04);
+}
+
+.mockup-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.6);
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.4rem;
+  opacity: 0;
+  transition: opacity 0.2s ease;
 }
-.action-btn {
+.product-mockup-wrap:hover .mockup-overlay {
+  opacity: 1;
+}
+
+.btn-overlay-preview {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.55rem 1rem;
+  border-radius: 999px;
+  background: #fff;
+  color: #0f172a;
+  font-size: 0.78rem;
+  font-weight: 800;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+}
+
+.featured-ribbon {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: rgba(245, 158, 11, 0.95);
+  color: #fff;
+  font-size: 0.68rem;
+  font-weight: 800;
+  padding: 0.2rem 0.55rem;
+  border-radius: 6px;
+  backdrop-filter: blur(4px);
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.4);
+}
+
+/* Titles */
+.product-titles-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.product-cat-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.product-slug-tag {
+  font-size: 0.68rem;
+  color: #7c3aed;
+  font-family: monospace;
+  direction: ltr;
+  font-weight: 600;
+}
+
+.meta-sep {
+  color: var(--border-color);
+  font-weight: 800;
+}
+
+.product-card-title {
+  font-size: 1.15rem;
+  font-weight: 900;
+  color: var(--text-main);
+  margin: 0;
+  line-height: 1.25;
+}
+
+.product-card-sub {
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.product-tagline {
+  font-size: 0.8rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.product-card-desc {
+  font-size: 0.82rem;
+  line-height: 1.55;
+  color: var(--text-muted);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin: 0;
+}
+
+/* Badges Row */
+.product-badges-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  padding-top: 0.35rem;
+  border-top: 1px dashed var(--border-color);
+}
+
+.prod-badge-chip {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.2rem 0.55rem;
+  border-radius: 6px;
+  border: 1px solid transparent;
+}
+.module-badge {
+  background: rgba(124, 58, 237, 0.08);
+  color: #7c3aed;
+  border-color: rgba(124, 58, 237, 0.18);
+}
+.gallery-badge {
+  background: rgba(6, 182, 212, 0.08);
+  color: #0891b2;
+  border-color: rgba(6, 182, 212, 0.18);
+}
+.tier-badge {
+  background: rgba(245, 158, 11, 0.08);
+  color: #d97706;
+  border-color: rgba(245, 158, 11, 0.18);
+}
+.related-badge {
+  background: rgba(59, 130, 246, 0.08);
+  color: #2563eb;
+  border-color: rgba(59, 130, 246, 0.18);
+}
+
+.product-pricing-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.35rem;
+  margin-top: 0.15rem;
+}
+.price-val {
+  font-size: 1rem;
+  font-weight: 900;
+  color: var(--text-main);
+}
+.price-type {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+/* Card Footer */
+.product-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.85rem 1.35rem;
+  border-top: 1px solid var(--border-color);
+  background: var(--bg-main);
+}
+
+.toggle-status-action {
+  font-size: 0.74rem;
+  font-weight: 700;
+  padding: 0.35rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.btn-deactivate {
+  background: rgba(239, 68, 68, 0.08);
+  color: #ef4444;
+  border-color: rgba(239, 68, 68, 0.2);
+}
+.btn-deactivate:hover { background: rgba(239, 68, 68, 0.15); }
+.btn-activate {
+  background: rgba(16, 185, 129, 0.08);
+  color: #10b981;
+  border-color: rgba(16, 185, 129, 0.2);
+}
+.btn-activate:hover { background: rgba(16, 185, 129, 0.15); }
+
+.product-action-btns {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.action-icon-btn {
   width: 32px;
   height: 32px;
   border-radius: 8px;
@@ -1459,9 +1997,53 @@ onMounted(() => {
   cursor: pointer;
   transition: all 0.15s ease;
 }
-.preview-btn:hover { color: #0891b2; border-color: #0891b2; background: rgba(6, 182, 212, 0.08); }
+.action-icon-btn:hover { color: var(--text-main); }
+.preview-btn:hover { color: #0284c7; border-color: #0284c7; background: rgba(2, 132, 199, 0.08); }
 .edit-btn:hover { color: #7c3aed; border-color: #7c3aed; background: rgba(124, 58, 237, 0.08); }
 .delete-btn:hover { color: #ef4444; border-color: #ef4444; background: rgba(239, 68, 68, 0.08); }
+
+/* Loading & Empty State */
+.loading-state, .empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem;
+  color: var(--text-muted);
+  gap: 1rem;
+}
+
+.empty-icon-wrap {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: rgba(124, 58, 237, 0.08);
+  color: #7c3aed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-reset-filters {
+  padding: 0.55rem 1rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-card);
+  color: var(--text-main);
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid rgba(124, 58, 237, 0.2);
+  border-top-color: #7c3aed;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
 
 /* Modal Styles */
 .modal-overlay {
@@ -2123,5 +2705,323 @@ onMounted(() => {
   border-radius: 10px;
   font-weight: 700;
   cursor: pointer;
+}
+
+/* ================= CASE STUDY PREVIEW & EDITOR STYLES ================= */
+.modal-preview-case-study {
+  max-width: 950px;
+}
+
+.preview-hero-mockup-wrap {
+  margin-top: 1.25rem;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(0, 0, 0, 0.2);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+.preview-hero-mockup-wrap img {
+  width: 100%;
+  max-height: 360px;
+  object-fit: cover;
+  display: block;
+}
+
+.section-pill-tag {
+  display: inline-block;
+  background: rgba(147, 51, 234, 0.12);
+  color: #9333ea;
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  margin-bottom: 0.4rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.preview-sec-sub {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  margin-top: -0.25rem;
+  margin-bottom: 1rem;
+}
+
+/* Overview Grid */
+.overview-content-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 1.25rem;
+  align-items: center;
+}
+.overview-p {
+  font-size: 0.88rem;
+  line-height: 1.65;
+  color: var(--text-color);
+}
+.overview-image-col img {
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+/* Built For Grid */
+.preview-built-for-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.9rem;
+}
+.built-for-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 1rem;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.built-for-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+}
+.built-for-icon {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+.built-for-card-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-color);
+  margin-bottom: 0.35rem;
+}
+.built-for-card-desc {
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+/* Capabilities Grid */
+.preview-capabilities-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 0.9rem;
+}
+.capability-card {
+  background: var(--table-header-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 1rem;
+}
+.cap-icon-box {
+  font-size: 1.35rem;
+  margin-bottom: 0.5rem;
+}
+.cap-title {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text-color);
+  margin-bottom: 0.35rem;
+}
+.cap-desc {
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+/* Action Screens */
+.preview-action-main-img img {
+  width: 100%;
+  border-radius: 14px;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+  display: block;
+}
+.preview-action-screens-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.85rem;
+}
+.action-screen-preview-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.screen-preview-thumb img {
+  width: 100%;
+  height: 110px;
+  object-fit: cover;
+  display: block;
+}
+.screen-preview-title {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.5rem;
+  text-align: center;
+  color: var(--text-color);
+}
+
+/* Steps Grid */
+.preview-steps-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.85rem;
+}
+.preview-step-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 1rem;
+  position: relative;
+}
+.step-num-pill {
+  display: inline-block;
+  background: #9333ea;
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 0.15rem 0.55rem;
+  border-radius: 6px;
+  margin-bottom: 0.4rem;
+}
+.step-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-color);
+  margin-bottom: 0.25rem;
+}
+.step-desc {
+  font-size: 0.75rem;
+  line-height: 1.45;
+  color: var(--text-muted);
+}
+
+/* Why Teams Choose Grid */
+.preview-why-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 0.85rem;
+}
+.preview-why-card {
+  background: rgba(147, 51, 234, 0.04);
+  border: 1px solid rgba(147, 51, 234, 0.2);
+  border-radius: 12px;
+  padding: 0.95rem;
+}
+.why-card-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #9333ea;
+  margin-bottom: 0.25rem;
+}
+.why-card-desc {
+  font-size: 0.76rem;
+  line-height: 1.45;
+  color: var(--text-muted);
+}
+
+/* Bottom CTA Banner */
+.preview-bottom-cta-banner {
+  margin: 1.5rem 0 0.5rem;
+  border-radius: 16px;
+  padding: 1.75rem;
+  text-align: center;
+  color: #fff;
+}
+.cta-banner-title {
+  font-size: 1.25rem;
+  font-weight: 800;
+  margin-bottom: 0.4rem;
+}
+.cta-banner-desc {
+  font-size: 0.85rem;
+  opacity: 0.9;
+  max-width: 500px;
+  margin: 0 auto 1.1rem;
+  line-height: 1.5;
+}
+.cta-banner-btn {
+  display: inline-block;
+  background: #fff;
+  color: #9333ea;
+  font-weight: 800;
+  font-size: 0.85rem;
+  padding: 0.65rem 1.4rem;
+  border-radius: 10px;
+  text-decoration: none;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.cta-banner-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Form Sub Cards & Editors */
+.form-sub-card {
+  background: var(--table-header-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 1rem;
+}
+.sub-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+.sub-card-title {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text-color);
+}
+.sub-card-badge {
+  font-size: 0.7rem;
+  background: rgba(147, 51, 234, 0.12);
+  color: #9333ea;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  font-weight: 600;
+}
+.built-for-grid-editor,
+.capabilities-grid-editor,
+.action-screens-grid-editor,
+.steps-grid-editor,
+.why-choose-grid-editor {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.85rem;
+}
+.persona-edit-card,
+.cap-edit-card,
+.action-screen-card,
+.step-edit-card,
+.why-edit-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 0.85rem;
+}
+.persona-card-header,
+.cap-card-header,
+.screen-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+.persona-num, .cap-num, .screen-num {
+  color: var(--text-color);
+}
+.step-badge-num {
+  display: inline-block;
+  background: #9333ea;
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 800;
+  padding: 0.1rem 0.45rem;
+  border-radius: 4px;
+  margin-bottom: 0.4rem;
 }
 </style>

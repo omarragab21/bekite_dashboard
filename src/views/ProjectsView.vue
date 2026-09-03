@@ -103,160 +103,184 @@
       </div>
     </div>
 
-    <!-- Projects Table -->
-    <div class="table-card">
-      <div class="table-responsive">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th class="th-drag"></th>
-              <th>المشروع والعميل</th>
-              <th>التصنيفات المعتمدة</th>
-              <th>القنوات والوسائط المتوفرة</th>
-              <th>السنة والموقع</th>
-              <th>الحالة</th>
-              <th class="text-center">الإجراءات</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-if="loading" class="state-row">
-              <td colspan="7">
-                <div class="loading-wrap">
-                  <div class="spinner-mini"></div>
-                  <span>جاري تحميل مشاريع البورتفوليو...</span>
-                </div>
-              </td>
-            </tr>
-            <tr v-else-if="filteredProjects.length === 0" class="state-row">
-              <td colspan="7">
-                <div class="empty-state-wrap">
-                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="empty-icon">
-                    <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
-                  </svg>
-                  <span>لا توجد مشاريع مطابقة لمعايير البحث الحالية</span>
-                  <button class="btn-reset-filters" @click="resetFilters">إعادة ضبط الفلاتر</button>
-                </div>
-              </td>
-            </tr>
-            <template v-else>
-              <tr
-                v-for="project in filteredProjects"
-                :key="project.id"
-                class="data-row"
-                :class="{ 'row-dragging': draggedId === project.id }"
-                draggable="true"
-                @dragstart="onDragStart(project)"
-                @dragover.prevent="onDragOver(project)"
-                @drop.prevent="onDrop(project)"
-              >
-                <td class="td-drag">
-                  <span class="drag-handle" title="اسحب لإعادة الترتيب">⋮⋮</span>
-                </td>
-                <td>
-                  <div class="project-cell">
-                    <div class="project-thumb" :style="{ borderColor: project.accent_color || '#7c3aed' }">
-                      <img :src="project.web_image || project.card_image || project.image || '/logo.png'" :alt="project.title" @error="onImgError" />
-                    </div>
-                    <div class="project-meta">
-                      <div class="project-title-row">
-                        <span class="project-title">{{ project.title }}</span>
-                        <span v-if="project.title_en" class="project-title-en ltr-text">({{ project.title_en }})</span>
-                      </div>
-                      <span class="project-client">{{ project.client_name }}</span>
-                      <span class="project-slug ltr-text">/{{ project.slug }}</span>
-                    </div>
-                  </div>
-                </td>
-                <td>
-                  <div class="categories-tags-wrap">
-                    <span
-                      v-for="catSlug in (project.filter_categories || [])"
-                      :key="catSlug"
-                      class="cat-pill"
-                    >
-                      {{ getCategoryName(catSlug) }}
-                    </span>
-                    <span v-if="!project.filter_categories || !project.filter_categories.length" class="text-muted text-xs">
-                      عام
-                    </span>
-                  </div>
-                </td>
-                <td>
-                  <div class="channels-badges-wrap">
-                    <!-- Web Badge -->
-                    <span v-if="project.website_url || project.web_image" class="channel-badge web" title="منصة ويب متوفرة">
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
-                      </svg>
-                      ويب
-                    </span>
+    <!-- Projects Cards Grid (Same Style as Brands) -->
+    <div v-if="loading" class="loading-state">
+      <div class="spinner"></div>
+      <p>جاري تحميل مشاريع البورتفوليو من الخادم...</p>
+    </div>
 
-                    <!-- Mobile Badge -->
-                    <span v-if="project.has_mobile_app || project.mobile_image || project.ios_url || project.android_url" class="channel-badge mobile" title="تطبيق هاتف ذكي">
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/>
-                      </svg>
-                      موبايل
-                    </span>
+    <div v-else-if="filteredProjects.length === 0" class="empty-state">
+      <div class="empty-icon-wrap">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+        </svg>
+      </div>
+      <h3>لا توجد مشاريع مطابقة</h3>
+      <p>لم يتم العثور على أي مشروع يطابق معايير البحث والفلترة الحالية.</p>
+      <button class="btn-reset-filters" @click="resetFilters">إعادة ضبط الفلاتر</button>
+    </div>
 
-                    <!-- Social Badge -->
-                    <span v-if="getSocialImagesCount(project) > 0 || hasSocialLinks(project)" class="channel-badge social" :title="`${getSocialImagesCount(project)} صور سوشيال ميديا`">
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
-                      </svg>
-                      سوشيال ({{ getSocialImagesCount(project) }})
-                    </span>
+    <div v-else class="projects-cards-grid">
+      <div
+        v-for="project in filteredProjects"
+        :key="project.id"
+        class="project-card"
+        :class="{ 'card-dragging': draggedId === project.id }"
+        draggable="true"
+        @dragstart="onDragStart(project)"
+        @dragover.prevent="onDragOver(project)"
+        @drop.prevent="onDrop(project)"
+      >
+        <!-- Top Branded Accent Bar -->
+        <div class="project-top-bar" :style="{ background: project.accent_color || '#7c3aed' }"></div>
 
-                    <!-- Branding & PDF Badge -->
-                    <span v-if="project.branding_pdf_url || getBrandingImagesCount(project) > 0" class="channel-badge branding" :title="project.branding_pdf_url ? 'يتضمن ملف PDF للهوية' : 'صور هوية بصرية'">
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>
-                      </svg>
-                      هوية {{ project.branding_pdf_url ? '+ PDF' : '' }}
-                    </span>
-                  </div>
-                </td>
-                <td>
-                  <div class="loc-year-cell">
-                    <span class="loc-text">{{ project.location || 'عمان، الأردن' }}</span>
-                    <span class="year-text">{{ project.year || '2025 - 2026' }}</span>
-                  </div>
-                </td>
-                <td>
-                  <button
-                    class="status-toggle-btn"
-                    :class="project.is_active ? 'active' : 'inactive'"
-                    @click="toggleProjectStatus(project)"
-                    :title="project.is_active ? 'اضغط للتحويل إلى مسودة' : 'اضغط للنشر الفوري'"
-                  >
-                    {{ project.is_active ? 'منشور' : 'مسودة' }}
-                  </button>
-                </td>
-                <td>
-                  <div class="actions-cell">
-                    <button class="action-btn preview-btn" @click="openPreviewModal(project)" title="معاينة سريعة شاملة">
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
-                      </svg>
-                    </button>
-                    <button class="action-btn edit-btn" @click="openEditModal(project)" title="تعديل المشروع">
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-                      </svg>
-                    </button>
-                    <button class="action-btn delete-btn" @click="confirmDelete(project)" title="حذف المشروع">
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <polyline points="3 6 5 6 21 6"/>
-                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
-                      </svg>
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            </template>
-          </tbody>
-        </table>
+        <div class="project-card-inner">
+          <!-- Card Header (Badge & Status) -->
+          <div class="project-header-flex">
+            <span
+              class="project-badge-tag"
+              :style="{
+                color: project.accent_color || '#7c3aed',
+                backgroundColor: getAlphaColor(project.accent_color, '15'),
+                borderColor: getAlphaColor(project.accent_color, '35')
+              }"
+            >
+              {{ project.badge || 'PORTFOLIO' }}
+            </span>
+
+            <div class="project-status-chip" :class="project.is_active ? 'active' : 'inactive'">
+              <span class="status-dot"></span>
+              <span>{{ project.is_active ? 'منشور' : 'مسودة' }}</span>
+            </div>
+          </div>
+
+          <!-- Mockup Image Preview -->
+          <div class="project-mockup-wrap" @click="openPreviewModal(project)" title="اضغط للمعاينة الحية الشاملة">
+            <img
+              :src="project.web_image || project.card_image || project.image || '/logo.png'"
+              :alt="project.title"
+              class="project-mockup-img"
+              @error="onImgError"
+            />
+            <div class="mockup-overlay">
+              <span class="btn-overlay-preview">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+                </svg>
+                معاينة سريعة شاملة
+              </span>
+            </div>
+          </div>
+
+          <!-- Titles & Client -->
+          <div class="project-titles-wrap">
+            <div v-if="project.client_name" class="project-client-name">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+              </svg>
+              <span>{{ project.client_name }}</span>
+              <span class="meta-sep">·</span>
+              <span class="project-slug-tag ltr-text">/{{ project.slug }}</span>
+            </div>
+
+            <h3 class="project-card-title">{{ project.title }}</h3>
+            
+            <span
+              v-if="project.title_en && project.title_en.trim().toLowerCase() !== project.title.trim().toLowerCase()"
+              class="project-card-sub"
+              :style="{ color: project.accent_color || '#7c3aed' }"
+            >
+              {{ project.title_en }}
+            </span>
+          </div>
+
+          <!-- Location & Year Meta -->
+          <div class="project-meta-row">
+            <span class="meta-item">📍 {{ project.location || 'عمان، الأردن' }}</span>
+            <span class="meta-sep">·</span>
+            <span class="meta-item ltr-text" dir="ltr">📅 {{ project.year || '2025 - 2026' }}</span>
+          </div>
+
+          <!-- Description -->
+          <p class="project-card-desc">{{ project.description || 'مشروع رقمي متكامل تم تنفيذه بأعلى معايير الجودة والأداء والتصميم المتناسق.' }}</p>
+
+          <!-- Categories & Tags -->
+          <div class="project-cats-tags-wrap">
+            <div v-if="project.filter_categories && project.filter_categories.length" class="project-cats-row">
+              <span v-for="catSlug in project.filter_categories" :key="catSlug" class="cat-pill">
+                {{ getCategoryName(catSlug) }}
+              </span>
+            </div>
+            <div v-if="project.tags && project.tags.length" class="project-tags-row">
+              <span v-for="tag in project.tags.slice(0, 3)" :key="tag" class="project-tag-chip">
+                #{{ tag }}
+              </span>
+              <span v-if="project.tags.length > 3" class="project-tag-more" :title="project.tags.slice(3).join(', ')">
+                +{{ project.tags.length - 3 }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Available Channels -->
+          <div class="channels-badges-row">
+            <span v-if="project.website_url || project.web_image" class="channel-chip web" title="منصة ويب متوفرة">
+              🌐 ويب
+            </span>
+            <span v-if="project.has_mobile_app || project.mobile_image || project.ios_url || project.android_url" class="channel-chip mobile" title="تطبيق موبايل">
+              📱 موبايل
+            </span>
+            <span v-if="getSocialImagesCount(project) > 0 || hasSocialLinks(project)" class="channel-chip social" :title="`${getSocialImagesCount(project)} صور سوشيال ميديا`">
+              📸 سوشيال ({{ getSocialImagesCount(project) }})
+            </span>
+            <span v-if="project.branding_pdf_url || getBrandingImagesCount(project) > 0" class="channel-chip branding" :title="project.branding_pdf_url ? 'يتضمن ملف PDF للهوية' : 'صور هوية بصرية'">
+              📄 هوية {{ project.branding_pdf_url ? '+ PDF' : '' }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Footer Actions Bar -->
+        <div class="project-card-footer">
+          <button
+            class="toggle-status-action"
+            :class="project.is_active ? 'btn-deactivate' : 'btn-activate'"
+            @click="toggleProjectStatus(project)"
+            :title="project.is_active ? 'اضغط للتحويل إلى مسودة' : 'اضغط للنشر الفوري'"
+          >
+            {{ project.is_active ? 'إيقاف النشر (مسودة)' : 'نشر المشروع' }}
+          </button>
+
+          <div class="project-action-btns">
+            <button
+              class="action-icon-btn preview-btn"
+              @click="openPreviewModal(project)"
+              title="معاينة سريعة شاملة"
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+              </svg>
+            </button>
+            <button
+              class="action-icon-btn edit-btn"
+              @click="openEditModal(project)"
+              title="تعديل المشروع"
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+              </svg>
+            </button>
+            <button
+              class="action-icon-btn delete-btn"
+              @click="confirmDelete(project)"
+              title="حذف المشروع"
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="3 6 5 6 21 6"/>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+              </svg>
+            </button>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -405,6 +429,28 @@
                     v-model="formData.year"
                     class="form-input"
                     placeholder="2025 - 2026"
+                  />
+                </div>
+              </div>
+
+              <div class="form-grid-2">
+                <div class="form-group">
+                  <label class="form-label">شارة وتصنيف المشروع البارز (Badge) *</label>
+                  <input
+                    type="text"
+                    v-model="formData.badge"
+                    class="form-input"
+                    placeholder="مثال: الهوية والتجارة الإلكترونية"
+                  />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">الكلمات المفتاحية والوسوم (Tags - مفصولة بفواصل)</label>
+                  <input
+                    type="text"
+                    :value="formData.tags?.join(', ')"
+                    @input="formData.tags = $event.target.value.split(',').map(s => s.trim()).filter(Boolean)"
+                    class="form-input"
+                    placeholder="تجارة إلكترونية, تطبيق جوال, هوية بصرية"
                   />
                 </div>
               </div>
@@ -1056,10 +1102,18 @@
           <button class="preview-close-btn" @click="previewModalOpen = false">✕</button>
           
           <div class="preview-hero-content">
-            <span class="preview-client-badge">{{ previewProject.client_name }}</span>
+            <div class="preview-hero-badges-row">
+              <span v-if="previewProject.badge" class="preview-project-badge">★ {{ previewProject.badge }}</span>
+              <span class="preview-client-badge">العميل: {{ previewProject.client_name }}</span>
+            </div>
             <h2 class="preview-hero-title">{{ previewProject.title }}</h2>
             <p v-if="previewProject.title_en" class="preview-hero-sub ltr-text">{{ previewProject.title_en }}</p>
             
+            <!-- Tags row -->
+            <div v-if="previewProject.tags && previewProject.tags.length" class="preview-tags-row">
+              <span v-for="tag in previewProject.tags" :key="tag" class="preview-tag-chip">#{{ tag }}</span>
+            </div>
+
             <div class="preview-meta-chips">
               <span class="preview-chip">{{ previewProject.location || 'عمان، الأردن' }}</span>
               <span class="preview-chip">{{ previewProject.year || '2025 - 2026' }}</span>
@@ -1067,6 +1121,12 @@
                 {{ previewProject.is_active ? 'منشور نشط' : 'مسودة' }}
               </span>
             </div>
+          </div>
+
+          <!-- Official Logo Card in Header -->
+          <div v-if="previewProject.logo" class="preview-brand-logo-card">
+            <img :src="previewProject.logo" :alt="previewProject.client_name" @error="onImgError" />
+            <span class="logo-caption">شعار المشروع الرسمي</span>
           </div>
         </div>
 
@@ -1161,12 +1221,22 @@
           </div>
 
           <!-- Stats & Deliverables -->
-          <div v-if="previewProject.stats?.length" class="preview-section">
-            <h3 class="preview-sec-title">📊 نتائج ومخرجات المشروع</h3>
-            <div class="preview-stats-grid">
+          <div v-if="(previewProject.stats && previewProject.stats.length) || (previewProject.deliverables && previewProject.deliverables.length)" class="preview-section">
+            <h3 class="preview-sec-title">📊 نتائج ومخرجات المشروع (Results & Deliverables)</h3>
+            
+            <div v-if="previewProject.stats && previewProject.stats.length" class="preview-stats-grid">
               <div v-for="(st, idx) in previewProject.stats" :key="idx" class="preview-stat-card">
                 <span class="preview-stat-val">{{ st.value }}</span>
                 <span class="preview-stat-lbl">{{ st.label }}</span>
+              </div>
+            </div>
+
+            <div v-if="previewProject.deliverables && previewProject.deliverables.length" class="preview-deliverables-wrap mt-4">
+              <span class="deliverables-heading">📦 المخرجات والخدمات المسلمة للعميل:</span>
+              <div class="preview-deliverables-list">
+                <span v-for="(del, dIdx) in previewProject.deliverables" :key="dIdx" class="preview-deliverable-badge">
+                  ✓ {{ del }}
+                </span>
               </div>
             </div>
           </div>
@@ -1267,11 +1337,17 @@ const getInitialFormData = () => ({
   stats: [
     { label: 'نمو المبيعات', value: '+150%' },
   ],
-  deliverables: ['Web Platform'],
+  tags: ['تجارة إلكترونية', 'هوية بصرية', 'منصة ويب'],
+  deliverables: ['منصة ويب متكاملة', 'هوية بصرية كاملة', 'تطبيق هاتف ذكي'],
   is_active: 1,
 });
 
 const formData = ref(getInitialFormData());
+
+const getAlphaColor = (hex, alpha = '18') => {
+  if (!hex || !hex.startsWith('#')) return '#7c3aed18';
+  return `${hex}${alpha}`;
+};
 
 // Computed Stats
 const activeProjectsCount = computed(() => projects.value.filter(p => p.is_active === 1 || p.is_active === true).length);
@@ -1553,6 +1629,9 @@ const openEditModal = (project) => {
   const cloned = JSON.parse(JSON.stringify(project));
   if (!cloned.filter_categories) cloned.filter_categories = ['websites'];
   if (!cloned.stats) cloned.stats = [];
+  if (!Array.isArray(cloned.tags)) cloned.tags = [];
+  if (!Array.isArray(cloned.deliverables)) cloned.deliverables = ['منصة ويب متكاملة'];
+  if (!cloned.badge) cloned.badge = 'مشروع رقمي';
   if (!cloned.social_links) {
     cloned.social_links = { facebook: '', instagram: '', twitter: '', linkedin: '', tiktok: '', youtube: '' };
   }
@@ -1845,229 +1924,399 @@ onMounted(() => {
   cursor: pointer;
 }
 
-/* Table */
-.table-card {
+/* ================= PROJECTS CARDS GRID (Brands Aesthetic) ================= */
+.projects-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 1.5rem;
+}
+
+.project-card {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
-  border-radius: 18px;
+  border-radius: 20px;
   overflow: hidden;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  display: flex;
+  flex-direction: column;
+  transition: all 0.25s ease;
+  position: relative;
+}
+.project-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+.project-card.card-dragging {
+  opacity: 0.5;
+  border: 2px dashed #7c3aed;
 }
 
-.table-responsive {
-  overflow-x: auto;
-}
-
-.data-table {
+.project-top-bar {
+  height: 5px;
   width: 100%;
-  border-collapse: collapse;
-  text-align: right;
 }
 
-.data-table th {
-  background: var(--table-header-bg);
-  color: var(--text-muted);
-  font-size: 0.78rem;
-  font-weight: 700;
-  padding: 0.9rem 1.1rem;
-  border-bottom: 1px solid var(--border-color);
-  white-space: nowrap;
+.project-card-inner {
+  padding: 1.35rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  flex: 1;
 }
 
-.data-table td {
-  padding: 1rem 1.1rem;
-  border-bottom: 1px solid var(--border-color);
-  font-size: 0.85rem;
-  vertical-align: middle;
-}
-
-.th-drag, .td-drag {
-  width: 32px;
-  text-align: center;
-}
-
-.drag-handle {
-  cursor: grab;
-  color: var(--text-muted);
-  font-size: 1.15rem;
-  user-select: none;
-}
-
-.project-cell {
+.project-header-flex {
   display: flex;
   align-items: center;
-  gap: 0.9rem;
+  justify-content: space-between;
+  gap: 0.5rem;
 }
 
-.project-thumb {
-  width: 52px;
-  height: 52px;
-  border-radius: 12px;
-  overflow: hidden;
-  background: #e2e8f0;
-  flex-shrink: 0;
-  border: 2px solid transparent;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+.project-badge-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border: 1px solid;
 }
-.project-thumb img {
+
+.project-status-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.2rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+.project-status-chip.active {
+  background: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+}
+.project-status-chip.inactive {
+  background: rgba(156, 163, 175, 0.15);
+  color: #6b7280;
+}
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.project-status-chip.active .status-dot {
+  background: #10b981;
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.25);
+}
+.project-status-chip.inactive .status-dot {
+  background: #9ca3af;
+}
+
+/* Mockup Frame */
+.project-mockup-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #0f172a;
+  border: 1px solid var(--border-color);
+  cursor: pointer;
+}
+
+.project-mockup-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: transform 0.4s ease;
+}
+.project-mockup-wrap:hover .project-mockup-img {
+  transform: scale(1.04);
 }
 
-.project-meta {
-  display: flex;
-  flex-direction: column;
-  gap: 0.15rem;
-}
-
-.project-title-row {
+.mockup-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.6);
   display: flex;
   align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+.project-mockup-wrap:hover .mockup-overlay {
+  opacity: 1;
+}
+
+.btn-overlay-preview {
+  display: inline-flex;
+  align-items: center;
   gap: 0.4rem;
-}
-
-.project-title {
-  font-weight: 800;
-  color: var(--text-main);
-  font-size: 0.92rem;
-}
-
-.project-title-en {
+  padding: 0.55rem 1rem;
+  border-radius: 999px;
+  background: #fff;
+  color: #0f172a;
   font-size: 0.78rem;
+  font-weight: 800;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+}
+
+/* Titles */
+.project-titles-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.project-client-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.74rem;
+  font-weight: 700;
   color: var(--text-muted);
 }
 
-.project-client {
-  font-size: 0.78rem;
+.project-slug-tag {
+  font-size: 0.68rem;
+  color: #7c3aed;
+  font-family: monospace;
+  direction: ltr;
+  font-weight: 600;
+}
+
+.meta-sep {
+  color: var(--border-color);
+  font-weight: 800;
+}
+
+.project-card-title {
+  font-size: 1.15rem;
+  font-weight: 900;
+  color: var(--text-main);
+  margin: 0;
+  line-height: 1.25;
+}
+
+.project-card-sub {
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.project-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.74rem;
   color: var(--text-muted);
   font-weight: 600;
 }
 
-.project-slug {
-  font-size: 0.7rem;
-  color: #7c3aed;
-  font-family: monospace;
+.meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
 }
 
-.categories-tags-wrap {
+.project-card-desc {
+  font-size: 0.82rem;
+  line-height: 1.55;
+  color: var(--text-muted);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin: 0;
+}
+
+/* Categories & Tags */
+.project-cats-tags-wrap {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.35rem;
-  max-width: 250px;
-}
-
-.cat-pill {
-  font-size: 0.72rem;
-  font-weight: 700;
-  background: rgba(124, 58, 237, 0.08);
-  color: #7c3aed;
-  padding: 0.2rem 0.55rem;
-  border-radius: 6px;
-}
-
-.cat-pill-large {
-  font-size: 0.8rem;
-  font-weight: 700;
-  background: rgba(124, 58, 237, 0.12);
-  color: #7c3aed;
-  padding: 0.35rem 0.8rem;
-  border-radius: 8px;
-}
-
-.channels-badges-wrap {
-  display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: 0.4rem;
 }
 
-.channel-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
-  padding: 0.25rem 0.55rem;
+.project-cats-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.cat-pill {
+  font-size: 0.68rem;
+  font-weight: 700;
+  background: rgba(124, 58, 237, 0.08);
+  color: #7c3aed;
+  padding: 0.2rem 0.6rem;
   border-radius: 6px;
-  font-size: 0.72rem;
-  font-weight: 700;
+  border: 1px solid rgba(124, 58, 237, 0.16);
 }
-.channel-badge.web { background: rgba(59, 130, 246, 0.1); color: #2563eb; }
-.channel-badge.mobile { background: rgba(16, 185, 129, 0.1); color: #059669; }
-.channel-badge.social { background: rgba(236, 72, 153, 0.1); color: #db2777; }
-.channel-badge.branding { background: rgba(245, 158, 11, 0.1); color: #d97706; }
 
-.loc-year-cell {
+.project-tags-row {
   display: flex;
-  flex-direction: column;
-  gap: 0.15rem;
-}
-
-.loc-text {
-  font-size: 0.82rem;
-  font-weight: 700;
-  color: var(--text-main);
-}
-
-.year-text {
-  font-size: 0.74rem;
-  color: var(--text-muted);
-}
-
-.status-toggle-btn {
-  padding: 0.35rem 0.85rem;
-  border-radius: 8px;
-  font-size: 0.76rem;
-  font-weight: 800;
-  border: none;
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-.status-toggle-btn.active {
-  background: rgba(16, 185, 129, 0.12);
-  color: #10b981;
-}
-.status-toggle-btn.inactive {
-  background: rgba(239, 68, 68, 0.12);
-  color: #ef4444;
-}
-
-.actions-cell {
-  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
   align-items: center;
-  justify-content: center;
-  gap: 0.45rem;
 }
 
-.action-btn {
-  width: 34px;
-  height: 34px;
-  border-radius: 10px;
-  border: 1px solid var(--border-color);
+.project-tag-chip {
+  font-size: 0.68rem;
+  font-weight: 600;
   background: var(--bg-main);
   color: var(--text-muted);
+  border: 1px solid var(--border-color);
+  padding: 0.15rem 0.5rem;
+  border-radius: 6px;
+}
+
+.project-tag-more {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #7c3aed;
+  background: rgba(124, 58, 237, 0.06);
+  padding: 0.15rem 0.4rem;
+  border-radius: 6px;
+  cursor: help;
+}
+
+/* Channels Badges */
+.channels-badges-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  padding-top: 0.35rem;
+  border-top: 1px dashed var(--border-color);
+}
+
+.channel-chip {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.2rem 0.55rem;
+  border-radius: 6px;
+  border: 1px solid transparent;
+}
+.channel-chip.web {
+  background: rgba(59, 130, 246, 0.08);
+  color: #2563eb;
+  border-color: rgba(59, 130, 246, 0.2);
+}
+.channel-chip.mobile {
+  background: rgba(16, 185, 129, 0.08);
+  color: #10b981;
+  border-color: rgba(16, 185, 129, 0.2);
+}
+.channel-chip.social {
+  background: rgba(236, 72, 153, 0.08);
+  color: #db2777;
+  border-color: rgba(236, 72, 153, 0.2);
+}
+.channel-chip.branding {
+  background: rgba(245, 158, 11, 0.08);
+  color: #d97706;
+  border-color: rgba(245, 158, 11, 0.2);
+}
+
+/* Card Footer */
+.project-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.85rem 1.35rem;
+  border-top: 1px solid var(--border-color);
+  background: var(--bg-main);
+}
+
+.toggle-status-action {
+  font-size: 0.74rem;
+  font-weight: 700;
+  padding: 0.35rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.btn-deactivate {
+  background: rgba(239, 68, 68, 0.08);
+  color: #ef4444;
+  border-color: rgba(239, 68, 68, 0.2);
+}
+.btn-deactivate:hover { background: rgba(239, 68, 68, 0.15); }
+.btn-activate {
+  background: rgba(16, 185, 129, 0.08);
+  color: #10b981;
+  border-color: rgba(16, 185, 129, 0.2);
+}
+.btn-activate:hover { background: rgba(16, 185, 129, 0.15); }
+
+.project-action-btns {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.action-icon-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-card);
+  color: var(--text-muted);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: all 0.15s ease;
 }
-.preview-btn:hover { color: #0891b2; border-color: #0891b2; background: rgba(6, 182, 212, 0.08); }
+.action-icon-btn:hover { color: var(--text-main); }
+.preview-btn:hover { color: #0284c7; border-color: #0284c7; background: rgba(2, 132, 199, 0.08); }
 .edit-btn:hover { color: #7c3aed; border-color: #7c3aed; background: rgba(124, 58, 237, 0.08); }
 .delete-btn:hover { color: #ef4444; border-color: #ef4444; background: rgba(239, 68, 68, 0.08); }
 
-.state-row td {
-  text-align: center;
-  padding: 3rem 1.5rem;
-}
-
-.loading-wrap, .empty-state-wrap {
+/* Loading & Empty State */
+.loading-state, .empty-state {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 0.75rem;
+  padding: 4rem;
   color: var(--text-muted);
-  font-size: 0.9rem;
+  gap: 1rem;
 }
+
+.empty-icon-wrap {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: rgba(124, 58, 237, 0.08);
+  color: #7c3aed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-reset-filters {
+  padding: 0.55rem 1rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-card);
+  color: var(--text-main);
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid rgba(124, 58, 237, 0.2);
+  border-top-color: #7c3aed;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
 
 .spinner-mini {
   width: 22px;
@@ -3126,5 +3375,142 @@ onMounted(() => {
   border-radius: 10px;
   font-weight: 700;
   cursor: pointer;
+}
+
+/* Badge, Tags & Deliverables styles */
+.project-badge-tag {
+  display: inline-block;
+  padding: 0.15rem 0.45rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #7c3aed;
+  background: rgba(124, 58, 237, 0.12);
+  border: 1px solid rgba(124, 58, 237, 0.25);
+  border-radius: 6px;
+  margin-right: 0.4rem;
+}
+
+.project-sub-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.project-table-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  margin-top: 0.25rem;
+}
+
+.table-tag-chip {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  background: var(--bg-main);
+  padding: 0.1rem 0.35rem;
+  border-radius: 4px;
+  border: 1px solid var(--border-color);
+}
+
+.preview-hero-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1.5rem;
+}
+
+.preview-hero-badges-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.preview-project-badge {
+  background: rgba(245, 158, 11, 0.2);
+  color: #f59e0b;
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 0.2rem 0.65rem;
+  border-radius: 20px;
+}
+
+.preview-tags-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin: 0.4rem 0 0.6rem 0;
+}
+
+.preview-tag-chip {
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  font-size: 0.72rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 6px;
+  backdrop-filter: blur(4px);
+}
+
+.preview-brand-logo-card {
+  background: #ffffff;
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  max-width: 140px;
+  flex-shrink: 0;
+}
+
+.preview-brand-logo-card img {
+  max-height: 48px;
+  max-width: 110px;
+  object-fit: contain;
+}
+
+.logo-caption {
+  font-size: 0.62rem;
+  color: #64748b;
+  font-weight: 600;
+  text-align: center;
+}
+
+.preview-deliverables-wrap {
+  background: rgba(124, 58, 237, 0.04);
+  border: 1px solid rgba(124, 58, 237, 0.15);
+  border-radius: 12px;
+  padding: 1rem;
+}
+
+.deliverables-heading {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 0.6rem;
+}
+
+.preview-deliverables-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.preview-deliverable-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  background: var(--card-bg);
+  border: 1px solid rgba(124, 58, 237, 0.25);
+  color: #7c3aed;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 0.35rem 0.75rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.03);
 }
 </style>

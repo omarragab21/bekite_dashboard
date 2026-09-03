@@ -207,9 +207,15 @@ const triggerAlert = (message, type = 'success') => {
                    <td class="col-email ltr-text">{{ msg.email || '-' }}</td>
                    <td class="col-subject">{{ msg.subject || '-' }}</td>
                    <td class="col-status">
-                      <span :class="['status-badge-table', msg.status]" @click="toggleReadStatus(msg)" style="cursor: pointer;">
-                         {{ formatStatus(msg.status) }}
-                      </span>
+                      <button
+                         type="button"
+                         :class="['status-badge-table', msg.status]"
+                         @click="toggleReadStatus(msg)"
+                         :title="msg.status === 'read' ? 'انقر للتعيين كغير مقروء' : 'انقر للتعيين كمقروء'"
+                      >
+                         <span class="badge-dot"></span>
+                         <span class="badge-text">{{ msg.status === 'read' ? 'مقروءة' : 'غير مقروءة' }}</span>
+                      </button>
                    </td>
                    <td class="col-actions">
                       <div class="actions-group">
@@ -264,10 +270,18 @@ const triggerAlert = (message, type = 'success') => {
                       {{ currentMessage.message }}
                    </div>
                 </div>
-                <div class="detail-item mt-4">
-                   <label>الحالة:</label>
-                   <span :class="['status-badge-table', currentMessage.status]">{{ formatStatus(currentMessage.status) }}</span>
-                </div>
+                 <div class="detail-item mt-4">
+                    <label>حالة الرسالة:</label>
+                    <div class="modal-status-box">
+                       <span :class="['status-badge-table', currentMessage.status]">
+                          <span class="badge-dot"></span>
+                          <span class="badge-text">{{ currentMessage.status === 'read' ? 'مقروءة' : 'غير مقروءة' }}</span>
+                       </span>
+                       <button type="button" class="btn-toggle-modal" @click="toggleReadStatus(currentMessage)">
+                          {{ currentMessage.status === 'read' ? 'تعيين كغير مقروءة' : 'تعيين كمقروءة' }}
+                       </button>
+                    </div>
+                 </div>
              </div>
           </div>
           
@@ -325,18 +339,110 @@ const triggerAlert = (message, type = 'success') => {
 
 .data-row { transition: 0.2s; }
 .data-row:hover { background: #fefafb; }
-.data-row.is-unread { background: #fff9fc; }
+.data-row.is-unread { background: #fffbfb; }
 
 .name-cell { display: flex; align-items: center; gap: 8px; justify-content: flex-start; }
-.unread-dot { width: 8px; height: 8px; border-radius: 50%; background: #873260; flex-shrink: 0; }
+.unread-dot { width: 8px; height: 8px; border-radius: 50%; background: #ef4444; box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.25); flex-shrink: 0; }
 .sender-name { font-weight: 700; color: #111827; }
 
 .ltr-text { direction: ltr; text-align: left; }
 
-.status-badge-table { padding: 4px 12px; border-radius: 100px; font-size: 0.75rem; font-weight: 700; display: inline-block; transition: 0.2s; }
-.status-badge-table.unread { background: #fdf2f8; color: #873260; border: 1px solid rgba(139, 34, 82, 0.2); }
-.status-badge-table.read { background: #f3f4f6; color: #6b7280; border: 1px solid #e5e7eb; }
-.status-badge-table:hover { opacity: 0.8; }
+.col-status {
+  width: 140px;
+  min-width: 140px;
+  text-align: center;
+  white-space: nowrap !important;
+}
+
+.status-badge-table {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  white-space: nowrap !important;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  line-height: 1;
+  user-select: none;
+}
+
+.status-badge-table .badge-text {
+  white-space: nowrap !important;
+  display: inline-block;
+}
+
+.badge-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+/* UNREAD: RED */
+.status-badge-table.unread {
+  background: rgba(239, 68, 68, 0.1) !important;
+  color: #ef4444 !important;
+  border-color: rgba(239, 68, 68, 0.25) !important;
+}
+.status-badge-table.unread:hover {
+  background: rgba(239, 68, 68, 0.18) !important;
+  border-color: rgba(239, 68, 68, 0.45) !important;
+}
+.status-badge-table.unread .badge-dot {
+  background: #ef4444 !important;
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.25);
+  animation: pulse-red 2s infinite;
+}
+
+/* READ: GREEN */
+.status-badge-table.read {
+  background: rgba(16, 185, 129, 0.1) !important;
+  color: #10b981 !important;
+  border-color: rgba(16, 185, 129, 0.25) !important;
+}
+.status-badge-table.read:hover {
+  background: rgba(16, 185, 129, 0.18) !important;
+  border-color: rgba(16, 185, 129, 0.45) !important;
+}
+.status-badge-table.read .badge-dot {
+  background: #10b981 !important;
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+}
+
+@keyframes pulse-red {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.5); }
+  70% { transform: scale(1); box-shadow: 0 0 0 4px rgba(239, 68, 68, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+}
+
+.modal-status-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 4px;
+}
+.btn-toggle-modal {
+  padding: 5px 12px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  background: #f9fafb;
+  color: #4b5563;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s;
+  white-space: nowrap;
+}
+.btn-toggle-modal:hover {
+  background: #f3f4f6;
+  color: #111827;
+}
 
 .actions-group { display: flex; gap: 8px; justify-content: center; }
 .action-btn { width: 32px; height: 32px; border-radius: 6px; border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
