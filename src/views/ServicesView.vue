@@ -339,9 +339,66 @@
                     <span>الأيقونة الحالية: <strong>{{ formData.icon_name }}</strong> (ارفع ملفاً جديداً لاستبدالها)</span>
                   </div>
                 </div>
-                <div class="form-group">
-                  <label class="form-label">صورة الهيرو الاستعراضية (Hero Image URL)</label>
-                  <input type="text" v-model="formData.hero_image" class="form-input ltr-text" placeholder="https://images.unsplash.com/photo-1547658719-da2b51169166?w=1200&q=80" />
+                <div class="form-group image-upload-form-group">
+                  <div class="label-with-hint">
+                    <label class="form-label">صورة الهيرو الاستعراضية (رفع صورة)</label>
+                    <span class="icon-format-tag">PNG / JPG / WebP</span>
+                  </div>
+
+                  <input
+                    type="file"
+                    ref="heroImageInput"
+                    class="hidden-file-input"
+                    accept="image/*"
+                    @change="handleHeroImageUpload"
+                  />
+
+                  <!-- Uploaded Hero Image Box -->
+                  <div v-if="formData.hero_image" class="image-uploaded-box">
+                    <div class="image-uploaded-preview-wrap">
+                      <img :src="formData.hero_image" alt="Hero Image" class="image-uploaded-img" @error="onImgError" />
+                    </div>
+                    <div class="image-uploaded-meta">
+                      <span class="image-uploaded-name">تم تعيين صورة الهيرو</span>
+                      <div class="image-uploaded-actions">
+                        <button type="button" class="btn-icon-action change-btn" @click="triggerHeroImageInput">
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+                          </svg>
+                          <span>تغيير الصورة</span>
+                        </button>
+                        <button type="button" class="btn-icon-action remove-btn" @click="removeHeroImage">
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                          </svg>
+                          <span>إزالة</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Empty Dropzone State -->
+                  <div
+                    v-else
+                    class="image-dropzone"
+                    :class="{ 'is-dragover': isDraggingHero }"
+                    @click="triggerHeroImageInput"
+                    @dragover.prevent="isDraggingHero = true"
+                    @dragleave.prevent="isDraggingHero = false"
+                    @drop.prevent="handleHeroImageDrop"
+                  >
+                    <div class="image-dropzone-icon">
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                        <circle cx="8.5" cy="8.5" r="1.5"/>
+                        <polyline points="21 15 16 10 5 21"/>
+                      </svg>
+                    </div>
+                    <div class="image-dropzone-content">
+                      <span class="image-dropzone-title">انقر لرفع صورة الهيرو من جهازك أو اسحبها هنا</span>
+                      <span class="image-dropzone-hint">يدعم صيغ PNG, JPG, WebP (بحد أقصى 5MB)</span>
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -446,9 +503,66 @@
                 </div>
 
                 <div class="form-grid-2">
-                  <div class="form-group">
-                    <label class="form-label">صورة الحل التوضيحية (Solve Image URL)</label>
-                    <input type="text" v-model="formData.solve_section.image" class="form-input ltr-text" placeholder="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1000&q=80" />
+                  <div class="form-group image-upload-form-group">
+                    <div class="label-with-hint">
+                      <label class="form-label">صورة الحل التوضيحية (رفع صورة)</label>
+                      <span class="icon-format-tag">PNG / JPG / WebP</span>
+                    </div>
+
+                    <input
+                      type="file"
+                      ref="solveImageInput"
+                      class="hidden-file-input"
+                      accept="image/*"
+                      @change="handleSolveImageUpload"
+                    />
+
+                    <!-- Uploaded Solve Image Box -->
+                    <div v-if="formData.solve_section.image" class="image-uploaded-box">
+                      <div class="image-uploaded-preview-wrap">
+                        <img :src="formData.solve_section.image" alt="Solve Image" class="image-uploaded-img" @error="onImgError" />
+                      </div>
+                      <div class="image-uploaded-meta">
+                        <span class="image-uploaded-name">تم تعيين صورة الحل</span>
+                        <div class="image-uploaded-actions">
+                          <button type="button" class="btn-icon-action change-btn" @click="triggerSolveImageInput">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+                            </svg>
+                            <span>تغيير الصورة</span>
+                          </button>
+                          <button type="button" class="btn-icon-action remove-btn" @click="removeSolveImage">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                            </svg>
+                            <span>إزالة</span>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Empty Dropzone State -->
+                    <div
+                      v-else
+                      class="image-dropzone"
+                      :class="{ 'is-dragover': isDraggingSolve }"
+                      @click="triggerSolveImageInput"
+                      @dragover.prevent="isDraggingSolve = true"
+                      @dragleave.prevent="isDraggingSolve = false"
+                      @drop.prevent="handleSolveImageDrop"
+                    >
+                      <div class="image-dropzone-icon">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                          <circle cx="8.5" cy="8.5" r="1.5"/>
+                          <polyline points="21 15 16 10 5 21"/>
+                        </svg>
+                      </div>
+                      <div class="image-dropzone-content">
+                        <span class="image-dropzone-title">انقر لرفع صورة الحل من جهازك أو اسحبها هنا</span>
+                        <span class="image-dropzone-hint">يدعم صيغ PNG, JPG, WebP (بحد أقصى 5MB)</span>
+                      </div>
+                    </div>
                   </div>
                   <div class="form-group">
                     <label class="form-label">نص زر الإجراء (CTA Text)</label>
@@ -746,7 +860,7 @@ function goToPrevTab() {
 }
 
 function onImgError(e) {
-  e.target.src = 'https://images.unsplash.com/photo-1547658719-da2b51169166?w=1200&q=80';
+  e.target.style.display = 'none';
 }
 
 const defaultSolutionForm = () => ({
@@ -757,9 +871,9 @@ const defaultSolutionForm = () => ({
   slug: 'web-development',
   category: 'technology',
   badge: 'DEVELOPMENT',
-  icon_name: 'Code',
+  icon_name: 'Custom',
   icon_image: '',
-  hero_image: 'https://images.unsplash.com/photo-1547658719-da2b51169166?w=1200&q=80',
+  hero_image: '',
   description: 'نطور مواقع وتطبيقات ويب استثنائية تجمع بين التصميم المبتكر والأداء الفائق وأعلى معايير الأمان.',
   technologies: ['React 18', 'Vue 3', 'TailwindCSS', 'Node.js', 'PostgreSQL'],
   is_active: 1,
@@ -781,7 +895,7 @@ const defaultSolutionForm = () => ({
     title: 'كيف نعيد هندسة حضورك الرقمي؟',
     subtitle: 'نهج شامل يجمع بين الفن البرمجي والأداء التجاري القابل للتوسع.',
     description: 'نبني منصات ويب مخصصة بالكامل وفق أعلى المعايير العالمية، مع التركيز على سرعة استجابة فائقة، تجربة مستخدم سلسة، وتهيئة متكاملة لمحركات البحث لضمان تحقيق أعلى عوائد استثمار.',
-    image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1000&q=80',
+    image: '',
     ctaText: 'ابدأ مشروعك الآن مع استشارة مجانية'
   },
 
@@ -870,6 +984,93 @@ const removeIcon = () => {
   success('تمت إزالة الأيقونة');
 };
 
+// Hero Image Upload Handling
+const heroImageInput = ref(null);
+const isDraggingHero = ref(false);
+
+const triggerHeroImageInput = () => {
+  heroImageInput.value?.click();
+};
+
+const processHeroImageFile = (file) => {
+  if (!file) return;
+  if (file.size > 5 * 1024 * 1024) {
+    toastError('حجم صورة الهيرو يجب ألا يتجاوز 5 ميجابايت');
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    formData.value.hero_image = e.target.result;
+    success('تم رفع صورة الهيرو بنجاح');
+  };
+  reader.onerror = () => {
+    toastError('تعذر قراءة ملف الصورة');
+  };
+  reader.readAsDataURL(file);
+};
+
+const handleHeroImageUpload = (e) => {
+  const file = e.target.files?.[0];
+  processHeroImageFile(file);
+  e.target.value = '';
+};
+
+const handleHeroImageDrop = (e) => {
+  isDraggingHero.value = false;
+  const file = e.dataTransfer?.files?.[0];
+  processHeroImageFile(file);
+};
+
+const removeHeroImage = () => {
+  formData.value.hero_image = '';
+  if (heroImageInput.value) heroImageInput.value.value = '';
+  success('تمت إزالة صورة الهيرو');
+};
+
+// Solve Section Image Upload Handling
+const solveImageInput = ref(null);
+const isDraggingSolve = ref(false);
+
+const triggerSolveImageInput = () => {
+  solveImageInput.value?.click();
+};
+
+const processSolveImageFile = (file) => {
+  if (!file) return;
+  if (file.size > 5 * 1024 * 1024) {
+    toastError('حجم صورة الحل يجب ألا يتجاوز 5 ميجابايت');
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    if (!formData.value.solve_section) formData.value.solve_section = {};
+    formData.value.solve_section.image = e.target.result;
+    success('تم رفع صورة الحل المبتكر بنجاح');
+  };
+  reader.onerror = () => {
+    toastError('تعذر قراءة ملف الصورة');
+  };
+  reader.readAsDataURL(file);
+};
+
+const handleSolveImageUpload = (e) => {
+  const file = e.target.files?.[0];
+  processSolveImageFile(file);
+  e.target.value = '';
+};
+
+const handleSolveImageDrop = (e) => {
+  isDraggingSolve.value = false;
+  const file = e.dataTransfer?.files?.[0];
+  processSolveImageFile(file);
+};
+
+const removeSolveImage = () => {
+  if (formData.value.solve_section) formData.value.solve_section.image = '';
+  if (solveImageInput.value) solveImageInput.value.value = '';
+  success('تمت إزالة صورة الحل');
+};
+
 const openPreviewModal = (sol) => {
   previewSolution.value = JSON.parse(JSON.stringify(sol));
   const def = defaultSolutionForm();
@@ -894,7 +1095,11 @@ const openAddModal = () => {
   currentEditId.value = null;
   activeTab.value = 'general';
   formData.value = defaultSolutionForm();
+  formData.value.hero_image = '';
+  if (formData.value.solve_section) formData.value.solve_section.image = '';
   if (iconFileInput.value) iconFileInput.value.value = '';
+  if (heroImageInput.value) heroImageInput.value.value = '';
+  if (solveImageInput.value) solveImageInput.value.value = '';
   modalOpen.value = true;
 };
 
@@ -907,7 +1112,7 @@ const openEditModal = (sol) => {
   const def = defaultSolutionForm();
   if (!formData.value.technologies) formData.value.technologies = [];
   if (!formData.value.title_highlight) formData.value.title_highlight = '';
-  if (!formData.value.hero_image) formData.value.hero_image = def.hero_image;
+  if (formData.value.hero_image === undefined) formData.value.hero_image = '';
   if (!formData.value.icon_image) {
     formData.value.icon_image = sol.icon_image || (sol.icon && (sol.icon.startsWith('data:') || sol.icon.startsWith('http') || sol.icon.startsWith('/')) ? sol.icon : '');
   }
@@ -918,6 +1123,8 @@ const openEditModal = (sol) => {
   if (!formData.value.why_section) formData.value.why_section = def.why_section;
 
   if (iconFileInput.value) iconFileInput.value.value = '';
+  if (heroImageInput.value) heroImageInput.value.value = '';
+  if (solveImageInput.value) solveImageInput.value.value = '';
   modalOpen.value = true;
 };
 
@@ -2133,5 +2340,119 @@ onMounted(() => {
   width: 20px;
   height: 20px;
   object-fit: contain;
+}
+
+/* Image Upload (Hero & Solve Section) */
+.image-upload-form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.image-dropzone {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.85rem 1rem;
+  border: 1.5px dashed var(--border-color);
+  border-radius: 12px;
+  background: var(--bg-card);
+  cursor: pointer;
+  transition: all 0.25s ease;
+  min-height: 72px;
+}
+
+.image-dropzone:hover {
+  border-color: #7c3aed;
+  background: rgba(124, 58, 237, 0.03);
+}
+
+.image-dropzone.is-dragover {
+  border-color: #7c3aed;
+  background: rgba(124, 58, 237, 0.08);
+  transform: scale(1.01);
+}
+
+.image-dropzone-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  background: rgba(124, 58, 237, 0.1);
+  color: #7c3aed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.image-dropzone:hover .image-dropzone-icon {
+  transform: scale(1.08);
+}
+
+.image-dropzone-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  text-align: right;
+}
+
+.image-dropzone-title {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.image-dropzone-hint {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+.image-uploaded-box {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  background: var(--bg-card);
+  border: 1.5px solid rgba(16, 185, 129, 0.35);
+  border-radius: 12px;
+  min-height: 72px;
+}
+
+.image-uploaded-preview-wrap {
+  width: 68px;
+  height: 48px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+  background: #18181b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.image-uploaded-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.image-uploaded-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  flex: 1;
+}
+
+.image-uploaded-name {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #10b981;
+}
+
+.image-uploaded-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 </style>
