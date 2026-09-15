@@ -207,6 +207,7 @@ export function createSolutionModel(raw = {}) {
     hero_image: raw.hero_image || '',
     icon: raw.icon || 'code',
     icon_name: raw.icon_name || 'Code',
+    icon_image: raw.icon_image || raw.icon_url || (raw.icon && (raw.icon.startsWith('data:') || raw.icon.startsWith('http') || raw.icon.startsWith('/')) ? raw.icon : ''),
     technologies: Array.isArray(raw.technologies) ? raw.technologies : [],
     tags: Array.isArray(raw.tags) ? raw.tags : [],
     capabilities: Array.isArray(raw.capabilities) ? raw.capabilities : [],

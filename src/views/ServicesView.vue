@@ -84,7 +84,13 @@
       >
         <div class="sol-top">
           <div class="sol-icon-box" :class="'cat-' + sol.category">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <img
+              v-if="sol.icon_image"
+              :src="sol.icon_image"
+              class="sol-custom-icon"
+              alt="Icon"
+            />
+            <svg v-else width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <g v-if="sol.icon_name === 'Code'">
                 <path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/>
               </g>
@@ -267,19 +273,71 @@
               </div>
 
               <div class="form-grid-2">
-                <div class="form-group">
-                  <label class="form-label">الأيقونة (Icon Name)</label>
-                  <select v-model="formData.icon_name" class="form-input ltr-text">
-                    <option value="Code">Code</option>
-                    <option value="Smartphone">Smartphone</option>
-                    <option value="Database">Database</option>
-                    <option value="Cloud">Cloud</option>
-                    <option value="Palette">Palette</option>
-                    <option value="Share2">Share2</option>
-                    <option value="TrendingUp">TrendingUp</option>
-                    <option value="FileText">FileText</option>
-                    <option value="Camera">Camera</option>
-                  </select>
+                <div class="form-group icon-upload-form-group">
+                  <div class="label-with-hint">
+                    <label class="form-label">أيقونة الحل (رفع أيقونة)</label>
+                    <span class="icon-format-tag">SVG / PNG / WebP</span>
+                  </div>
+
+                  <input
+                    type="file"
+                    ref="iconFileInput"
+                    class="hidden-file-input"
+                    accept="image/*,.svg"
+                    @change="handleIconUpload"
+                  />
+
+                  <!-- Uploaded Icon Box -->
+                  <div v-if="formData.icon_image" class="icon-uploaded-box">
+                    <div class="icon-uploaded-preview-wrap" :class="'cat-' + formData.category">
+                      <img :src="formData.icon_image" alt="Uploaded Icon" class="icon-uploaded-img" />
+                    </div>
+                    <div class="icon-uploaded-meta">
+                      <span class="icon-uploaded-name">تم رفع الأيقونة بنجاح</span>
+                      <div class="icon-uploaded-actions">
+                        <button type="button" class="btn-icon-action change-btn" @click="triggerIconInput">
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+                          </svg>
+                          <span>تغيير</span>
+                        </button>
+                        <button type="button" class="btn-icon-action remove-btn" @click="removeIcon">
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                          </svg>
+                          <span>إزالة</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Empty Dropzone State -->
+                  <div
+                    v-else
+                    class="icon-dropzone"
+                    :class="{ 'is-dragover': isDraggingIcon }"
+                    @click="triggerIconInput"
+                    @dragover.prevent="isDraggingIcon = true"
+                    @dragleave.prevent="isDraggingIcon = false"
+                    @drop.prevent="handleIconDrop"
+                  >
+                    <div class="icon-dropzone-icon">
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                        <polyline points="17 8 12 3 7 8"/>
+                        <line x1="12" y1="3" x2="12" y2="15"/>
+                      </svg>
+                    </div>
+                    <div class="icon-dropzone-content">
+                      <span class="icon-dropzone-title">انقر لرفع أيقونة أو اسحبها هنا</span>
+                      <span class="icon-dropzone-hint">يدعم SVG أو PNG بخلفية شفافة (حتى 2MB)</span>
+                    </div>
+                  </div>
+
+                  <div v-if="!formData.icon_image && formData.icon_name" class="icon-current-notice">
+                    <span class="notice-dot"></span>
+                    <span>الأيقونة الحالية: <strong>{{ formData.icon_name }}</strong> (ارفع ملفاً جديداً لاستبدالها)</span>
+                  </div>
                 </div>
                 <div class="form-group">
                   <label class="form-label">صورة الهيرو الاستعراضية (Hero Image URL)</label>
@@ -531,7 +589,12 @@
           <button class="preview-close-btn" @click="previewModalOpen = false">✕</button>
           
           <div class="preview-hero-content">
-            <span class="preview-client-badge">{{ previewSolution.badge || 'DIGITAL SOLUTION' }}</span>
+            <div class="preview-hero-top-row">
+              <span class="preview-client-badge">{{ previewSolution.badge || 'DIGITAL SOLUTION' }}</span>
+              <div v-if="previewSolution.icon_image" class="preview-hero-icon-pill">
+                <img :src="previewSolution.icon_image" alt="icon" class="preview-hero-icon-img" />
+              </div>
+            </div>
             <h2 class="preview-hero-title">{{ previewSolution.title }}</h2>
             <h3 v-if="previewSolution.title_highlight" class="preview-highlight-headline">
               {{ previewSolution.title_highlight }}
@@ -695,6 +758,7 @@ const defaultSolutionForm = () => ({
   category: 'technology',
   badge: 'DEVELOPMENT',
   icon_name: 'Code',
+  icon_image: '',
   hero_image: 'https://images.unsplash.com/photo-1547658719-da2b51169166?w=1200&q=80',
   description: 'نطور مواقع وتطبيقات ويب استثنائية تجمع بين التصميم المبتكر والأداء الفائق وأعلى معايير الأمان.',
   technologies: ['React 18', 'Vue 3', 'TailwindCSS', 'Node.js', 'PostgreSQL'],
@@ -762,9 +826,56 @@ const defaultSolutionForm = () => ({
 
 const formData = ref(defaultSolutionForm());
 
+// Custom Icon Upload Handling
+const iconFileInput = ref(null);
+const isDraggingIcon = ref(false);
+
+const triggerIconInput = () => {
+  iconFileInput.value?.click();
+};
+
+const processIconFile = (file) => {
+  if (!file) return;
+  if (file.size > 2 * 1024 * 1024) {
+    toastError('حجم ملف الأيقونة يجب ألا يتجاوز 2 ميجابايت');
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    formData.value.icon_image = e.target.result;
+    formData.value.icon = e.target.result;
+    success('تم رفع الأيقونة بنجاح');
+  };
+  reader.onerror = () => {
+    toastError('تعذر قراءة ملف الأيقونة');
+  };
+  reader.readAsDataURL(file);
+};
+
+const handleIconUpload = (e) => {
+  const file = e.target.files?.[0];
+  processIconFile(file);
+  e.target.value = '';
+};
+
+const handleIconDrop = (e) => {
+  isDraggingIcon.value = false;
+  const file = e.dataTransfer?.files?.[0];
+  processIconFile(file);
+};
+
+const removeIcon = () => {
+  formData.value.icon_image = '';
+  if (iconFileInput.value) iconFileInput.value.value = '';
+  success('تمت إزالة الأيقونة');
+};
+
 const openPreviewModal = (sol) => {
   previewSolution.value = JSON.parse(JSON.stringify(sol));
   const def = defaultSolutionForm();
+  if (!previewSolution.value.icon_image) {
+    previewSolution.value.icon_image = sol.icon_image || (sol.icon && (sol.icon.startsWith('data:') || sol.icon.startsWith('http') || sol.icon.startsWith('/')) ? sol.icon : '');
+  }
   if (!previewSolution.value.problem_section) previewSolution.value.problem_section = def.problem_section;
   if (!previewSolution.value.solve_section) previewSolution.value.solve_section = def.solve_section;
   if (!previewSolution.value.deliver_section) previewSolution.value.deliver_section = def.deliver_section;
@@ -783,6 +894,7 @@ const openAddModal = () => {
   currentEditId.value = null;
   activeTab.value = 'general';
   formData.value = defaultSolutionForm();
+  if (iconFileInput.value) iconFileInput.value.value = '';
   modalOpen.value = true;
 };
 
@@ -796,12 +908,16 @@ const openEditModal = (sol) => {
   if (!formData.value.technologies) formData.value.technologies = [];
   if (!formData.value.title_highlight) formData.value.title_highlight = '';
   if (!formData.value.hero_image) formData.value.hero_image = def.hero_image;
+  if (!formData.value.icon_image) {
+    formData.value.icon_image = sol.icon_image || (sol.icon && (sol.icon.startsWith('data:') || sol.icon.startsWith('http') || sol.icon.startsWith('/')) ? sol.icon : '');
+  }
   if (!formData.value.problem_section) formData.value.problem_section = def.problem_section;
   if (!formData.value.solve_section) formData.value.solve_section = def.solve_section;
   if (!formData.value.deliver_section) formData.value.deliver_section = def.deliver_section;
   if (!formData.value.process_section) formData.value.process_section = def.process_section;
   if (!formData.value.why_section) formData.value.why_section = def.why_section;
 
+  if (iconFileInput.value) iconFileInput.value.value = '';
   modalOpen.value = true;
 };
 
@@ -854,6 +970,9 @@ const closeModal = () => {
 const saveSolution = async () => {
   saving.value = true;
   try {
+    if (formData.value.icon_image) {
+      formData.value.icon = formData.value.icon_image;
+    }
     if (isEdit.value) {
       const updated = await SolutionService.update(currentEditId.value, formData.value);
       const idx = solutions.value.findIndex(s => s.id === currentEditId.value);
@@ -1797,5 +1916,222 @@ onMounted(() => {
   padding: 0.1rem 0.45rem;
   border-radius: 4px;
   margin-bottom: 0.4rem;
+}
+
+/* Custom Icon Upload & Presentation */
+.hidden-file-input {
+  display: none !important;
+}
+
+.sol-custom-icon {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+}
+
+.icon-upload-form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.label-with-hint {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.4rem;
+}
+
+.icon-format-tag {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  background: rgba(124, 58, 237, 0.08);
+  border: 1px solid rgba(124, 58, 237, 0.15);
+  padding: 0.15rem 0.5rem;
+  border-radius: 6px;
+  font-family: 'Outfit', sans-serif;
+}
+
+.icon-dropzone {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.85rem 1rem;
+  border: 1.5px dashed var(--border-color);
+  border-radius: 12px;
+  background: var(--bg-card);
+  cursor: pointer;
+  transition: all 0.25s ease;
+  min-height: 72px;
+}
+
+.icon-dropzone:hover {
+  border-color: #7c3aed;
+  background: rgba(124, 58, 237, 0.03);
+}
+
+.icon-dropzone.is-dragover {
+  border-color: #7c3aed;
+  background: rgba(124, 58, 237, 0.08);
+  transform: scale(1.01);
+}
+
+.icon-dropzone-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  background: rgba(124, 58, 237, 0.1);
+  color: #7c3aed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.icon-dropzone:hover .icon-dropzone-icon {
+  transform: scale(1.08);
+}
+
+.icon-dropzone-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  text-align: right;
+}
+
+.icon-dropzone-title {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.icon-dropzone-hint {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+.icon-uploaded-box {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  background: var(--bg-card);
+  border: 1.5px solid rgba(16, 185, 129, 0.35);
+  border-radius: 12px;
+  min-height: 72px;
+}
+
+.icon-uploaded-preview-wrap {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.icon-uploaded-img {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+}
+
+.icon-uploaded-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  flex: 1;
+}
+
+.icon-uploaded-name {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #10b981;
+}
+
+.icon-uploaded-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-icon-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.25rem 0.65rem;
+  border-radius: 6px;
+  font-size: 0.73rem;
+  font-weight: 700;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.btn-icon-action.change-btn {
+  background: rgba(124, 58, 237, 0.1);
+  color: #7c3aed;
+  border-color: rgba(124, 58, 237, 0.25);
+}
+.btn-icon-action.change-btn:hover {
+  background: #7c3aed;
+  color: #fff;
+}
+
+.btn-icon-action.remove-btn {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+  border-color: rgba(239, 68, 68, 0.25);
+}
+.btn-icon-action.remove-btn:hover {
+  background: #ef4444;
+  color: #fff;
+}
+
+.icon-current-notice {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-top: 0.4rem;
+  padding: 0.25rem 0.5rem;
+  background: rgba(0, 0, 0, 0.02);
+  border-radius: 6px;
+}
+
+.notice-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #7c3aed;
+  flex-shrink: 0;
+}
+
+.preview-hero-top-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.preview-hero-icon-pill {
+  width: 34px;
+  height: 34px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.preview-hero-icon-img {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
 }
 </style>
