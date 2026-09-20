@@ -174,7 +174,7 @@ const router = useRouter();
 
 const form = ref({
   email: 'admin@bekite.com',
-  password: 'admin123',
+  password: 'password123',
   remember: true,
 });
 
@@ -218,14 +218,16 @@ const handleLogin = async () => {
   loading.value = true;
 
   try {
-    const response = await api.post('/v1/login', {
+    const response = await api.post('/dashboard/login', {
       email: form.value.email,
       password: form.value.password,
     });
 
     // حفظ الـ token والمعلومات
+    const userData = response.data.user || response.data.admin || {};
     localStorage.setItem('token', response.data.token);
-    localStorage.setItem('admin', JSON.stringify(response.data.admin));
+    localStorage.setItem('user', JSON.stringify(userData));
+    localStorage.setItem('admin', JSON.stringify(userData));
 
     if (form.value.remember) {
       localStorage.setItem('remembered_email', form.value.email);

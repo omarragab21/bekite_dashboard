@@ -31,7 +31,7 @@ const fetchLogs = async () => {
 
 const fetchAdmins = async () => {
     try {
-        const response = await api.get('/dashboard/admins');
+        const response = await api.get('/dashboard/users');
         admins.value = response.data.data;
     } catch (error) {
         console.error('Failed to fetch admins');

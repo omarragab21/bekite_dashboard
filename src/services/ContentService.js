@@ -3,6 +3,7 @@
  */
 
 import apiClient from '../infrastructure/api/client';
+import { JobService } from './JobService';
 
 export class ContentService {
   // 1. Articles & News
@@ -26,25 +27,25 @@ export class ContentService {
     return res.data;
   }
 
-  // 2. Careers & Job Postings
+  // 2. Careers & Job Postings (job-site)
+  static normalizeCareerPayload(payload = {}) {
+    return JobService.normalizePayload(payload);
+  }
+
   static async getCareers(params = {}) {
-    const res = await apiClient.get('/dashboard/careers', { params });
-    return res.data?.data || [];
+    return JobService.getAll(params);
   }
 
   static async createCareer(payload) {
-    const res = await apiClient.post('/dashboard/careers', payload);
-    return res.data?.data;
+    return JobService.create(payload);
   }
 
   static async updateCareer(id, payload) {
-    const res = await apiClient.put(`/dashboard/careers/${id}`, payload);
-    return res.data?.data;
+    return JobService.update(id, payload);
   }
 
   static async deleteCareer(id) {
-    const res = await apiClient.delete(`/dashboard/careers/${id}`);
-    return res.data;
+    return JobService.delete(id);
   }
 
   // 3. Team Members

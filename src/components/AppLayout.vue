@@ -132,7 +132,7 @@
                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
               </svg>
             </div>
-            <span class="user-name">{{ adminName }}</span>
+            <span class="user-name">{{ displayName }}</span>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <polyline points="6 9 12 15 18 9"/>
             </svg>
@@ -141,9 +141,9 @@
             <div v-if="userMenuOpen" class="user-dropdown" @click.stop>
               <div class="dropdown-header">
                 <div class="user-info">
-                  <span class="user-role">{{ adminName }}</span>
-                  <span class="user-email">{{ adminEmail }}</span>
-                  <span class="user-badge">{{ adminRole }}</span>
+                  <span class="user-role">{{ displayName }}</span>
+                  <span v-if="displayEmail" class="user-email">{{ displayEmail }}</span>
+                  <span class="user-badge">{{ displayRole }}</span>
                 </div>
                 <div class="user-avatar-large">
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -227,14 +227,19 @@ import { useRouter, useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import api from '../config/axios';
 import { useTheme } from '../composables/useTheme';
+import { InquiryService, MessageService } from '../services';
 
 const { isDark, toggleTheme } = useTheme();
 
 const router = useRouter();
 const route = useRoute();
-const adminName = ref('عمر رجب');
-const adminEmail = ref('admin@bekite.com');
-const adminRole = ref('مدير النظام (سوبر)');
+const adminName = ref('');
+const adminEmail = ref('');
+const adminRole = ref('');
+
+const displayName = computed(() => adminName.value?.trim() || 'مدير النظام');
+const displayRole = computed(() => adminRole.value?.trim() || 'مدير النظام');
+const displayEmail = computed(() => adminEmail.value?.trim() || '');
 const sidebarCollapsed = ref(false);
 const userMenuOpen = ref(false);
 const inquiriesCount = ref(0);
@@ -245,7 +250,8 @@ const notifOpen = ref(false);
 const notifications = ref([]);
 const unreadCount = ref(0);
 const notifWrapper = ref(null);
-let notifPollInterval = null;
+let unsubscribeMessages = null;
+let inquiriesPollInterval = null;
 
 const currentRouteName = computed(() => {
   const map = {
@@ -256,13 +262,15 @@ const currentRouteName = computed(() => {
     '/admin/products': 'المنتجات والأنظمة الرقمية',
     '/admin/categories': 'أقسام المنتجات الرقمية',
     '/admin/services': 'دليل الحلول والخدمات',
-    '/admin/brands': 'علاماتنا والشركات التابعة (Venture Brands)',
+    '/admin/brands': 'العلامات التجارية والشركات التابعة (Brands & Ventures)',
+    '/admin/partners': 'شركاء التكنولوجيا والاعتماد الدولي (Strategic Partners)',
     '/admin/service-requests': 'طلبات واستفسارات العملاء (CRM Leads)',
     '/admin/careers': 'الوظائف والفرص المتاحة (Careers)',
     '/admin/knowledge-guides': 'الوظائف والفرص المتاحة (Careers)',
     '/admin/messages': 'رسائل التواصل',
     '/admin/team-members': 'فريق العمل والقيادة',
     '/admin/dynamic-pages': 'الصفحات والسياسات',
+    '/admin/about-us': locale.value === 'en' ? 'About Us' : 'معلومات التواصل',
     '/admin/settings': 'إعدادات المنصة',
     '/admin/admins': 'مدراء النظام والصلاحيات',
     '/admin/activity-log': 'سجل النشاطات',
@@ -274,53 +282,31 @@ const currentRouteName = computed(() => {
 
 const toggleNotifications = () => {
   notifOpen.value = !notifOpen.value;
-  if (notifOpen.value) {
-    fetchNotifications();
-    fetchUnreadCount();
-  }
-};
-
-const fetchNotifications = async () => {
-  try {
-    const res = await api.get('/dashboard/notifications?per_page=20');
-    notifications.value = res.data.data || [];
-  } catch (err) {
-    console.error('Failed to fetch notifications', err);
-  }
-};
-
-const fetchUnreadCount = async () => {
-  try {
-    const res = await api.get('/dashboard/notifications/unread-count');
-    unreadCount.value = res.data.count || 0;
-  } catch (err) {
-    console.error('Failed to fetch unread count', err);
-  }
 };
 
 const fetchInquiriesCount = async () => {
   try {
-    const res = await api.get('/dashboard/service-requests');
-    inquiriesCount.value = (res.data.data || []).filter(i => i.status === 'new').length;
+    const inquiries = await InquiryService.getAll();
+    inquiriesCount.value = (inquiries || []).filter(i => (i.status || '').toLowerCase() === 'new').length;
   } catch (err) {
-    console.error('Failed to fetch leads count', err);
+    inquiriesCount.value = 0;
   }
 };
 
 const markAllAsRead = async () => {
   try {
-    await api.post('/dashboard/notifications/read-all');
+    await MessageService.markAllAsRead();
     notifications.value.forEach(n => (n.is_read = true));
     unreadCount.value = 0;
   } catch (err) {
-    console.error('Failed to mark all as read', err);
+    console.error('Failed to mark all as read in Firebase', err);
   }
 };
 
 const handleNotifClick = async (notif) => {
   if (!notif.is_read) {
     try {
-      await api.post(`/dashboard/notifications/${notif.id}/read`);
+      await MessageService.updateStatus(notif.id, 'read');
       notif.is_read = true;
       unreadCount.value = Math.max(0, unreadCount.value - 1);
     } catch (err) {
@@ -393,9 +379,9 @@ const closeUserMenu = (e) => {
 
 const handleLogout = async () => {
   try {
-    await api.post('/logout');
+    await api.post('/admin/logout');
   } catch (err) {
-    console.error(err);
+    console.warn('Logout API failed, clearing local storage anyway', err);
   } finally {
     localStorage.removeItem('token');
     localStorage.removeItem('admin');
@@ -433,8 +419,13 @@ const menuItems = computed(() => [
   },
   {
     route: '/admin/brands',
-    label: 'علاماتنا',
-    icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>`,
+    label: 'العلامات التجارية',
+    icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>`,
+  },
+  {
+    route: '/admin/partners',
+    label: 'الشركاء',
+    icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>`,
   },
   {
     route: '/admin/careers',
@@ -450,30 +441,75 @@ const menuItems = computed(() => [
       { route: '/admin/service-requests', label: 'طلبات العملاء (CRM)' },
     ],
   },
+  {
+    route: '/admin/about-us',
+    label: locale.value === 'en' ? 'About Us' : 'معلومات التواصل',
+    icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>`,
+  },
 ]);
 
-onMounted(() => {
-  const adminInner = JSON.parse(localStorage.getItem('admin') || '{}');
-  if (adminInner?.name) adminName.value = adminInner.name;
-  if (adminInner?.email) adminEmail.value = adminInner.email;
-  if (adminInner?.is_super_admin) adminRole.value = 'مدير النظام (سوبر)';
+const updateAdminFromStorage = (e) => {
+  const adminInner = e?.detail || JSON.parse(localStorage.getItem('admin') || '{}');
+  adminName.value = adminInner?.name || adminInner?.name_ar || '';
+  adminEmail.value = adminInner?.email || '';
+  if (adminInner?.is_super_admin) adminRole.value = 'مدير عام النظام';
+  else if (adminInner?.role_name) adminRole.value = adminInner.role_name;
   else if (adminInner?.role) adminRole.value = adminInner.role;
+  else adminRole.value = 'مدير النظام';
+};
+
+const fetchCurrentUserFromApi = async () => {
+  const token = localStorage.getItem('token');
+  if (!token) return;
+  try {
+    const res = await api.get('/auth/me');
+    const user = res.data?.data || res.data;
+    if (user) {
+      if (user.name) adminName.value = user.name;
+      if (user.email) adminEmail.value = user.email;
+      if (user.role_name) adminRole.value = user.role_name;
+      else if (user.role) adminRole.value = user.role;
+      const current = JSON.parse(localStorage.getItem('admin') || '{}');
+      localStorage.setItem('admin', JSON.stringify({ ...current, ...user }));
+    }
+  } catch (e) {
+    // Keep local storage or fallback to 'مدير النظام'
+  }
+};
+
+onMounted(() => {
+  updateAdminFromStorage();
+  fetchCurrentUserFromApi();
+  window.addEventListener('admin-profile-updated', updateAdminFromStorage);
+  window.addEventListener('storage', updateAdminFromStorage);
 
   document.addEventListener('click', closeUserMenu);
   document.addEventListener('click', closeNotifDropdown);
-  fetchInquiriesCount();
-  fetchUnreadCount();
 
-  notifPollInterval = setInterval(() => {
-    fetchUnreadCount();
-    fetchInquiriesCount();
-  }, 30000);
+  // Real-time streaming of messages and unread counter (1, 2, 3...) via Firebase onSnapshot
+  unsubscribeMessages = MessageService.subscribeUnreadCount((count, allMsgs) => {
+    unreadCount.value = count;
+    notifications.value = (allMsgs || []).slice(0, 8).map(m => ({
+      id: m.id,
+      title: m.name || 'رسالة تواصل جديدة',
+      message: m.message,
+      created_at: m.created_at || m.createdAt,
+      is_read: m.status === 'read' || m.is_read === 1,
+      action_url: '/admin/messages'
+    }));
+  });
+
+  fetchInquiriesCount();
+  inquiriesPollInterval = setInterval(fetchInquiriesCount, 60000);
 });
 
 onUnmounted(() => {
+  window.removeEventListener('admin-profile-updated', updateAdminFromStorage);
+  window.removeEventListener('storage', updateAdminFromStorage);
   document.removeEventListener('click', closeUserMenu);
   document.removeEventListener('click', closeNotifDropdown);
-  if (notifPollInterval) clearInterval(notifPollInterval);
+  if (unsubscribeMessages) unsubscribeMessages();
+  if (inquiriesPollInterval) clearInterval(inquiriesPollInterval);
 });
 </script>
 

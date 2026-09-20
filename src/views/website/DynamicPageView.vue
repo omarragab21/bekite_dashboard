@@ -32,6 +32,7 @@ import { useI18n } from 'vue-i18n';
 import { useRoute } from 'vue-router';
 import api from '../../config/axios';
 import { useLocalized } from '../../composables/useLocalized';
+import { sanitizeHtml } from '../../utils/sanitizer';
 
 const route = useRoute();
 const { t } = useI18n();
@@ -102,10 +103,11 @@ watch(() => [route.params.slug, route.params.id], fetchPage);
 const formattedContent = computed(() => {
   const content = getField(page.value, 'content');
   if (!content) return '';
+  let rawHtml = content;
   if (!content.includes('<p>') && !content.includes('<div>')) {
-     return content.split('\n').map(line => `<p>${line}</p>`).join('');
+     rawHtml = content.split('\n').map(line => `<p>${line}</p>`).join('');
   }
-  return content;
+  return sanitizeHtml(rawHtml);
 });
 
 const formatDate = (date) => {

@@ -6,11 +6,11 @@
 export const initialMockData = {
   admin: {
     id: 1,
-    name: 'عمر رجب',
-    name_en: 'Omar Ragab',
+    name: 'مدير النظام',
+    name_en: 'System Administrator',
     email: 'admin@bekite.com',
     role: 'super_admin',
-    role_name: 'المدير التنفيذي للتطوير والأنظمة',
+    role_name: 'مدير عام النظام',
     permissions: ['all'],
     avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
     created_at: '2025-01-01',
@@ -19,7 +19,7 @@ export const initialMockData = {
   // ===== Analytics & KPIs =====
   statistics: {
     summary: {
-      total_projects: 12,
+      total_projects: 4,
       projects_change: 25.0,
       total_products: 6,
       products_change: 50.0,
@@ -79,376 +79,413 @@ export const initialMockData = {
     { id: 7, slug: 'saas', name: 'برمجيات سحابية', name_en: 'SaaS', is_active: 1, count: 3 },
   ],
 
-  // ===== Be Kite 12 Portfolio Projects =====
+  // ===== Be Kite 4 Portfolio Projects (With Multi-Image Social Media) =====
   projects: [
     {
-      id: 1,
-      slug: 'iris-flowers',
-      title: 'Iris Flowers',
-      title_en: 'Iris Flowers',
-      client_name: 'Iris Flowers Group',
-      location: 'عمان، الأردن',
-      location_en: 'Amman, Jordan',
-      year: '2025 - 2026',
-      badge: 'الهوية والتجارة الإلكترونية',
-      badge_en: 'Brand & E-Commerce',
-      description: 'تحول رقمي شامل لـ Iris Flowers يشمل الهوية البصرية ومنصة التجارة الإلكترونية وتطبيقات الهاتف الذكية وإدارة الحملات الإعلانية.',
-      description_en: 'A complete digital transformation for Iris Flowers, from visual identity and e-commerce to mobile apps.',
-      image: '/images/projects/iris_website_showcase.jpg',
-      card_image: '/images/projects/iris_website_showcase.jpg',
-      web_image: '/images/projects/iris_website_showcase.jpg',
-      website_url: 'https://irisflowers.net/',
-      has_mobile_app: true,
-      mobile_image: 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=800&auto=format&fit=crop&q=80',
-      ios_url: 'https://apps.apple.com/app/iris-flowers/id123456789',
-      android_url: 'https://play.google.com/store/apps/details?id=com.bekite.irisflowers',
-      social_media_images: [
-        { id: 1, image: '/images/projects/iris_sm_1.png', title: 'أصدق تعبير - باقات الورد الفاخرة' },
-        { id: 2, image: '/images/projects/iris_sm_2.png', title: 'ذوق الرفيع - زهور طبيعية منتقاة' },
-        { id: 3, image: '/images/projects/iris_sm_3.png', title: 'لكل مناسبة - إهداءات استثنائية' },
-        { id: 4, image: '/images/projects/iris_sm_4.png', title: 'تصل في وقتها - توصيل سريع ودقيق' },
-      ],
-      social_links: {
-        facebook: 'https://facebook.com/irisflowersjo',
-        instagram: 'https://instagram.com/irisflowersjo',
-        twitter: 'https://x.com/irisflowersjo',
-        linkedin: 'https://linkedin.com/company/irisflowers',
-        tiktok: 'https://tiktok.com/@irisflowersjo',
-        youtube: 'https://youtube.com/@irisflowers',
-      },
-      branding_images: [
-        { id: 1, title: 'Gold Foil Monogram Emblem', image: '/images/projects/iris_brand_1.png' },
-        { id: 2, title: 'VIP Badges & Event Lanyards', image: '/images/projects/iris_brand_2.png' },
-        { id: 3, title: 'Embossed Textured Stationery', image: '/images/projects/iris_brand_3.png' },
-        { id: 4, title: 'Brand Merchandise & Apparel', image: '/images/projects/iris_brand_4.png' },
-      ],
-      branding_pdf_url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
-      branding_pdf_name: 'Iris_Flowers_Brand_Guidelines_2026.pdf',
-      logo: '/images/projects/irs.jpg',
-      accent_color: '#9333ea',
-      filter_categories: ['websites', 'ecommerce', 'branding', 'digital-marketing', 'mobile'],
-      tags: ['الهوية البصرية', 'تجارة إلكترونية', 'تسويق رقمي', 'تطبيق هاتف'],
-      is_active: 1,
-      order_index: 1,
-      stats: [
-        { label: 'نمو المبيعات', label_en: 'Sales Growth', value: '+240%' },
-        { label: 'تحميلات التطبيق', label_en: 'App Downloads', value: '45K+' },
-        { label: 'معدل التحويل', label_en: 'Conversion Rate', value: '4.8%' },
-      ],
-      deliverables: ['Web Platform', 'iOS & Android App', 'Brand Identity', 'Social Media Management', 'Performance Marketing'],
-      created_at: '2026-01-15',
+        "id": 1,
+        "slug": "iris-flowers",
+        "title": "Iris Flowers",
+        "title_en": "Iris Flowers",
+        "client_name": "Iris Flowers Group",
+        "location": "عمان، الأردن",
+        "location_en": "Amman, Jordan",
+        "year": "2025 - 2026",
+        "badge": "الهوية والتجارة الإلكترونية",
+        "badge_en": "Brand & E-Commerce",
+        "description": "تحول رقمي شامل لـ Iris Flowers يشمل الهوية البصرية ومنصة التجارة الإلكترونية وتطبيقات الهاتف الذكية وإدارة الحملات الإعلانية والتسويق الرقمي.",
+        "description_en": "A complete digital transformation for Iris Flowers, from visual identity and e-commerce to mobile apps and full performance marketing.",
+        "image": "/images/projects/iris_website_showcase.jpg",
+        "card_image": "/images/projects/iris_website_showcase.jpg",
+        "web_image": "/images/projects/iris_website_showcase.jpg",
+        "website_url": "https://irisflowers.net/",
+        "live_website_url": "https://irisflowers.net/",
+        "has_mobile_app": true,
+        "mobile_image": "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=800&auto=format&fit=crop&q=80",
+        "ios_url": "https://apps.apple.com/app/iris-flowers/id123456789",
+        "android_url": "https://play.google.com/store/apps/details?id=com.bekite.irisflowers",
+        "social_media_images": [
+            {
+                "id": 1,
+                "image": "https://images.unsplash.com/photo-1561181286-d3fee7d55364?w=800&auto=format&fit=crop&q=80",
+                "title": "أصدق تعبير - باقات الورد الفاخرة"
+            },
+            {
+                "id": 2,
+                "image": "https://images.unsplash.com/photo-1526047932273-341f2a7631f9?w=800&auto=format&fit=crop&q=80",
+                "title": "ذوق رفيع - زهور طبيعية منتقاة"
+            },
+            {
+                "id": 3,
+                "image": "https://images.unsplash.com/photo-1582794543139-8ac9cb0f7b11?w=800&auto=format&fit=crop&q=80",
+                "title": "لكل مناسبة - إهداءات استثنائية"
+            },
+            {
+                "id": 4,
+                "image": "https://images.unsplash.com/photo-1518895949257-7621c3c786d7?w=800&auto=format&fit=crop&q=80",
+                "title": "تصل في وقتها - توصيل سريع ودقيق"
+            }
+        ],
+        "social_links": {
+            "facebook": "https://facebook.com/irisflowersjo",
+            "instagram": "https://instagram.com/irisflowersjo",
+            "twitter": "https://x.com/irisflowersjo",
+            "linkedin": "https://linkedin.com/company/irisflowers",
+            "tiktok": "https://tiktok.com/@irisflowersjo",
+            "youtube": "https://youtube.com/@irisflowers"
+        },
+        "branding_images": [
+            {
+                "id": 1,
+                "title": "Gold Foil Monogram Emblem",
+                "image": "/images/projects/iris_brand_1.png"
+            },
+            {
+                "id": 2,
+                "title": "VIP Badges & Event Lanyards",
+                "image": "/images/projects/iris_brand_2.png"
+            },
+            {
+                "id": 3,
+                "title": "Embossed Textured Stationery",
+                "image": "/images/projects/iris_brand_3.png"
+            },
+            {
+                "id": 4,
+                "title": "Brand Merchandise & Apparel",
+                "image": "/images/projects/iris_brand_4.png"
+            }
+        ],
+        "branding_pdf_url": "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+        "branding_pdf_name": "Iris_Flowers_Brand_Guidelines_2026.pdf",
+        "logo": "/images/projects/irs.jpg",
+        "accent_color": "#9333ea",
+        "filter_categories": [
+            "websites",
+            "ecommerce",
+            "branding",
+            "digital-marketing",
+            "mobile"
+        ],
+        "tags": [
+            "الهوية البصرية",
+            "تجارة إلكترونية",
+            "تسويق رقمي",
+            "تطبيق هاتف"
+        ],
+        "is_active": 1,
+        "order_index": 1,
+        "stats": [
+            {
+                "label": "نمو المبيعات",
+                "label_en": "Sales Growth",
+                "value": "+240%"
+            },
+            {
+                "label": "تحميلات التطبيق",
+                "label_en": "App Downloads",
+                "value": "45K+"
+            },
+            {
+                "label": "معدل التحويل",
+                "label_en": "Conversion Rate",
+                "value": "4.8%"
+            }
+        ],
+        "deliverables": [
+            "Web Platform",
+            "iOS & Android App",
+            "Brand Identity",
+            "Social Media Management",
+            "Performance Marketing"
+        ],
+        "created_at": "2026-01-15"
     },
     {
-      id: 2,
-      slug: 'al-mzon-schools',
-      title: 'مدارس المزن AL-Mzon',
-      title_en: 'AL-Mzon Schools',
-      client_name: 'Al-Mzon Educational Academy',
-      location: 'عمان، الأردن',
-      location_en: 'Amman, Jordan',
-      year: '2025',
-      badge: 'موقع تعليمي',
-      badge_en: 'Education Website',
-      description: 'حضور رقمي متطور لمدارس المزن يجمع بين منصة ويب تفاعلية وإدارة احترافية للحملات ومنصات التواصل الاجتماعي.',
-      description_en: 'A modern digital presence for AL-Mzon Schools, combining a professional web platform with dynamic social media.',
-      image: '/images/projects/al-mzon-schools.png',
-      card_image: '/images/projects/al-mzon-schools.png',
-      web_image: '/images/projects/al-mzon-schools.png',
-      website_url: 'https://almzon-schools.edu.jo',
-      has_mobile_app: true,
-      mobile_image: 'https://images.unsplash.com/photo-1551650975-87deedd944c3?w=800&auto=format&fit=crop&q=80',
-      ios_url: 'https://apps.apple.com/app/almzon/id987654321',
-      android_url: 'https://play.google.com/store/apps/details?id=jo.edu.almzon',
-      social_media_images: [
-        { id: 1, image: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=600&auto=format&fit=crop&q=80', title: 'فعاليات اليوم المفتوح' },
-        { id: 2, image: 'https://images.unsplash.com/photo-1509062522246-3755977927d7?w=600&auto=format&fit=crop&q=80', title: 'المختبرات والأنشطة الطلابية' },
-      ],
-      social_links: {
-        facebook: 'https://facebook.com/almzonschools',
-        instagram: 'https://instagram.com/almzonschools',
-        twitter: '',
-        linkedin: 'https://linkedin.com/school/almzonschools',
-        tiktok: '',
-        youtube: 'https://youtube.com/@almzon',
-      },
-      branding_images: [
-        { id: 1, title: 'Al-Mzon Official Logo & Color Palette', image: '/images/projects/al-mzon-schools.png' },
-      ],
-      branding_pdf_url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
-      branding_pdf_name: 'Al_Mzon_Brand_Identity_Guide.pdf',
-      logo: '/images/projects/al-mzon-schools.svg',
-      accent_color: '#0284c7',
-      filter_categories: ['websites', 'digital-marketing', 'customized-systems', 'mobile'],
-      tags: ['موقع إلكتروني', 'تسويق رقمي', 'استشارات', 'تطبيق هاتف'],
-      is_active: 1,
-      order_index: 2,
-      stats: [
-        { label: 'الطلاب المسجلين', label_en: 'Registered Students', value: '2,500+' },
-        { label: 'نمو التفاعل', label_en: 'Engagement Boost', value: '+180%' },
-      ],
-      deliverables: ['Responsive Web Portal', 'Student Registration CMS', 'Social Media Strategy', 'Mobile App'],
-      created_at: '2026-01-20',
+        "id": 2,
+        "slug": "al-mzon-schools",
+        "title": "مدارس المزن AL-Mzon",
+        "title_en": "AL-Mzon Schools",
+        "client_name": "Al-Mzon Educational Academy",
+        "location": "عمان، الأردن",
+        "location_en": "Amman, Jordan",
+        "year": "2025",
+        "badge": "موقع تعليمي",
+        "badge_en": "Education Website",
+        "description": "حضور رقمي متطور لمدارس المزن يجمع بين منصة ويب تفاعلية وإدارة احترافية للحملات ومنصات التواصل الاجتماعي ونظام القبول والتسجيل.",
+        "description_en": "A modern digital presence for AL-Mzon Schools, combining a professional web platform with dynamic social media campaigns and admissions portal.",
+        "image": "/images/projects/al-mzon-schools.png",
+        "card_image": "/images/projects/al-mzon-schools.png",
+        "web_image": "/images/projects/al-mzon-schools.png",
+        "website_url": "https://almzon-schools.edu.jo",
+        "live_website_url": "https://almzon-schools.edu.jo",
+        "has_mobile_app": true,
+        "mobile_image": "https://images.unsplash.com/photo-1551650975-87deedd944c3?w=800&auto=format&fit=crop&q=80",
+        "ios_url": "https://apps.apple.com/app/almzon/id987654321",
+        "android_url": "https://play.google.com/store/apps/details?id=jo.edu.almzon",
+        "social_media_images": [
+            {
+                "id": 1,
+                "image": "https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=800&auto=format&fit=crop&q=80",
+                "title": "فعاليات اليوم المفتوح والتسجيل"
+            },
+            {
+                "id": 2,
+                "image": "https://images.unsplash.com/photo-1509062522246-3755977927d7?w=800&auto=format&fit=crop&q=80",
+                "title": "المختبرات والابتكار العلمي للطلاب"
+            },
+            {
+                "id": 3,
+                "image": "https://images.unsplash.com/photo-1577896851231-70ef18881754?w=800&auto=format&fit=crop&q=80",
+                "title": "تكريم أوائل الطلبة والمتميزين"
+            },
+            {
+                "id": 4,
+                "image": "https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?w=800&auto=format&fit=crop&q=80",
+                "title": "بيئة تعليمية تفاعلية حديثة"
+            }
+        ],
+        "social_links": {
+            "facebook": "https://facebook.com/almzonschools",
+            "instagram": "https://instagram.com/almzonschools",
+            "twitter": "https://x.com/almzonschools",
+            "linkedin": "https://linkedin.com/school/almzonschools",
+            "tiktok": "https://tiktok.com/@almzon",
+            "youtube": "https://youtube.com/@almzon"
+        },
+        "branding_images": [
+            {
+                "id": 1,
+                "title": "Al-Mzon Official Logo & Color Palette",
+                "image": "/images/projects/al-mzon-schools.png"
+            }
+        ],
+        "branding_pdf_url": "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+        "branding_pdf_name": "Al_Mzon_Brand_Identity_Guide.pdf",
+        "logo": "/images/projects/al-mzon-schools.svg",
+        "accent_color": "#0284c7",
+        "filter_categories": [
+            "websites",
+            "digital-marketing",
+            "customized-systems",
+            "mobile"
+        ],
+        "tags": [
+            "موقع إلكتروني",
+            "تسويق رقمي",
+            "استشارات",
+            "تطبيق هاتف"
+        ],
+        "is_active": 1,
+        "order_index": 2,
+        "stats": [
+            {
+                "label": "الطلاب المسجلين",
+                "label_en": "Registered Students",
+                "value": "2,500+"
+            },
+            {
+                "label": "نمو التفاعل",
+                "label_en": "Engagement Boost",
+                "value": "+180%"
+            }
+        ],
+        "deliverables": [
+            "Responsive Web Portal",
+            "Student Registration CMS",
+            "Social Media Strategy",
+            "Mobile App"
+        ],
+        "created_at": "2026-01-20"
     },
     {
-      id: 3,
-      slug: 'kudos-events',
-      title: 'Kudos Events',
-      title_en: 'Kudos Events',
-      client_name: 'Kudos Events Management LLC',
-      location: 'دبي، الإمارات',
-      location_en: 'Dubai, UAE',
-      year: '2025',
-      badge: 'موقع فعاليات وتسويق',
-      badge_en: 'Event Website & Marketing',
-      description: 'منصة فعاليات ذكية تجمع بيانات التنظيم وتقدم لوحة تحكم تفاعلية مع صناعة محتوى احترافي وموقع ويب متكامل.',
-      description_en: 'Business intelligence event dashboard with interactive visualization, content production, and web presence.',
-      image: '/images/projects/kudos-events.png',
-      card_image: '/images/projects/kudos-events.png',
-      logo: '/images/projects/kudos-events.svg',
-      accent_color: '#1e293b',
-      filter_categories: ['websites', 'digital-marketing', 'branding'],
-      tags: ['عروض تقديمية', 'صناعة المحتوى', 'موقع إلكتروني'],
-      is_active: 1,
-      order_index: 3,
-      stats: [
-        { label: 'الفعاليات المدارة', label_en: 'Managed Events', value: '120+' },
-        { label: 'التذاكر المحجوزة', label_en: 'Tickets Booked', value: '85K+' },
-      ],
-      deliverables: ['Event Ticketing Portal', 'Brand Presentation Deck', 'Media Production'],
-      created_at: '2026-02-01',
+        "id": 3,
+        "slug": "kudos-events",
+        "title": "Kudos Events",
+        "title_en": "Kudos Events",
+        "client_name": "Kudos Events Management LLC",
+        "location": "دبي، الإمارات",
+        "location_en": "Dubai, UAE",
+        "year": "2025",
+        "badge": "فعاليات ومؤتمرات",
+        "badge_en": "Events & Conferences",
+        "description": "منصة رقمية رائدة لإدارة وتنظيم المؤتمرات والمعارض الكبرى، تشمل هوية فاخرة وأنظمة حجز تذاكر وتغطية سوشيال ميديا مباشرة.",
+        "description_en": "An experiential events management platform featuring high-end branding, digital ticketing, and live social media production.",
+        "image": "/images/projects/kudos-events.png",
+        "card_image": "/images/projects/kudos-events.png",
+        "web_image": "/images/projects/kudos-events.png",
+        "website_url": "https://kudos-events.ae",
+        "live_website_url": "https://kudos-events.ae",
+        "has_mobile_app": false,
+        "social_media_images": [
+            {
+                "id": 1,
+                "image": "https://images.unsplash.com/photo-1511578314322-379afb476865?w=800&auto=format&fit=crop&q=80",
+                "title": "تغطية المؤتمرات والقمم العالمية"
+            },
+            {
+                "id": 2,
+                "image": "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=800&auto=format&fit=crop&q=80",
+                "title": "إضاءة المسارح والإنتاج الفني"
+            },
+            {
+                "id": 3,
+                "image": "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=800&auto=format&fit=crop&q=80",
+                "title": "تنظيم حفلات الإطلاق وجوائز التميز"
+            },
+            {
+                "id": 4,
+                "image": "https://images.unsplash.com/photo-1475721027785-f74eccf877e2?w=800&auto=format&fit=crop&q=80",
+                "title": "لقطات حصرية خلف الكواليس"
+            }
+        ],
+        "social_links": {
+            "facebook": "https://facebook.com/kudosevents",
+            "instagram": "https://instagram.com/kudosevents",
+            "twitter": "https://x.com/kudosevents",
+            "linkedin": "https://linkedin.com/company/kudosevents",
+            "tiktok": "https://tiktok.com/@kudosevents",
+            "youtube": "https://youtube.com/@kudosevents"
+        },
+        "branding_images": [
+            {
+                "id": 1,
+                "title": "Kudos Brand Identity & Event Guide",
+                "image": "/images/projects/kudos-events.png"
+            }
+        ],
+        "branding_pdf_url": "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+        "branding_pdf_name": "Kudos_Events_Brand_Guidelines.pdf",
+        "logo": "/images/projects/kudos-events.svg",
+        "accent_color": "#d97706",
+        "filter_categories": [
+            "websites",
+            "branding",
+            "digital-marketing"
+        ],
+        "tags": [
+            "تنظيم فعاليات",
+            "هوية بصرية",
+            "تسويق رقمي"
+        ],
+        "is_active": 1,
+        "order_index": 3,
+        "stats": [
+            {
+                "label": "حضور الفعاليات",
+                "label_en": "Event Attendees",
+                "value": "50K+"
+            },
+            {
+                "label": "تغطية إعلامية",
+                "label_en": "Media Impressions",
+                "value": "2.4M"
+            }
+        ],
+        "deliverables": [
+            "Interactive Web Platform",
+            "VIP Guest Management",
+            "Social Media Live Coverage"
+        ],
+        "created_at": "2026-02-05"
     },
     {
-      id: 4,
-      slug: 'birma-water',
-      title: 'بيرما Birma Water',
-      title_en: 'Birma Water',
-      client_name: 'Birma Bottling Company',
-      location: 'إربد، الأردن',
-      location_en: 'Irbid, Jordan',
-      year: '2025 - 2026',
-      badge: 'منصة سحابية SaaS',
-      badge_en: 'SaaS Platform',
-      description: 'منصة سحابية متقدمة لإدارة علاقات العملاء وعمليات التوزيع اللوجستي مع تتبع الطلبات وتحليلات أداء الفريق.',
-      description_en: 'A cloud customer relationship management platform for distribution brand — prospect routing, lead management, and team analytics.',
-      image: '/images/projects/birma-water.png',
-      card_image: '/images/projects/birma-water.png',
-      logo: '/images/projects/birma-water.svg',
-      accent_color: '#0369a1',
-      filter_categories: ['saas', 'customized-systems', 'websites'],
-      tags: ['SaaS', 'توصيل سريع'],
-      is_active: 1,
-      order_index: 4,
-      stats: [
-        { label: 'حجم التوزيع اليومي', label_en: 'Daily Delivery', value: '12,000 Gallons' },
-        { label: 'وفر التكاليف', label_en: 'Cost Reduction', value: '32%' },
-      ],
-      deliverables: ['Custom ERP/CRM', 'Dispatch Management', 'Mobile Driver App'],
-      created_at: '2026-02-10',
-    },
-    {
-      id: 5,
-      slug: 'diplomatic-sweets',
-      title: 'حلويات الدبلوماسي Diplomat',
-      title_en: 'Diplomatic Sweets',
-      client_name: 'Diplomatic Sweets Co.',
-      location: 'عمان، الأردن',
-      location_en: 'Amman, Jordan',
-      year: '2025',
-      badge: 'تسويق رقمي',
-      badge_en: 'Digital Marketing',
-      description: 'حلول رقمية وتسويقية متكاملة تشمل إدارة التحويلات، تحسين محركات البحث SEO، وإدارة الحملات الرقمية وتحليل الأداء.',
-      description_en: 'New social and digital solutions with conversion management, SEO boost, social media marketing, and performance analytics.',
-      image: '/images/projects/diplomatic-sweets.png',
-      card_image: '/images/projects/diplomatic-sweets.png',
-      logo: '/images/projects/diplomatic-sweets.svg',
-      accent_color: '#d97706',
-      filter_categories: ['digital-marketing', 'branding', 'websites'],
-      tags: ['SEO', 'استراتيجية'],
-      is_active: 1,
-      order_index: 5,
-      stats: [
-        { label: 'الوصول الشهري', label_en: 'Monthly Reach', value: '1.2M+' },
-        { label: 'العائد الإعلاني ROAS', label_en: 'ROAS', value: '6.4x' },
-      ],
-      deliverables: ['SEO Engine Setup', 'Creative Advertising Campaigns', 'Visual Identity Refresh'],
-      created_at: '2026-02-15',
-    },
-    {
-      id: 6,
-      slug: 'sanabel-al-salam',
-      title: 'سنابل السلام Sanabel Al Salam',
-      title_en: 'Sanabel Al Salam',
-      client_name: 'Sanabel Al Salam Holding',
-      location: 'الرياض، السعودية',
-      location_en: 'Riyadh, Saudi Arabia',
-      year: '2025 - 2026',
-      badge: 'منصة مناسبات وفعاليات',
-      badge_en: 'Events Platform',
-      description: 'منصة رقمية شاملة لإدارة الفعاليات والطلبات المتعددة — حجز التذاكر، تنظيم الموردين، وإدارة الضيوف عبر الويب والموبايل.',
-      description_en: 'End-to-end event management platform for multiple brands and venues — ticketing, seating, vendor coordination, and guest management.',
-      image: '/images/projects/sanabel-al-salam.png',
-      card_image: '/images/projects/sanabel-al-salam.png',
-      logo: '/images/projects/sanabel-al-salam.svg',
-      accent_color: '#365314',
-      filter_categories: ['websites', 'mobile', 'customized-systems'],
-      tags: ['ويب / موبايل', 'فعاليات'],
-      is_active: 1,
-      order_index: 6,
-      stats: [
-        { label: 'المستخدمين النشطين', label_en: 'Active Users', value: '120K+' },
-      ],
-      deliverables: ['Cross-platform Mobile App', 'Enterprise Admin Panel', 'Real-time Seating Engine'],
-      created_at: '2026-03-01',
-    },
-    {
-      id: 7,
-      slug: 'military-consumer-corporation',
-      title: 'المؤسسة الاستهلاكية العسكرية',
-      title_en: 'Military Consumer Corporation',
-      client_name: 'Military Consumer Corporation',
-      location: 'الأردن',
-      location_en: 'Jordan',
-      year: '2025 - 2026',
-      badge: 'منصة تجارة إلكترونية',
-      badge_en: 'E-Commerce Platform',
-      description: 'منصة تجارة إلكترونية متكاملة تجمع بين إدارة المنتجات الضخمة، تتبع الشحن اللوجستي، وبرامج ولاء العملاء في نظام موحد.',
-      description_en: 'A full-featured e-commerce platform combined product management, lifecycle patent tags, logistics tracking, and customer loyalty into one seamless system.',
-      image: '/images/projects/military-consumer.png',
-      card_image: '/images/projects/military-consumer.png',
-      logo: '/images/projects/military-consumer.svg',
-      accent_color: '#15803d',
-      filter_categories: ['ecommerce', 'websites', 'mobile', 'customized-systems'],
-      tags: ['تجارة إلكترونية', 'ويب / موبايل'],
-      is_active: 1,
-      order_index: 7,
-      stats: [
-        { label: 'المنتجات المدرجة', label_en: 'SKUs Managed', value: '50,000+' },
-        { label: 'المعاملات اللحظية', label_en: 'Realtime TPS', value: '350/sec' },
-      ],
-      deliverables: ['Large-scale E-Commerce Infrastructure', 'Warehouse Management System', 'Government Grade Security'],
-      created_at: '2026-03-10',
-    },
-    {
-      id: 8,
-      slug: 'al-ruwad-chemicals-factory',
-      title: 'مصنع الرواد للكيماويات Al-Ruwad',
-      title_en: 'Al-Ruwad Chemicals Factory',
-      client_name: 'Al-Ruwad Industrial Group',
-      location: 'الزرقاء، الأردن',
-      location_en: 'Zarqa, Jordan',
-      year: '2025',
-      badge: 'منصة مؤسسية للشركات',
-      badge_en: 'Corporate Web Platform',
-      description: 'منصة مؤسسية رقمية تربط المالية والموارد البشرية وإدارة المخزون والعمليات، مما يمنح الإدارة رؤية شاملة ولحظية.',
-      description_en: 'An institutional platform connecting finance, HR, inventory, and operations — giving foundation managers real-time visibility over all operations.',
-      image: '/images/projects/al-ruwad.png',
-      card_image: '/images/projects/al-ruwad.png',
-      logo: '/images/projects/al-ruwad.svg',
-      accent_color: '#0891b2',
-      filter_categories: ['websites', 'customized-systems'],
-      tags: ['ويب / موبايل', 'مؤسسي', 'الأردن'],
-      is_active: 1,
-      order_index: 8,
-      deliverables: ['ERP Portal', 'Supply Chain Visibility', 'B2B Client Portal'],
-      created_at: '2026-03-15',
-    },
-    {
-      id: 9,
-      slug: 'tawa',
-      title: 'تاوا Tawa',
-      title_en: 'Tawa',
-      client_name: 'Tawa Smart Living Systems',
-      location: 'المنامة، البحرين',
-      location_en: 'Manama, Bahrain',
-      year: '2025',
-      badge: 'تطبيق مجتمعي ذكي',
-      badge_en: 'Community App',
-      description: 'بوابة وتطبيق لإدارة المجتمعات السكنية والمرافق الذكية مع التذاكر الآلية، حجز الخدمات، والتواصل المباشر مع السكان.',
-      description_en: 'Tenant asset community management portal with automated ticketing, communications, service bookings, and sustainability tracking for smart spaces.',
-      image: '/images/projects/tawa.png',
-      card_image: '/images/projects/tawa.png',
-      logo: '/images/projects/tawa.svg',
-      accent_color: '#ca8a04',
-      filter_categories: ['mobile', 'websites', 'customized-systems'],
-      tags: ['ويب / موبايل', 'مجتمع', 'استجابة سريعة'],
-      is_active: 1,
-      order_index: 9,
-      deliverables: ['Mobile Resident App', 'IoT Facility Management Integration'],
-      created_at: '2026-03-20',
-    },
-    {
-      id: 10,
-      slug: 'kyan-land',
-      title: 'كيان الأرض Kyan Land',
-      title_en: 'Kyan Land',
-      client_name: 'Kyan Agri & Food Trading',
-      location: 'عمان، الأردن',
-      location_en: 'Amman, Jordan',
-      year: '2025 - 2026',
-      badge: 'تطبيق هاتف ذكي',
-      badge_en: 'Mobile Application',
-      description: 'تطبيق توصيل سريع مع إدارة لحظية للمخزون، ترشيحات ذكية، ودفع إلكتروني سلس يخدم آلاف الطلبات اليومية.',
-      description_en: 'A premium grocery delivery app with dynamic inventory, smart recommendations, and seamless checkout — serving thousands of daily orders.',
-      image: '/images/projects/kyan-land.png',
-      card_image: '/images/projects/kyan-land.png',
-      logo: '/images/projects/kyan-land.svg',
-      accent_color: '#0d9488',
-      filter_categories: ['mobile', 'ecommerce'],
-      tags: ['تطبيق هاتف', 'توصيل'],
-      is_active: 1,
-      order_index: 10,
-      deliverables: ['Consumer App (Flutter)', 'Store Operations App', 'Payment Gateway Integration'],
-      created_at: '2026-04-01',
-    },
-    {
-      id: 11,
-      slug: 'arafat-sweets',
-      title: 'حلويات عرفات Arafat Sweets',
-      title_en: 'Arafat Sweets',
-      client_name: 'Arafat Sweets Stores',
-      location: 'عمان، الأردن',
-      location_en: 'Amman, Jordan',
-      year: '2025',
-      badge: 'اللوجستيات والتوزيع',
-      badge_en: 'Logistics',
-      description: 'نظام متطور لإدارة أسطول التوزيع مع تتبع GPS وتخطيط مسارات التوصيل الذكية والتوجيه الآلي للطلبات.',
-      description_en: 'Fleet management and delivery optimization system with GPS tracking, route planning, and automated dispatch for logistics operations.',
-      image: '/images/projects/arafat-sweets.png',
-      card_image: '/images/projects/arafat-sweets.png',
-      logo: '/images/projects/arafat-sweets.svg',
-      accent_color: '#991b1b',
-      filter_categories: ['customized-systems', 'websites', 'branding'],
-      tags: ['ويب / موبايل', 'لوجستيات', 'الأردن'],
-      is_active: 1,
-      order_index: 11,
-      deliverables: ['Live Fleet GPS Tracking', 'Route Optimization Engine'],
-      created_at: '2026-04-10',
-    },
-    {
-      id: 12,
-      slug: 'cherry-rent-a-car',
-      title: 'Cherry Rent A Car',
-      title_en: 'Cherry Rent A Car',
-      client_name: 'Cherry Tourism & Car Rental',
-      location: 'عمان، الأردن',
-      location_en: 'Amman, Jordan',
-      year: '2025 - 2026',
-      badge: 'إدارة وتأجير السيارات',
-      badge_en: 'Hospitality',
-      description: 'نظام حجوزات وإدارة أسطول متكامل لتأجير السيارات — معالجة الحجوزات، تجربة العميل، وإدارة الصيانة والمرافق.',
-      description_en: 'Property management and reservation system for boutique rentals — handling bookings, guest experiences, and facilities management.',
-      image: '/images/projects/cherry-rentacar.png',
-      card_image: '/images/projects/cherry-rentacar.png',
-      logo: '/images/projects/cherry-rentacar.svg',
-      accent_color: '#831843',
-      filter_categories: ['websites', 'mobile', 'customized-systems'],
-      tags: ['ويب / موبايل', 'ضيافة', 'تأجير سيارات'],
-      is_active: 1,
-      order_index: 12,
-      deliverables: ['Online Booking Engine', 'Contract & Inspection Digital Workflow'],
-      created_at: '2026-04-18',
-    },
-  ],
+        "id": 4,
+        "slug": "birma-water",
+        "title": "مياه بيرما Birma",
+        "title_en": "Birma Water",
+        "client_name": "Birma Bottled Water Co.",
+        "location": "الرياض، السعودية",
+        "location_en": "Riyadh, Saudi Arabia",
+        "year": "2025 - 2026",
+        "badge": "هوية وتجارة إلكترونية",
+        "badge_en": "Brand & E-Commerce",
+        "description": "هوية تجارية عصرية ومتجر إلكتروني مع نظام توصيل اشتراكات المياه للمنازل والشركات وحملات تسويق رقمي عبر منصات التواصل.",
+        "description_en": "A modern consumer brand with e-commerce subscriptions, route dispatch optimization, and high-impact social media creative.",
+        "image": "/images/projects/birma-water.png",
+        "card_image": "/images/projects/birma-water.png",
+        "web_image": "/images/projects/birma-water.png",
+        "website_url": "https://birmawater.com",
+        "live_website_url": "https://birmawater.com",
+        "has_mobile_app": true,
+        "mobile_image": "https://images.unsplash.com/photo-1526406915894-7bcd65f60845?w=800&auto=format&fit=crop&q=80",
+        "ios_url": "https://apps.apple.com/app/birma-water/id555666777",
+        "android_url": "https://play.google.com/store/apps/details?id=com.birma.water",
+        "social_media_images": [
+            {
+                "id": 1,
+                "image": "https://images.unsplash.com/photo-1548839140-29a749e1bc4e?w=800&auto=format&fit=crop&q=80",
+                "title": "نقاء الطبيعة في كل قطرة"
+            },
+            {
+                "id": 2,
+                "image": "https://images.unsplash.com/photo-1559839914-17aae19cec71?w=800&auto=format&fit=crop&q=80",
+                "title": "حملة الانتعاش والصحة اليومية"
+            },
+            {
+                "id": 3,
+                "image": "https://images.unsplash.com/photo-1560023907-5f339617ea30?w=800&auto=format&fit=crop&q=80",
+                "title": "عروض الاشتراكات للمنازل والشركات"
+            },
+            {
+                "id": 4,
+                "image": "https://images.unsplash.com/photo-1550572017-ed200f5e6343?w=800&auto=format&fit=crop&q=80",
+                "title": "خدمة التوصيل السريع لجميع المناطق"
+            }
+        ],
+        "social_links": {
+            "facebook": "https://facebook.com/birmawater",
+            "instagram": "https://instagram.com/birmawater",
+            "twitter": "https://x.com/birmawater",
+            "linkedin": "https://linkedin.com/company/birmawater",
+            "tiktok": "https://tiktok.com/@birmawater",
+            "youtube": "https://youtube.com/@birmawater"
+        },
+        "branding_images": [
+            {
+                "id": 1,
+                "title": "Birma Water Bottle Label & Packaging Design",
+                "image": "/images/projects/birma-water.png"
+            }
+        ],
+        "branding_pdf_url": "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+        "branding_pdf_name": "Birma_Brand_Packaging_Guidelines.pdf",
+        "logo": "/images/projects/birma-water.svg",
+        "accent_color": "#0d9488",
+        "filter_categories": [
+            "ecommerce",
+            "branding",
+            "digital-marketing",
+            "mobile"
+        ],
+        "tags": [
+            "تجارة إلكترونية",
+            "هوية بصرية",
+            "تسويق رقمي",
+            "تطبيق هاتف"
+        ],
+        "is_active": 1,
+        "order_index": 4,
+        "stats": [
+            {
+                "label": "طلبات التوصيل",
+                "label_en": "Monthly Deliveries",
+                "value": "120K+"
+            },
+            {
+                "label": "العملاء المشتركين",
+                "label_en": "Active Subscribers",
+                "value": "18K+"
+            }
+        ],
+        "deliverables": [
+            "E-Commerce Web Portal",
+            "Mobile App for iOS & Android",
+            "Brand Identity & Packaging",
+            "Social Media Campaigns"
+        ],
+        "created_at": "2026-02-15"
+    }
+],
 
   // ===== Product Categories (Digital Products) =====
   productCategories: [
@@ -1732,11 +1769,11 @@ export const initialMockData = {
   teamMembers: [
     {
       id: 1,
-      name: 'عمر رجب',
-      name_en: 'Omar Ragab',
-      position: 'المدير التنفيذي للتطوير والأنظمة',
-      position_en: 'CEO & Head of Technology',
-      email: 'omar@bekite.com',
+      name: 'أحمد المحمود',
+      name_en: 'Ahmed Al-Mahmoud',
+      position: 'مدير تطوير النظم والبرمجيات',
+      position_en: 'Head of Software Development',
+      email: 'dev@bekite.com',
       image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80',
       bio: 'قائد تقني متمرس في هندسة النظم السحابية العملاقة والتحول الرقمي لأكبر المؤسسات في الشرق الأوسط.',
       is_active: 1,
@@ -1835,7 +1872,7 @@ export const initialMockData = {
   admins: [
     {
       id: 1,
-      name: 'عمر رجب',
+      name: 'مدير النظام',
       email: 'admin@bekite.com',
       role: 'super_admin',
       role_name: 'مدير عام النظام (Super Admin)',
@@ -1895,7 +1932,7 @@ export const initialMockData = {
   activityLogs: [
     {
       id: 1,
-      admin_name: 'عمر رجب',
+      admin_name: 'مدير النظام',
       action: 'تحديث بيانات مشروع',
       description: 'تحديث معرض الصور وإحصائيات مشروع Iris Flowers',
       ip_address: '192.168.1.1',
@@ -1903,7 +1940,7 @@ export const initialMockData = {
     },
     {
       id: 2,
-      admin_name: 'عمر رجب',
+      admin_name: 'مدير النظام',
       action: 'تغيير حالة طلب عميل',
       description: 'تغيير حالة طلب م. راشد الحنيطي إلى قيد التنفيذ In Progress',
       ip_address: '192.168.1.1',

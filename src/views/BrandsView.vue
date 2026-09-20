@@ -164,11 +164,19 @@
           <!-- Mockup Image Preview -->
           <div class="brand-mockup-wrap" @click="openPreviewModal(brand)" title="اضغط للمعاينة الحية">
             <img
-              :src="brand.image || '/images/brands/zalameh_mockup.png'"
+              v-if="brand.image"
+              :src="brand.image"
               :alt="brand.name"
               class="brand-mockup-img"
               @error="onImgError"
             />
+            <div v-else class="brand-placeholder-svg">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+                <line x1="8" y1="21" x2="16" y2="21"/>
+                <line x1="12" y1="17" x2="12" y2="21"/>
+              </svg>
+            </div>
             <div class="mockup-overlay">
               <span class="btn-overlay-preview">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -321,9 +329,12 @@
                     type="text"
                     v-model="formData.name"
                     class="form-input"
+                    :class="{ 'input-error': formErrors.name }"
+                    @input="formErrors.name = null"
                     required
                     placeholder="مثال: تطبيق زلمة | Zalameh App"
                   />
+                  <span v-if="formErrors.name" class="field-error-msg">{{ formErrors.name }}</span>
                 </div>
                 <div class="form-group">
                   <label class="form-label">اسم العلامة (English) *</label>
@@ -331,9 +342,12 @@
                     type="text"
                     v-model="formData.name_en"
                     class="form-input ltr-text"
+                    :class="{ 'input-error': formErrors.name_en }"
+                    @input="formErrors.name_en = null"
                     required
                     placeholder="e.g. Zalameh App"
                   />
+                  <span v-if="formErrors.name_en" class="field-error-msg">{{ formErrors.name_en }}</span>
                 </div>
               </div>
 
@@ -415,34 +429,44 @@
             <!-- TAB 2: Content & Visuals -->
             <div v-show="formTab === 'content'" class="tab-pane">
               <div class="form-group">
-                <label class="form-label">رابط صورة الموك آب (Mockup Image URL)</label>
-                <div class="image-input-wrap">
-                  <input
-                    type="text"
-                    v-model="formData.image"
-                    class="form-input ltr-text"
-                    placeholder="/images/brands/zalameh_mockup.png"
-                  />
-                  <div class="presets-row">
-                    <span class="preset-label">نماذج سريعة:</span>
-                    <button
-                      type="button"
-                      class="preset-btn"
-                      @click="formData.image = '/images/brands/zalameh_mockup.png'"
-                    >
-                      زلمة (Zalameh)
-                    </button>
-                    <button
-                      type="button"
-                      class="preset-btn"
-                      @click="formData.image = '/images/brands/hadayapp_mockup.png'"
-                    >
-                      هدايا آب (HadayApp)
-                    </button>
+                <label class="form-label">صورة الموك آب الاستعراضية (Mockup Image Artwork) *</label>
+                <div class="image-uploader-flex">
+                  <div class="image-preview-frame">
+                    <img
+                      v-if="formData.image"
+                      :src="formData.image"
+                      alt="Preview"
+                      class="preview-img"
+                      @error="onImgError"
+                    />
+                    <div v-else class="preview-img-empty">
+                      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                        <circle cx="8.5" cy="8.5" r="1.5"/>
+                        <polyline points="21 15 16 10 5 21"/>
+                      </svg>
+                    </div>
                   </div>
-                </div>
-                <div v-if="formData.image" class="modal-mockup-preview">
-                  <img :src="formData.image" alt="Preview" @error="onImgError" />
+
+                  <div class="image-inputs-col">
+                    <p class="upload-hint">ارفع صورة المظهر مباشرة أو أدخل رابط الصورة:</p>
+                    <div class="upload-controls-row">
+                      <label class="btn-file-upload">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+                        </svg>
+                        رفع صورة من الجهاز
+                        <input type="file" accept="image/*" @change="handleBrandImageUpload" style="display: none;" />
+                      </label>
+                      <span class="or-separator">أو رابط مباشر:</span>
+                      <input
+                        type="text"
+                        v-model="formData.image"
+                        class="form-input ltr-text flex-1"
+                        placeholder="https://... أو رابط الصورة"
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -580,99 +604,128 @@
 
     <!-- ================= LIVE PREVIEW MODAL (1:1 with BrandsPage.jsx) ================= -->
     <div v-if="previewModalOpen && previewBrand" class="modal-overlay" @click.self="previewModalOpen = false">
-      <div class="modal-card modal-preview-brand">
-        <div class="preview-site-bar">
-          <div class="site-bar-info">
-            <span class="site-dot"></span>
-            <span>معاينة حية لصفحة العلامات التجارية (Be Kite Brands Page Preview)</span>
-          </div>
-          <button class="close-btn" @click="previewModalOpen = false">✕</button>
-        </div>
+      <div class="modal-card modal-preview-card modal-preview-brand">
+        <!-- Floating Fixed Close Button -->
+        <button class="preview-close-btn" @click="previewModalOpen = false" title="إغلاق المعاينة">✕</button>
 
-        <div class="preview-brand-body">
-          <div
-            class="preview-brand-layout"
-            :class="{ 'layout-image-right': previewBrand.layout === 'image-right' }"
-          >
-            <!-- Image Column -->
-            <div class="preview-image-col">
-              <div class="preview-mockup-frame">
-                <img
-                  :src="previewBrand.image || '/images/brands/zalameh_mockup.png'"
-                  :alt="previewBrand.name"
-                  @error="onImgError"
-                />
-              </div>
+        <!-- Scrollable Content Wrapper: Contains Header Banner + Brand Layout -->
+        <div class="preview-scrollable-content">
+          <div class="preview-site-bar">
+            <div class="site-bar-info">
+              <span class="site-dot"></span>
+              <span>معاينة حية لصفحة العلامات التجارية (Be Kite Brands Page Preview)</span>
             </div>
+          </div>
 
-            <!-- Text Column -->
-            <div class="preview-text-col">
-              <!-- Branded Badge -->
-              <div class="preview-badge-row">
-                <span
-                  class="preview-badge-pill"
-                  :style="{
-                    backgroundColor: getAlphaColor(previewBrand.brand_color, '15'),
-                    color: previewBrand.brand_color || '#ea580c',
-                    borderColor: getAlphaColor(previewBrand.brand_color, '30')
-                  }"
-                >
-                  {{ previewBrand.badge || 'CONSUMER APP' }}
-                </span>
-              </div>
-
-              <!-- Title -->
-              <h2 class="preview-brand-title">{{ previewBrand.name }}</h2>
-
-              <!-- Subtitle -->
-              <p
-                class="preview-brand-sub"
-                :style="{ color: previewBrand.brand_color || '#ea580c' }"
-              >
-                {{ previewBrand.subtitle }}
-              </p>
-
-              <!-- Description -->
-              <p class="preview-brand-desc">{{ previewBrand.description }}</p>
-
-              <!-- Tags -->
-              <div v-if="previewBrand.tags && previewBrand.tags.length" class="preview-tags-row">
-                <span v-for="tag in previewBrand.tags" :key="tag" class="preview-tag-chip">
-                  {{ tag }}
-                </span>
-              </div>
-
-              <!-- Action Links -->
-              <div class="preview-launch-btns">
-                <template v-if="previewBrand.links && previewBrand.links.length">
-                  <a
-                    v-for="link in previewBrand.links"
-                    :key="link.label"
-                    :href="link.href"
-                    target="_blank"
-                    class="preview-action-btn"
-                    :class="link.type === 'primary' ? 'btn-primary-launch' : 'btn-secondary-launch'"
-                    :style="link.type === 'primary' ? {
-                      backgroundColor: previewBrand.brand_color || '#ea580c',
-                      boxShadow: `0 10px 25px -5px ${getAlphaColor(previewBrand.brand_color, '40')}`
-                    } : {}"
-                  >
-                    <span>{{ link.label }}</span>
-                    <svg v-if="link.type === 'primary'" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-                      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+          <div class="preview-brand-body">
+            <div
+              class="preview-brand-layout"
+              :class="{ 'layout-image-right': previewBrand.layout === 'image-right' || previewBrand.layout === 'image_right' }"
+            >
+              <!-- Image Column -->
+              <div class="preview-image-col">
+                <div class="preview-mockup-frame">
+                  <img
+                    v-if="previewBrand.image"
+                    :src="previewBrand.image"
+                    :alt="previewBrand.name"
+                    @error="onImgError"
+                  />
+                  <div v-else class="preview-img-empty">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                      <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                      <circle cx="8.5" cy="8.5" r="1.5"/>
+                      <polyline points="21 15 16 10 5 21"/>
                     </svg>
-                  </a>
-                </template>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Text Column -->
+              <div class="preview-text-col">
+                <!-- Branded Badge -->
+                <div class="preview-badge-row">
+                  <span
+                    class="preview-badge-pill"
+                    :style="{
+                      backgroundColor: getAlphaColor(previewBrand.brand_color, '15'),
+                      color: previewBrand.brand_color || '#ea580c',
+                      borderColor: getAlphaColor(previewBrand.brand_color, '30')
+                    }"
+                  >
+                    {{ previewBrand.badge || 'CONSUMER APP' }}
+                  </span>
+                </div>
+
+                <!-- Title -->
+                <h2 class="preview-brand-title">{{ previewBrand.name }}</h2>
+
+                <!-- Subtitle -->
+                <p
+                  class="preview-brand-sub"
+                  :style="{ color: previewBrand.brand_color || '#ea580c' }"
+                >
+                  {{ previewBrand.subtitle }}
+                </p>
+
+                <!-- Description -->
+                <p class="preview-brand-desc">{{ previewBrand.description }}</p>
+
+                <!-- Tags / Categories -->
+                <div v-if="(previewBrand.tags && previewBrand.tags.length) || (previewBrand.categories && previewBrand.categories.length)" class="preview-tags-row">
+                  <span v-for="tag in (previewBrand.tags?.length ? previewBrand.tags : previewBrand.categories)" :key="tag" class="preview-tag-chip">
+                    #{{ tag }}
+                  </span>
+                </div>
+
+                <!-- Action Links -->
+                <div class="preview-launch-btns">
+                  <template v-if="previewBrand.links && previewBrand.links.length">
+                    <a
+                      v-for="link in previewBrand.links.filter(l => l.href && l.href !== '#')"
+                      :key="link.label"
+                      :href="link.href"
+                      target="_blank"
+                      class="preview-action-btn"
+                      :class="link.type === 'primary' ? 'btn-primary-launch' : 'btn-secondary-launch'"
+                      :style="link.type === 'primary' ? {
+                        backgroundColor: previewBrand.brand_color || '#ea580c',
+                        boxShadow: `0 10px 25px -5px ${getAlphaColor(previewBrand.brand_color, '40')}`
+                      } : {}"
+                    >
+                      <span>{{ link.label }}</span>
+                      <svg v-if="link.type === 'primary'" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+                      </svg>
+                    </a>
+                  </template>
+                  <template v-else-if="previewBrand.website_url">
+                    <a
+                      :href="previewBrand.website_url"
+                      target="_blank"
+                      class="preview-action-btn btn-primary-launch"
+                      :style="{
+                        backgroundColor: previewBrand.brand_color || '#ea580c',
+                        boxShadow: `0 10px 25px -5px ${getAlphaColor(previewBrand.brand_color, '40')}`
+                      }"
+                    >
+                      <span>زيارة الموقع الرسمي</span>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+                      </svg>
+                    </a>
+                  </template>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Preview Footer -->
+        <!-- Fixed Preview Footer -->
         <div class="preview-footer-actions">
           <button class="btn-cancel" @click="previewModalOpen = false">إغلاق المعاينة</button>
           <button class="btn-edit-direct" @click="editFromPreview(previewBrand)">
-            تعديل بيانات هذه العلامة
+            تعديل بيانات هذه العلامة ✎
           </button>
         </div>
       </div>
@@ -703,33 +756,55 @@ const previewModalOpen = ref(false);
 const previewBrand = ref(null);
 
 const formDataLinks = ref({
-  website: 'https://zalameh.com',
-  ios: '#',
-  android: '#',
+  website: '',
+  ios: '',
+  android: '',
 });
 
 const defaultBrandForm = () => ({
   name: '',
   name_en: '',
+  brand_ar: '',
+  brand_en: '',
   subtitle: '',
   subtitle_en: '',
+  subtitle_ar: '',
   slug: '',
-  badge: 'CONSUMER APP',
-  badge_en: 'CONSUMER APP',
+  badge: '',
+  badge_en: '',
   description: '',
   description_en: '',
-  tags: ['تطبيق مجتمعي', 'علامة تجارية للمستهلك', 'ثقافة وأسلوب حياة'],
-  tags_en: ['Community App', 'Consumer Brand'],
+  description_ar: '',
+  tags: [],
+  tags_en: [],
+  categories: [],
   brand_color: '#ea580c',
   accent_color: '#c2410c',
   layout: 'image-left',
-  image: '/images/brands/zalameh_mockup.png',
+  image: '',
+  mockup_image_file: null,
+  website_url: '',
+  apple_store_url: '',
+  google_play_url: '',
+  status_of_project: 'Live Production',
   is_coming_soon: 0,
   pipeline_status: 'متاح في السوق',
   is_active: 1,
 });
 
+const formErrors = ref({});
 const formData = ref(defaultBrandForm());
+
+function handleBrandImageUpload(e) {
+  const file = e.target.files?.[0];
+  if (!file) return;
+  formData.value.mockup_image_file = file;
+  const reader = new FileReader();
+  reader.onload = (event) => {
+    formData.value.image = event.target.result;
+  };
+  reader.readAsDataURL(file);
+}
 
 // Counts
 const activeLiveCount = computed(() => brands.value.filter(b => b.is_active && !b.is_coming_soon).length);
@@ -762,7 +837,7 @@ const getAlphaColor = (hex, alpha = '18') => {
 };
 
 const onImgError = (e) => {
-  e.target.src = '/images/brands/zalameh_mockup.png';
+  e.target.style.display = 'none';
 };
 
 const resetFilters = () => {
@@ -797,6 +872,7 @@ const toggleBrandStatus = async (brand) => {
 const openAddModal = () => {
   isEdit.value = false;
   currentEditId.value = null;
+  formErrors.value = {};
   formTab.value = 'identity';
   formData.value = defaultBrandForm();
   formDataLinks.value = { website: '', ios: '', android: '' };
@@ -806,14 +882,24 @@ const openAddModal = () => {
 const openEditModal = (brand) => {
   isEdit.value = true;
   currentEditId.value = brand.id;
+  formErrors.value = {};
   formTab.value = 'identity';
   formData.value = JSON.parse(JSON.stringify(brand));
   
+  // Ensure tags & categories are synchronized
+  if (!formData.value.tags || !formData.value.tags.length) {
+    formData.value.tags = formData.value.categories || [];
+  }
+
+  // Ensure name aliases
+  if (!formData.value.name) formData.value.name = formData.value.brand_ar || formData.value.title || '';
+  if (!formData.value.name_en) formData.value.name_en = formData.value.brand_en || formData.value.title_en || '';
+
   // Extract links
   formDataLinks.value = {
-    website: brand.links?.find(l => l.label?.includes('موقع') || l.label?.toLowerCase()?.includes('web'))?.href || '',
-    ios: brand.links?.find(l => l.label?.toLowerCase()?.includes('ios') || l.label?.includes('آبل'))?.href || '',
-    android: brand.links?.find(l => l.label?.toLowerCase()?.includes('android') || l.label?.includes('أندرويد'))?.href || '',
+    website: brand.website_url || brand.links?.find(l => l.label?.includes('موقع') || l.label?.toLowerCase()?.includes('web'))?.href || '',
+    ios: brand.apple_store_url || brand.links?.find(l => l.label?.toLowerCase()?.includes('ios') || l.label?.includes('آبل'))?.href || '',
+    android: brand.google_play_url || brand.links?.find(l => l.label?.toLowerCase()?.includes('android') || l.label?.includes('أندرويد'))?.href || '',
   };
 
   modalOpen.value = true;
@@ -844,9 +930,44 @@ const goToPrevTab = () => {
 };
 
 const saveBrand = async () => {
+  formErrors.value = {};
+  // Front-end Validation
+  const brand_ar = (formData.value.name || formData.value.brand_ar || '').trim();
+  const brand_en = (formData.value.name_en || formData.value.brand_en || '').trim();
+
+  let hasError = false;
+  if (!brand_ar) {
+    formErrors.value.name = 'يرجى إدخال اسم العلامة التجارية بالعربية';
+    hasError = true;
+  }
+  if (!brand_en) {
+    formErrors.value.name_en = 'يرجى إدخال اسم العلامة بالإنجليزية (English Brand Name)';
+    hasError = true;
+  }
+
+  if (hasError) {
+    formTab.value = 'identity';
+    toastError('يرجى ملء الحقول الإجبارية المحددة باللون الأحمر');
+    return;
+  }
+
+  // Auto-generate slug if empty
+  if (!formData.value.slug || !formData.value.slug.trim()) {
+    formData.value.slug = brand_en.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || `brand-${Date.now()}`;
+  }
+
   saving.value = true;
   try {
-    // Assemble links array
+    // Populate direct URLs and categories
+    formData.value.brand_ar = brand_ar;
+    formData.value.brand_en = brand_en;
+    formData.value.website_url = formDataLinks.value.website || '';
+    formData.value.apple_store_url = formDataLinks.value.ios || '';
+    formData.value.google_play_url = formDataLinks.value.android || '';
+    formData.value.categories = (formData.value.tags && formData.value.tags.length) ? formData.value.tags : ['علامة استهلاكية'];
+    formData.value.status_of_project = formData.value.pipeline_status || (formData.value.is_coming_soon ? 'In Pipeline' : 'Live Production');
+
+    // Assemble links array for local state
     const links = [];
     if (formDataLinks.value.website) {
       links.push({ label: 'الموقع الإلكتروني', label_en: 'Website', href: formDataLinks.value.website, type: 'primary' });
@@ -872,7 +993,8 @@ const saveBrand = async () => {
     closeModal();
   } catch (err) {
     console.error('Failed to save brand', err);
-    toastError('حدث خطأ أثناء حفظ بيانات العلامة');
+    const msg = err.response?.data?.message || 'حدث خطأ أثناء حفظ بيانات العلامة';
+    toastError(msg);
   } finally {
     saving.value = false;
   }
@@ -1098,11 +1220,14 @@ onMounted(() => {
 /* Brands Grid */
 .brands-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 330px));
+  gap: 1.25rem;
+  justify-content: start;
 }
 
 .brand-card {
+  width: 100%;
+  max-width: 330px;
   background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: 20px;
@@ -1674,13 +1799,74 @@ onMounted(() => {
 }
 
 /* ================= LIVE PREVIEW MODAL (1:1 with BrandsPage.jsx) ================= */
+.modal-preview-brand {
+  max-width: 950px;
+  height: 90vh;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+
+.preview-close-btn {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 60;
+  transition: all 0.2s ease;
+}
+.preview-close-btn:hover {
+  background: rgba(239, 68, 68, 0.9);
+  transform: scale(1.08);
+}
+
+.preview-scrollable-content {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+  display: flex;
+  flex-direction: column;
+}
+
+.preview-scrollable-content::-webkit-scrollbar {
+  width: 8px;
+}
+.preview-scrollable-content::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+}
+.preview-scrollable-content::-webkit-scrollbar-thumb {
+  background: rgba(124, 58, 237, 0.4);
+  border-radius: 4px;
+}
+.preview-scrollable-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(124, 58, 237, 0.7);
+}
+
 .preview-site-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.75rem 1.25rem;
+  padding: 0.85rem 1.5rem;
   background: #1e1b4b;
   color: #fff;
+  flex-shrink: 0;
 }
 
 .site-bar-info {
@@ -1702,8 +1888,7 @@ onMounted(() => {
   padding: 2.5rem 2rem;
   background: #f8f9fb;
   color: #150522;
-  overflow-y: auto;
-  max-height: 70vh;
+  flex: 1 0 auto;
 }
 
 .preview-brand-layout {
@@ -1836,6 +2021,7 @@ onMounted(() => {
 }
 
 .preview-footer-actions {
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -1896,4 +2082,18 @@ onMounted(() => {
   animation: spin 0.8s linear infinite;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
+
+.input-error {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.18) !important;
+  background-color: rgba(239, 68, 68, 0.02) !important;
+}
+
+.field-error-msg {
+  display: block;
+  font-size: 0.75rem;
+  color: #ef4444;
+  font-weight: 700;
+  margin-top: 0.35rem;
+}
 </style>

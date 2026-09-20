@@ -112,6 +112,7 @@
 import { ref, onMounted, reactive } from 'vue';
 import { useI18n } from 'vue-i18n';
 import api from '../../config/axios';
+import { MessageService } from '../../services/MessageService';
 import { useLocalized } from '../../composables/useLocalized';
 
 const { t, locale } = useI18n();
@@ -125,13 +126,22 @@ const form = reactive({
 });
 
 const storeSettings = reactive({
-  address: {},
-  phone: '',
-  whatsapp: '',
-  email: '',
-  support_email: '',
-  working_hours: {},
-  friday_hours: {}
+  address: {
+    ar: 'المملكة الأردنية الهاشمية - عمان - شارع مكة',
+    en: 'Hashemite Kingdom of Jordan - Amman - Mecca St.'
+  },
+  phone: '+962 79 123 4567',
+  whatsapp: '+962 79 123 4567',
+  email: 'info@be-kite.com',
+  support_email: 'support@be-kite.com',
+  working_hours: {
+    ar: 'الأحد - الخميس: 9:00 ص - 6:00 م',
+    en: 'Sun - Thu: 9:00 AM - 6:00 PM'
+  },
+  friday_hours: {
+    ar: 'الجمعة - السبت: مغلق',
+    en: 'Fri - Sat: Closed'
+  }
 });
 
 const isSubmitting = ref(false);
@@ -139,28 +149,24 @@ const isSubmitting = ref(false);
 const fetchSettings = async () => {
   try {
     const res = await api.get('/frontend/settings');
-    const settings = res.data.data || res.data;
+    const settings = res.data?.data || res.data;
     if (Array.isArray(settings)) {
       const getVal = (key) => settings.find(s => s.key === key)?.value;
-      storeSettings.address = {
-        ar: getVal('address_ar') || getVal('address'),
-        en: getVal('address_en') || getVal('address')
-      };
-      storeSettings.phone = getVal('support_phone') || getVal('phone_number');
-      storeSettings.email = getVal('email');
-      storeSettings.whatsapp = getVal('whatsapp');
-      storeSettings.support_email = getVal('support_email');
-      storeSettings.working_hours = {
-        ar: getVal('working_hours_ar'),
-        en: getVal('working_hours_en')
-      };
-      storeSettings.friday_hours = {
-        ar: getVal('friday_hours_ar'),
-        en: getVal('friday_hours_en')
-      };
+      if (getVal('address_ar') || getVal('address')) {
+        storeSettings.address = {
+          ar: getVal('address_ar') || getVal('address'),
+          en: getVal('address_en') || getVal('address')
+        };
+      }
+      if (getVal('support_phone') || getVal('phone_number')) {
+        storeSettings.phone = getVal('support_phone') || getVal('phone_number');
+      }
+      if (getVal('email')) storeSettings.email = getVal('email');
+      if (getVal('whatsapp')) storeSettings.whatsapp = getVal('whatsapp');
+      if (getVal('support_email')) storeSettings.support_email = getVal('support_email');
     }
-  } catch (err) {
-    console.error('Failed to fetch contact settings', err);
+  } catch {
+    // Graceful fallback to default store settings
   }
 };
 
@@ -170,11 +176,22 @@ const handleSubmit = async () => {
   if (isSubmitting.value) return;
   isSubmitting.value = true;
   try {
-    await api.post('/frontend/contact', form);
-    alert(t('contact.success_message'));
+    const fullMessage = form.subject 
+      ? `[${form.subject}] ${form.message}` 
+      : form.message;
+
+    await MessageService.submitPublicMessage({
+      name: form.name.trim(),
+      email: form.email.trim(),
+      phone_number: form.phone ? form.phone.trim() : null,
+      message: fullMessage.trim()
+    });
+
+    alert(t('contact.success_message') || 'تم إرسال رسالتك بنجاح!');
     Object.assign(form, { name: '', email: '', phone: '', subject: '', message: '' });
   } catch (err) {
-    alert(err.response?.data?.message || t('contact.error_message'));
+    const errMsg = err.response?.data?.message || t('contact.error_message') || 'حدث خطأ أثناء إرسال الرسالة، يرجى المحاولة لاحقاً.';
+    alert(errMsg);
   } finally {
     isSubmitting.value = false;
   }

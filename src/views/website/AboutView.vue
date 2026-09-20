@@ -62,13 +62,15 @@ const fetchAboutContent = async () => {
   }
 };
 
+import { sanitizeHtml } from '../../utils/sanitizer';
+
 onMounted(fetchAboutContent);
 
 const formattedContent = computed(() => {
   if (!page.value?.content) {
-    return t('about.default_story');
+    return sanitizeHtml(t('about.default_story'));
   }
-  return localized(page.value, 'content');
+  return sanitizeHtml(localized(page.value, 'content'));
 });
 </script>
 

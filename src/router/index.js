@@ -16,6 +16,13 @@ const routes = [
     component: LoginView,
   },
 
+  // Public Contact Us Page
+  {
+    path: '/contact',
+    name: 'ContactUs',
+    component: () => import('../views/website/ContactView.vue'),
+  },
+
   // Admin Dashboard CMS Routes
   {
     path: '/admin',
@@ -74,6 +81,13 @@ const routes = [
         component: () => import('../views/BrandsView.vue'),
       },
 
+      // Strategic Technology Partners
+      {
+        path: 'partners',
+        name: 'Partners',
+        component: () => import('../views/PartnersView.vue'),
+      },
+
       // CRM Inquiries & Leads
       {
         path: 'service-requests',
@@ -122,6 +136,11 @@ const routes = [
 
       // System & Settings
       {
+        path: 'about-us',
+        name: 'AboutUs',
+        component: () => import('../views/AboutUsView.vue'),
+      },
+      {
         path: 'settings',
         name: 'Settings',
         component: () => import('../views/SettingsView.vue'),
@@ -168,14 +187,23 @@ const router = createRouter({
   },
 });
 
-// Auth Guard
+// Auth Guard: Hardened session validation
 router.beforeEach((to, from, next) => {
-  const token = localStorage.getItem('token');
+  const rawToken = localStorage.getItem('token');
+  const hasValidToken = Boolean(
+    rawToken &&
+    rawToken !== 'null' &&
+    rawToken !== 'undefined' &&
+    rawToken.trim() !== ''
+  );
   const isAdminPath = to.path.startsWith('/admin');
 
-  if (isAdminPath && to.meta.requiresAuth && !token && to.name !== 'Login') {
+  if (isAdminPath && !hasValidToken && to.name !== 'Login') {
+    localStorage.removeItem('token');
+    localStorage.removeItem('admin');
+    localStorage.removeItem('user');
     next('/admin/login');
-  } else if (to.name === 'Login' && token) {
+  } else if (to.name === 'Login' && hasValidToken) {
     next('/admin/dashboard');
   } else {
     next();

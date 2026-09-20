@@ -190,7 +190,7 @@
               <label class="form-label" style="text-align: right;">الصور <span class="req">*</span></label>
               <div class="image-uploader">
                 <div class="upload-box" @click="triggerFileInput" v-if="(form.existing_images.length + form.new_images.length) < 4">
-                  <input type="file" ref="fileInput" @change="handleFileChange" accept="image/*" multiple class="hidden-input" />
+                  <input type="file" ref="fileInput" @change="handleFileChange" accept="image/jpeg,image/png,image/webp,image/gif,image/svg+xml" multiple class="hidden-input" />
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
                   <p>إضافة صورة<br><span>(JPG, PNG | بحد أقصى 4 صور)</span></p>
                 </div>
@@ -316,8 +316,9 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue';
+import { ref, computed, onMounted, watch, onBeforeUnmount } from 'vue';
 import api from '../config/axios';
+import { revokeObjectUrl, validateImageFiles } from '../utils/imageUpload';
 
 const items = ref([]);
 const loading = ref(false);
@@ -395,6 +396,7 @@ watch([statusFilter, typeFilter], () => { currentPage.value = 1; fetchItems(); }
 watch(searchQuery, () => { clearTimeout(searchDebounceTimer); searchDebounceTimer = setTimeout(() => { currentPage.value = 1; fetchItems(); }, 400); });
 
 onMounted(() => { fetchItems(); });
+onBeforeUnmount(() => imagePreviews.value.forEach(({ preview }) => revokeObjectUrl(preview)));
 
 const showFormModal = ref(false);
 const showViewModal = ref(false);
@@ -435,31 +437,30 @@ const openEditModal = (item) => {
 const openViewModal = (item) => { viewItem.value = item; currentImageIdx.value = 0; showViewModal.value = true; };
 const prevImage = () => { if (currentImageIdx.value > 0) currentImageIdx.value--; else currentImageIdx.value = (viewItem.value?.images?.length || 1) - 1; };
 const nextImage = () => { const max = (viewItem.value?.images?.length || 1) - 1; if (currentImageIdx.value < max) currentImageIdx.value++; else currentImageIdx.value = 0; };
-const closeModal = () => { showFormModal.value = false; };
+const closeModal = () => {
+  imagePreviews.value.forEach(({ preview }) => revokeObjectUrl(preview));
+  imagePreviews.value = [];
+  showFormModal.value = false;
+};
 
 const triggerFileInput = () => { fileInput.value.click(); };
 const handleFileChange = (e) => {
-  const files = Array.from(e.target.files);
+  const files = Array.from(e.target.files || []);
   const currentTotal = form.value.existing_images.length + form.value.new_images.length;
-  if (currentTotal + files.length > 4) {
-    triggerAlert('يُسمح بـ 4 صور كحد أقصى', 'error');
-    const allowedCount = 4 - currentTotal;
-    if (allowedCount > 0) {
-      files.slice(0, allowedCount).forEach(file => {
-        form.value.new_images.push(file);
-        imagePreviews.value.push({ file, preview: URL.createObjectURL(file) });
-      });
-    }
-  } else {
-    files.forEach(file => {
-      form.value.new_images.push(file);
-      imagePreviews.value.push({ file, preview: URL.createObjectURL(file) });
-    });
-  }
+  const { accepted, errors } = validateImageFiles(files, { currentCount, maxFiles: 4 });
+  accepted.forEach((file) => {
+    form.value.new_images.push(file);
+    imagePreviews.value.push({ file, preview: URL.createObjectURL(file) });
+  });
+  if (errors.length) triggerAlert(errors.join(' • '), 'error');
   e.target.value = null;
 };
 const removeExistingImage = (idx) => { form.value.existing_images.splice(idx, 1); };
-const removeNewImage = (idx) => { form.value.new_images.splice(idx, 1); imagePreviews.value.splice(idx, 1); };
+const removeNewImage = (idx) => {
+  revokeObjectUrl(imagePreviews.value[idx]?.preview);
+  form.value.new_images.splice(idx, 1);
+  imagePreviews.value.splice(idx, 1);
+};
 
 const submitForm = async () => {
   if (!String(form.value.title_ar || '').trim()) { activeLang.value = 'ar'; triggerAlert('العنوان بالعربي مطلوب', 'error'); return; }

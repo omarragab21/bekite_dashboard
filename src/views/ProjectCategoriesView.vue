@@ -89,12 +89,30 @@
         <form @submit.prevent="saveCategory" class="modal-body">
           <div class="form-group">
             <label class="form-label">اسم القسم (بالعربية) *</label>
-            <input type="text" v-model="formData.name" class="form-input" required placeholder="مثال: المواقع الإلكترونية" />
+            <input
+              type="text"
+              v-model="formData.name"
+              class="form-input"
+              :class="{ 'input-error': formErrors.name }"
+              @input="formErrors.name = null"
+              required
+              placeholder="مثال: المواقع الإلكترونية"
+            />
+            <span v-if="formErrors.name" class="field-error-msg">{{ formErrors.name }}</span>
           </div>
 
           <div class="form-group">
             <label class="form-label">اسم القسم (English) *</label>
-            <input type="text" v-model="formData.name_en" class="form-input ltr-text" required placeholder="e.g. Websites" />
+            <input
+              type="text"
+              v-model="formData.name_en"
+              class="form-input ltr-text"
+              :class="{ 'input-error': formErrors.name_en }"
+              @input="formErrors.name_en = null"
+              required
+              placeholder="e.g. Websites"
+            />
+            <span v-if="formErrors.name_en" class="field-error-msg">{{ formErrors.name_en }}</span>
           </div>
 
           <div class="form-group">
@@ -124,6 +142,9 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import api from '../config/axios';
+import { useToast } from '../composables/useToast';
+
+const { success, error: toastError } = useToast();
 
 const loading = ref(true);
 const saving = ref(false);
@@ -133,6 +154,7 @@ const projects = ref([]);
 const modalOpen = ref(false);
 const isEdit = ref(false);
 const currentEditId = ref(null);
+const formErrors = ref({});
 
 const formData = ref({
   name: '',
@@ -156,6 +178,7 @@ const fetchData = async () => {
     projects.value = projRes.data.data || [];
   } catch (err) {
     console.error('Failed to fetch project categories', err);
+    toastError('تعذر تحميل أقسام المشاريع');
   } finally {
     loading.value = false;
   }
@@ -166,14 +189,17 @@ const toggleStatus = async (cat) => {
   try {
     await api.put(`/dashboard/project-categories/${cat.id}`, { is_active: newStatus });
     cat.is_active = newStatus;
+    success(newStatus ? 'تم تفعيل القسم' : 'تم تعطيل القسم');
   } catch (err) {
     console.error('Failed to update status', err);
+    toastError('تعذر تحديث حالة القسم');
   }
 };
 
 const openAddModal = () => {
   isEdit.value = false;
   currentEditId.value = null;
+  formErrors.value = {};
   formData.value = {
     name: '',
     name_en: '',
@@ -186,6 +212,7 @@ const openAddModal = () => {
 const openEditModal = (cat) => {
   isEdit.value = true;
   currentEditId.value = cat.id;
+  formErrors.value = {};
   formData.value = JSON.parse(JSON.stringify(cat));
   modalOpen.value = true;
 };
@@ -195,19 +222,58 @@ const closeModal = () => {
 };
 
 const saveCategory = async () => {
+  formErrors.value = {};
+  // Front-end Validation
+  const name_ar = (formData.value.name || '').trim();
+  const name_en = (formData.value.name_en || '').trim();
+
+  let hasError = false;
+  if (!name_ar) {
+    formErrors.value.name = 'يرجى إدخال اسم القسم بالعربية';
+    hasError = true;
+  }
+  if (!name_en) {
+    formErrors.value.name_en = 'يرجى إدخال اسم القسم بالإنجليزية (English Name)';
+    hasError = true;
+  }
+
+  if (hasError) {
+    toastError('يرجى ملء الحقول الإجبارية المحددة باللون الأحمر');
+    return;
+  }
+
+  // Auto-generate slug if not provided
+  let slug = (formData.value.slug || '').trim();
+  if (!slug) {
+    slug = name_en.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || `cat-${Date.now()}`;
+    formData.value.slug = slug;
+  }
+
+  const payload = {
+    name_ar,
+    name_en,
+    name: name_ar,
+    slug,
+    is_active: formData.value.is_active ? 1 : 0,
+  };
+
   saving.value = true;
   try {
     if (isEdit.value) {
-      const res = await api.put(`/dashboard/project-categories/${currentEditId.value}`, formData.value);
+      const res = await api.put(`/dashboard/project-categories/${currentEditId.value}`, payload);
       const idx = categories.value.findIndex(c => c.id === currentEditId.value);
       if (idx !== -1) categories.value[idx] = res.data.data;
+      success('تم تحديث قسم البورتفوليو بنجاح');
     } else {
-      const res = await api.post('/dashboard/project-categories', formData.value);
+      const res = await api.post('/dashboard/project-categories', payload);
       categories.value.push(res.data.data);
+      success('تمت إضافة قسم البورتفوليو بنجاح');
     }
     closeModal();
   } catch (err) {
     console.error('Failed to save category', err);
+    const msg = err.response?.data?.message || 'حدث خطأ أثناء حفظ القسم';
+    toastError(msg);
   } finally {
     saving.value = false;
   }
@@ -476,5 +542,19 @@ onMounted(() => {
   color: #fff;
   font-weight: 700;
   cursor: pointer;
+}
+
+.input-error {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.18) !important;
+  background-color: rgba(239, 68, 68, 0.02) !important;
+}
+
+.field-error-msg {
+  display: block;
+  font-size: 0.75rem;
+  color: #ef4444;
+  font-weight: 700;
+  margin-top: 0.35rem;
 }
 </style>

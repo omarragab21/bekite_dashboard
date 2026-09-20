@@ -135,40 +135,45 @@
         <div class="project-top-bar" :style="{ background: project.accent_color || '#7c3aed' }"></div>
 
         <div class="project-card-inner">
-          <!-- Card Header (Badge & Status) -->
-          <div class="project-header-flex">
-            <span
-              class="project-badge-tag"
+          <!-- Top Row: Icon Box + Header Badges -->
+          <div class="project-top">
+            <div
+              class="project-icon-box"
               :style="{
-                color: project.accent_color || '#7c3aed',
                 backgroundColor: getAlphaColor(project.accent_color, '15'),
                 borderColor: getAlphaColor(project.accent_color, '35')
               }"
             >
-              {{ project.badge || 'PORTFOLIO' }}
-            </span>
-
-            <div class="project-status-chip" :class="project.is_active ? 'active' : 'inactive'">
-              <span class="status-dot"></span>
-              <span>{{ project.is_active ? 'منشور' : 'مسودة' }}</span>
+              <img
+                v-if="project.client_logo || project.icon_image || project.icon"
+                :src="project.client_logo || project.icon_image || project.icon"
+                class="project-custom-icon"
+                alt="Logo"
+                @error="onImgError"
+              />
+              <svg v-else width="22" height="22" viewBox="0 0 24 24" fill="none" :stroke="project.accent_color || '#7c3aed'" stroke-width="2">
+                <polygon points="12 2 2 7 12 12 22 7 12 2"/>
+                <polyline points="2 17 12 22 22 17"/>
+                <polyline points="2 12 12 17 22 12"/>
+              </svg>
             </div>
-          </div>
 
-          <!-- Mockup Image Preview -->
-          <div class="project-mockup-wrap" @click="openPreviewModal(project)" title="اضغط للمعاينة الحية الشاملة">
-            <img
-              :src="project.web_image || project.card_image || project.image || '/logo.png'"
-              :alt="project.title"
-              class="project-mockup-img"
-              @error="onImgError"
-            />
-            <div class="mockup-overlay">
-              <span class="btn-overlay-preview">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
-                </svg>
-                معاينة سريعة شاملة
+            <div class="project-header-meta">
+              <span
+                class="project-badge-tag"
+                :style="{
+                  color: project.accent_color || '#7c3aed',
+                  backgroundColor: getAlphaColor(project.accent_color, '15'),
+                  borderColor: getAlphaColor(project.accent_color, '35')
+                }"
+              >
+                {{ project.badge || 'PORTFOLIO' }}
               </span>
+
+              <div class="project-status-chip" :class="project.is_active ? 'active' : 'inactive'">
+                <span class="status-dot"></span>
+                <span>{{ project.is_active ? 'منشور' : 'مسودة' }}</span>
+              </div>
             </div>
           </div>
 
@@ -372,10 +377,12 @@
                     type="text"
                     v-model="formData.title"
                     class="form-input"
+                    :class="{ 'input-error': formErrors.title }"
+                    @input="formErrors.title = null; autoGenerateSlug()"
                     required
                     placeholder="مثال: Iris Flowers"
-                    @input="autoGenerateSlug"
                   />
+                  <span v-if="formErrors.title" class="field-error-msg">{{ formErrors.title }}</span>
                 </div>
                 <div class="form-group">
                   <label class="form-label">عنوان المشروع (English) *</label>
@@ -383,9 +390,12 @@
                     type="text"
                     v-model="formData.title_en"
                     class="form-input ltr-text"
+                    :class="{ 'input-error': formErrors.title_en }"
+                    @input="formErrors.title_en = null"
                     required
                     placeholder="e.g. Iris Flowers"
                   />
+                  <span v-if="formErrors.title_en" class="field-error-msg">{{ formErrors.title_en }}</span>
                 </div>
               </div>
 
@@ -396,9 +406,12 @@
                     type="text"
                     v-model="formData.client_name"
                     class="form-input"
+                    :class="{ 'input-error': formErrors.client_name }"
+                    @input="formErrors.client_name = null"
                     required
                     placeholder="مثال: مجموعة Iris للزهور والهدايا"
                   />
+                  <span v-if="formErrors.client_name" class="field-error-msg">{{ formErrors.client_name }}</span>
                 </div>
                 <div class="form-group">
                   <label class="form-label">الرابط التعريفي المخصص (Slug) *</label>
@@ -730,7 +743,7 @@
                     ref="socialMultiInput"
                     class="hidden-file-input"
                     multiple
-                    accept="image/*"
+                    accept="image/jpeg,image/png,image/webp,image/gif,image/svg+xml"
                     @change="handleMultipleImagesUpload($event, 'social_media_images')"
                   />
                   <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="dropzone-icon">
@@ -738,7 +751,7 @@
                     <polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
                   </svg>
                   <span class="dropzone-title">انقر لاختيار عدة صور دفعة واحدة أو اسحبها هنا</span>
-                  <span class="dropzone-hint">يمكنك رفع 1 إلى 20 صورة لحملات السوشيال ميديا</span>
+                  <span class="dropzone-hint">يمكنك رفع 1 إلى 10 صور (JPG, PNG, WEBP, GIF, SVG)</span>
                 </div>
 
                 <!-- Add via URL Row -->
@@ -931,7 +944,7 @@
                     ref="brandingMultiInput"
                     class="hidden-file-input"
                     multiple
-                    accept="image/*"
+                    accept="image/jpeg,image/png,image/webp,image/gif,image/svg+xml"
                     @change="handleMultipleImagesUpload($event, 'branding_images')"
                   />
                   <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="dropzone-icon">
@@ -939,7 +952,7 @@
                     <circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>
                   </svg>
                   <span class="dropzone-title">انقر لرفع صور الهوية البصرية (Mockups, Packaging, Stationery)</span>
-                  <span class="dropzone-hint">يمكنك اختيار عدة صور دفعة واحدة</span>
+                  <span class="dropzone-hint">يمكنك اختيار حتى 10 صور دفعة واحدة (بحد أقصى 5MB للصورة)</span>
                 </div>
 
                 <!-- Add via URL Row -->
@@ -1255,6 +1268,7 @@
 import { ref, computed, onMounted } from 'vue';
 import { ProjectService } from '../services/ProjectService';
 import { useToast } from '../composables/useToast';
+import { readFileAsDataUrl, validateImageFile, validateImageFiles } from '../utils/imageUpload';
 
 const { success, error: toastError } = useToast();
 
@@ -1295,11 +1309,11 @@ const getInitialFormData = () => ({
   title_en: '',
   slug: '',
   client_name: '',
-  location: 'عمان، الأردن',
-  location_en: 'Amman, Jordan',
-  year: '2025 - 2026',
-  badge: 'مشروع رقمي',
-  badge_en: 'Digital Project',
+  location: '',
+  location_en: '',
+  year: new Date().getFullYear().toString(),
+  badge: '',
+  badge_en: '',
   description: '',
   description_en: '',
   card_image: '',
@@ -1332,16 +1346,15 @@ const getInitialFormData = () => ({
   // Branding & PDF
   branding_images: [],
   branding_pdf_url: '',
-  branding_pdf_name: 'Brand_Identity_Guidelines.pdf',
+  branding_pdf_name: '',
 
-  stats: [
-    { label: 'نمو المبيعات', value: '+150%' },
-  ],
-  tags: ['تجارة إلكترونية', 'هوية بصرية', 'منصة ويب'],
-  deliverables: ['منصة ويب متكاملة', 'هوية بصرية كاملة', 'تطبيق هاتف ذكي'],
+  stats: [],
+  tags: [],
+  deliverables: [],
   is_active: 1,
 });
 
+const formErrors = ref({});
 const formData = ref(getInitialFormData());
 
 const getAlphaColor = (hex, alpha = '18') => {
@@ -1471,6 +1484,12 @@ const triggerFileInput = (inputRefName) => {
 const handleSingleImageUpload = (e, field) => {
   const file = e.target.files?.[0];
   if (!file) return;
+  const validationError = validateImageFile(file);
+  if (validationError) {
+    toastError(validationError);
+    e.target.value = null;
+    return;
+  }
   const reader = new FileReader();
   reader.onload = (event) => {
     formData.value[field] = event.target.result;
@@ -1485,7 +1504,7 @@ const handleSingleImageUpload = (e, field) => {
 };
 
 // Multiple Images Upload (Social / Branding)
-const handleMultipleImagesUpload = (e, field) => {
+const handleMultipleImagesUpload = async (e, field) => {
   const files = Array.from(e.target.files || []);
   if (!files.length) return;
 
@@ -1493,20 +1512,35 @@ const handleMultipleImagesUpload = (e, field) => {
     formData.value[field] = [];
   }
 
-  files.forEach((file, index) => {
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      formData.value[field].push({
-        id: Date.now() + index,
-        image: event.target.result,
-        url: event.target.result,
-        title: file.name.replace(/\.[^/.]+$/, ''),
-      });
-    };
-    reader.readAsDataURL(file);
+  const { accepted, errors } = validateImageFiles(files, {
+    currentCount: formData.value[field].length,
+    maxFiles: 10,
+  });
+  const existing = new Set(formData.value[field].map((item) => `${item.name || item.title || item.image}:${item.size || ''}`));
+  const uniqueFiles = accepted.filter((file) => {
+    const key = `${file.name}:${file.size}`;
+    if (existing.has(key)) return false;
+    existing.add(key);
+    return true;
   });
 
-  success(`تمت إضافة ${files.length} صور بنجاح`);
+  if (uniqueFiles.length) {
+    const images = await Promise.all(uniqueFiles.map(async (file) => {
+      const dataUrl = await readFileAsDataUrl(file);
+      return {
+        id: `${Date.now()}-${crypto.randomUUID?.() || Math.random().toString(36).slice(2)}`,
+        image: dataUrl,
+        url: dataUrl,
+        name: file.name,
+        size: file.size,
+        title: file.name.replace(/\.[^/.]+$/, ''),
+      };
+    }));
+    formData.value[field].push(...images);
+    success(`تمت إضافة ${images.length} صور بنجاح`);
+  }
+  if (errors.length) toastError(errors.join(' • '));
+  if (accepted.length && !uniqueFiles.length) toastError('الصور المحددة مضافة بالفعل');
   e.target.value = null;
 };
 
@@ -1612,6 +1646,7 @@ const toggleProjectStatus = async (project) => {
 const openAddModal = () => {
   isEdit.value = false;
   currentEditId.value = null;
+  formErrors.value = {};
   activeTab.value = 'general';
   formData.value = getInitialFormData();
   newSocialImageUrl.value = '';
@@ -1624,6 +1659,7 @@ const openAddModal = () => {
 const openEditModal = (project) => {
   isEdit.value = true;
   currentEditId.value = project.id;
+  formErrors.value = {};
   activeTab.value = 'general';
   
   const cloned = JSON.parse(JSON.stringify(project));
@@ -1668,6 +1704,47 @@ const openEditFromPreview = (project) => {
 };
 
 const saveProject = async () => {
+  formErrors.value = {};
+  // Front-end Validation
+  const name_ar = (formData.value.title || formData.value.name_ar || '').trim();
+  const name_en = (formData.value.title_en || formData.value.name_en || '').trim();
+  const client_name = (formData.value.client_name || '').trim();
+
+  let hasError = false;
+  if (!name_ar) {
+    formErrors.value.title = 'يرجى إدخال اسم المشروع بالعربية';
+    hasError = true;
+  }
+  if (!name_en) {
+    formErrors.value.title_en = 'يرجى إدخال عنوان المشروع بالإنجليزية (English Title)';
+    hasError = true;
+  }
+  if (!client_name) {
+    formErrors.value.client_name = 'يرجى إدخال اسم العميل أو الشركة المالكة';
+    hasError = true;
+  }
+
+  if (hasError) {
+    activeTab.value = 'general';
+    toastError('يرجى ملء الحقول الإجبارية المحددة باللون الأحمر');
+    return;
+  }
+
+  // Ensure slug is populated
+  if (!formData.value.slug || !formData.value.slug.trim()) {
+    formData.value.slug = name_en.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || `project-${Date.now()}`;
+  }
+
+  // Ensure filter_categories has at least 1
+  if (!formData.value.filter_categories || !formData.value.filter_categories.length) {
+    formData.value.filter_categories = ['websites'];
+  }
+
+  // Ensure category_ids has at least 1 valid id
+  if (!formData.value.category_ids || !formData.value.category_ids.length) {
+    formData.value.category_ids = [1];
+  }
+
   saving.value = true;
   try {
     // Ensure default images
@@ -1683,11 +1760,6 @@ const saveProject = async () => {
     }
     formData.value.image = formData.value.card_image;
 
-    // Ensure filter_categories has at least 1
-    if (!formData.value.filter_categories || !formData.value.filter_categories.length) {
-      formData.value.filter_categories = ['websites'];
-    }
-
     if (isEdit.value) {
       const updated = await ProjectService.update(currentEditId.value, formData.value);
       const idx = projects.value.findIndex(p => p.id === currentEditId.value);
@@ -1701,7 +1773,8 @@ const saveProject = async () => {
     closeModal();
   } catch (err) {
     console.error('Failed to save project', err);
-    toastError('حدث خطأ أثناء حفظ المشروع');
+    const msg = err.response?.data?.message || 'حدث خطأ أثناء حفظ المشروع';
+    toastError(msg);
   } finally {
     saving.value = false;
   }
@@ -1924,27 +1997,31 @@ onMounted(() => {
   cursor: pointer;
 }
 
-/* ================= PROJECTS CARDS GRID (Brands Aesthetic) ================= */
+/* ================= PROJECTS CARDS GRID (Compact Fixed Layout with Project Icons) ================= */
 .projects-cards-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 330px));
+  gap: 1.25rem;
+  justify-content: start;
 }
 
 .project-card {
+  width: 100%;
+  max-width: 330px;
   background: var(--bg-card);
   border: 1px solid var(--border-color);
-  border-radius: 20px;
+  border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
   display: flex;
   flex-direction: column;
-  transition: all 0.25s ease;
+  justify-content: space-between;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
   position: relative;
 }
 .project-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
 }
 .project-card.card-dragging {
   opacity: 0.5;
@@ -1952,45 +2029,70 @@ onMounted(() => {
 }
 
 .project-top-bar {
-  height: 5px;
+  height: 4px;
   width: 100%;
 }
 
 .project-card-inner {
-  padding: 1.35rem;
+  padding: 1.2rem;
   display: flex;
   flex-direction: column;
-  gap: 0.85rem;
+  gap: 0.8rem;
   flex: 1;
 }
 
-.project-header-flex {
+.project-top {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 0.5rem;
+  gap: 0.75rem;
+}
+
+.project-icon-box {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 1px solid transparent;
+}
+.project-custom-icon {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+}
+
+.project-header-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.35rem;
 }
 
 .project-badge-tag {
   display: inline-flex;
   align-items: center;
-  padding: 0.25rem 0.75rem;
-  border-radius: 999px;
-  font-size: 0.72rem;
+  padding: 0.2rem 0.65rem;
+  border-radius: 6px;
+  font-size: 0.68rem;
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   border: 1px solid;
+  font-family: 'Outfit', sans-serif;
 }
 
 .project-status-chip {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
-  padding: 0.2rem 0.65rem;
+  padding: 0.15rem 0.55rem;
   border-radius: 999px;
-  font-size: 0.7rem;
+  font-size: 0.68rem;
   font-weight: 700;
+  white-space: nowrap !important;
 }
 .project-status-chip.active {
   background: rgba(16, 185, 129, 0.1);
@@ -2006,6 +2108,7 @@ onMounted(() => {
   height: 6px;
   border-radius: 50%;
   display: inline-block;
+  flex-shrink: 0;
 }
 .project-status-chip.active .status-dot {
   background: #10b981;
@@ -2013,55 +2116,6 @@ onMounted(() => {
 }
 .project-status-chip.inactive .status-dot {
   background: #9ca3af;
-}
-
-/* Mockup Frame */
-.project-mockup-wrap {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 16 / 10;
-  border-radius: 14px;
-  overflow: hidden;
-  background: #0f172a;
-  border: 1px solid var(--border-color);
-  cursor: pointer;
-}
-
-.project-mockup-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.4s ease;
-}
-.project-mockup-wrap:hover .project-mockup-img {
-  transform: scale(1.04);
-}
-
-.mockup-overlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(15, 23, 42, 0.6);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  transition: opacity 0.2s ease;
-}
-.project-mockup-wrap:hover .mockup-overlay {
-  opacity: 1;
-}
-
-.btn-overlay-preview {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  padding: 0.55rem 1rem;
-  border-radius: 999px;
-  background: #fff;
-  color: #0f172a;
-  font-size: 0.78rem;
-  font-weight: 800;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
 }
 
 /* Titles */
@@ -3512,5 +3566,19 @@ onMounted(() => {
   padding: 0.35rem 0.75rem;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+}
+
+.input-error {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.18) !important;
+  background-color: rgba(239, 68, 68, 0.02) !important;
+}
+
+.field-error-msg {
+  display: block;
+  font-size: 0.75rem;
+  color: #ef4444;
+  font-weight: 700;
+  margin-top: 0.35rem;
 }
 </style>

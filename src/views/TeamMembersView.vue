@@ -69,22 +69,22 @@
           <div class="form-grid-2">
             <div class="form-group">
               <label class="form-label">الاسم الكامل (بالعربية) *</label>
-              <input type="text" v-model="formData.name" class="form-input" required placeholder="مثال: عمر رجب" />
+              <input type="text" v-model="formData.name" class="form-input" required placeholder="مثال: أحمد محمد" />
             </div>
             <div class="form-group">
               <label class="form-label">الاسم الكامل (English) *</label>
-              <input type="text" v-model="formData.name_en" class="form-input ltr-text" required placeholder="e.g. Omar Ragab" />
+              <input type="text" v-model="formData.name_en" class="form-input ltr-text" required placeholder="e.g. Ahmed Mohamed" />
             </div>
           </div>
 
           <div class="form-grid-2">
             <div class="form-group">
               <label class="form-label">المسمى والمنصب (بالعربية) *</label>
-              <input type="text" v-model="formData.role" class="form-input" required placeholder="مثال: المدير التنفيذي للتطوير والأنظمة" />
+              <input type="text" v-model="formData.role" class="form-input" required placeholder="مثال: مدير تطوير البرمجيات والأنظمة" />
             </div>
             <div class="form-group">
               <label class="form-label">المنصب (English) *</label>
-              <input type="text" v-model="formData.role_en" class="form-input ltr-text" required placeholder="Chief Technology Officer" />
+              <input type="text" v-model="formData.role_en" class="form-input ltr-text" required placeholder="Head of Software Development" />
             </div>
           </div>
 

@@ -4,8 +4,9 @@
  */
 
 import { initialMockData } from './mockData';
+import { DEFAULT_PARTNERS } from '../../src/services/PartnerService';
 
-const STORAGE_KEY = 'bekite_cms_v9_db';
+const STORAGE_KEY = 'bekite_cms_v11_db';
 
 class MockDB {
   constructor() {
@@ -18,7 +19,7 @@ class MockDB {
       if (stored) {
         const parsed = JSON.parse(stored);
         // Ensure essential Be Kite keys exist
-        if (parsed.projects && parsed.products && parsed.services && parsed.brands && parsed.brands.length >= 5 && parsed.careers && parsed.careers.length > 0 && parsed.messages && parsed.messages.length >= 7) {
+        if (parsed.projects && parsed.products && parsed.services && parsed.brands) {
           return parsed;
         }
       }
@@ -39,8 +40,12 @@ class MockDB {
   }
 
   get(key) {
-    if (!this.data[key] || (Array.isArray(this.data[key]) && initialMockData[key] && this.data[key].length < initialMockData[key].length)) {
-      this.data[key] = initialMockData[key] ? JSON.parse(JSON.stringify(initialMockData[key])) : [];
+    if (!this.data[key]) {
+      if (key === 'partners') {
+        this.data[key] = JSON.parse(JSON.stringify(DEFAULT_PARTNERS));
+      } else {
+        this.data[key] = initialMockData[key] ? JSON.parse(JSON.stringify(initialMockData[key])) : [];
+      }
     }
     return this.data[key];
   }
@@ -115,7 +120,7 @@ export async function handleMockRequest(config) {
   }
 
   // 1. Auth routes
-  if (url === '/v1/login' || url === '/frontend/login' || url === '/login' || url === '/admin/auth/login') {
+  if (url === '/dashboard/login' || url === '/v1/login' || url === '/frontend/login' || url === '/login' || url === '/admin/auth/login') {
     const admin = mockDb.get('admin');
     return {
       status: 200,
@@ -123,13 +128,14 @@ export async function handleMockRequest(config) {
         success: true,
         token: 'bekite_auth_token_2026_enterprise',
         admin: admin,
-        customer: { id: 1, name: 'عمر رجب', email: data?.email || 'admin@bekite.com' },
+        user: admin,
+        customer: { id: 1, name: 'مدير النظام', email: data?.email || 'admin@bekite.com' },
         message: 'تم تسجيل الدخول بنجاح إلى منصة بي كايت',
       },
     };
   }
 
-  if (url === '/logout' || url === '/frontend/logout' || url === '/admin/auth/logout') {
+  if (url === '/dashboard/logout' || url === '/logout' || url === '/frontend/logout' || url === '/admin/auth/logout') {
     return {
       status: 200,
       data: { success: true, message: 'تم تسجيل الخروج بنجاح' },
@@ -142,6 +148,47 @@ export async function handleMockRequest(config) {
       status: 200,
       data: { success: true, data: admin },
     };
+  }
+
+  // Password change endpoint
+  if (url === '/dashboard/change-password' || url === '/admin/change-password' || url === '/auth/change-password') {
+    return {
+      status: 200,
+      data: {
+        success: true,
+        message: 'تم تحديث كلمة المرور بنجاح',
+      },
+    };
+  }
+
+  // Dedicated admin profile endpoints
+  if (url === '/dashboard/profile' || url === '/admin/profile' || url === '/dashboard/users/me') {
+    if (method === 'get') {
+      const admin = mockDb.get('admin');
+      return {
+        status: 200,
+        data: { success: true, data: admin },
+      };
+    }
+    if (method === 'post' || method === 'put' || method === 'patch') {
+      let updateData = data;
+      if (data && typeof data.entries === 'function') {
+        updateData = {};
+        for (const [k, v] of data.entries()) {
+          if (k !== '_method') updateData[k] = v;
+        }
+      }
+      const admin = mockDb.get('admin');
+      const updated = { ...admin, ...(updateData || {}) };
+      mockDb.set('admin', updated);
+      if (admin.id) {
+        mockDb.update('admins', admin.id, updated);
+      }
+      return {
+        status: 200,
+        data: { success: true, data: updated, message: 'تم تحديث الملف الشخصي بنجاح' },
+      };
+    }
   }
 
   // 2. Statistics & Analytics
@@ -181,7 +228,7 @@ export async function handleMockRequest(config) {
     return { status: 200, data: { success: true } };
   }
 
-  if (url.match(/\/dashboard\/notifications\/\d+\/read/)) {
+  if (url.startsWith('/dashboard/notifications/') && url.endsWith('/read')) {
     const id = url.split('/')[3];
     mockDb.update('notifications', id, { is_read: 1 });
     return { status: 200, data: { success: true } };
@@ -189,16 +236,19 @@ export async function handleMockRequest(config) {
 
   // 4. Resource Routes Mapping
   const routesMapping = [
-    { pattern: /^\/(?:dashboard|admin)\/projects(?:\/(\d+))?/, key: 'projects' },
-    { pattern: /^\/(?:dashboard|admin)\/project-categories(?:\/(\d+))?/, key: 'projectCategories' },
-    { pattern: /^\/(?:dashboard|admin)\/products(?:\/(\d+))?/, key: 'products' },
-    { pattern: /^\/(?:dashboard|admin)\/categories(?:\/(\d+))?/, key: 'productCategories' },
+    { pattern: /^\/(?:dashboard|admin|site)\/projects(?:\/(\d+))?/, key: 'projects' },
+    { pattern: /^\/(?:dashboard|admin|site)\/project-categories(?:\/(\d+))?/, key: 'projectCategories' },
+    { pattern: /^\/(?:dashboard|admin|site)\/products(?:\/(\d+))?/, key: 'products' },
+    { pattern: /^\/(?:dashboard|admin|site)\/categories(?:\/(\d+))?/, key: 'productCategories' },
     { pattern: /^\/(?:dashboard|admin)\/product-categories(?:\/(\d+))?/, key: 'productCategories' },
-    { pattern: /^\/(?:dashboard|admin)\/solutions(?:\/(\d+))?/, key: 'services' },
+    { pattern: /^\/(?:dashboard|admin|site)\/solutions(?:\/(\d+))?/, key: 'services' },
     { pattern: /^\/(?:dashboard|admin)\/services(?:\/(\d+))?/, key: 'services' },
+    { pattern: /^\/(?:dashboard|admin|site)\/brand-showcases(?:\/(\d+))?/, key: 'brands' },
     { pattern: /^\/(?:dashboard|admin)\/brands(?:\/(\d+))?/, key: 'brands' },
     { pattern: /^\/(?:dashboard|admin)\/service-requests(?:\/(\d+))?/, key: 'serviceRequests' },
-    { pattern: /^\/(?:dashboard|admin)\/inquiries(?:\/(\d+))?/, key: 'serviceRequests' },
+    { pattern: /^\/(?:dashboard|admin|site)\/inquiries(?:\/(\d+))?/, key: 'serviceRequests' },
+    { pattern: /^\/(?:dashboard|admin|site)\/job-site(?:\/(\d+))?/, key: 'careers' },
+    { pattern: /^\/(?:dashboard|admin|site)\/job-sites(?:\/(\d+))?/, key: 'careers' },
     { pattern: /^\/(?:dashboard|admin)\/careers(?:\/(\d+))?/, key: 'careers' },
     { pattern: /^\/(?:dashboard|admin)\/knowledge-guides(?:\/(\d+))?/, key: 'careers' },
     { pattern: /^\/(?:dashboard|admin)\/team-members(?:\/(\d+))?/, key: 'teamMembers' },
@@ -207,10 +257,12 @@ export async function handleMockRequest(config) {
     { pattern: /^\/(?:dashboard|admin)\/legal(?:\/(\d+))?/, key: 'dynamicPages' },
     { pattern: /^\/(?:dashboard|admin)\/topics(?:\/(\d+))?/, key: 'dynamicPages' },
     { pattern: /^\/(?:dashboard|admin)\/contact-messages(?:\/(\d+))?/, key: 'messages' },
-    { pattern: /^\/(?:dashboard|admin)\/messages(?:\/(\d+))?/, key: 'messages' },
+    { pattern: /^\/(?:dashboard|admin|site)\/messages(?:\/(\d+))?/, key: 'messages' },
+    { pattern: /^\/(?:dashboard|admin)\/users(?:\/(\d+))?/, key: 'admins' },
     { pattern: /^\/(?:dashboard|admin)\/admins(?:\/(\d+))?/, key: 'admins' },
     { pattern: /^\/(?:dashboard|admin)\/activity-log(?:s)?(?:\/(\d+))?/, key: 'activityLogs' },
     { pattern: /^\/(?:dashboard|admin)\/notifications(?:\/(\d+))?/, key: 'notifications' },
+    { pattern: /^\/(?:dashboard|admin|site)\/partners(?:\/(\d+))?/, key: 'partners' },
   ];
 
   // Specific status toggles
@@ -218,6 +270,13 @@ export async function handleMockRequest(config) {
     const parts = url.match(/\/(?:contact-messages|messages)\/(\d+)\/(read|unread)/);
     const id = parts[1];
     const status = parts[2];
+    const updated = mockDb.update('messages', id, { status, is_read: status === 'read' ? 1 : 0 });
+    return { status: 200, data: { success: true, data: updated, message: 'تم تحديث حالة الرسالة' } };
+  }
+
+  if (url.match(/\/(?:contact-messages|messages)\/(\d+)\/status/) && (method === 'patch' || method === 'put' || method === 'post')) {
+    const id = url.match(/\/(?:contact-messages|messages)\/(\d+)\/status/)[1];
+    const status = data?.status || 'read';
     const updated = mockDb.update('messages', id, { status, is_read: status === 'read' ? 1 : 0 });
     return { status: 200, data: { success: true, data: updated, message: 'تم تحديث حالة الرسالة' } };
   }
@@ -326,14 +385,39 @@ export async function handleMockRequest(config) {
         };
       }
 
-      if (method === 'post') {
-        const created = mockDb.add(key, data || {});
-        return { status: 200, data: { success: true, data: created, message: 'تمت الإضافة بنجاح' } };
+      const isPostPut = Boolean(method === 'post' && id) || (
+        (data && typeof data.get === 'function' && (data.get('_method') === 'PUT' || data.get('_method') === 'PATCH')) ||
+        (data && typeof data === 'object' && (data._method === 'PUT' || data._method === 'PATCH'))
+      );
+
+      if (method === 'put' || method === 'patch' || isPostPut) {
+        let updateData = data;
+        if (data && typeof data.entries === 'function') {
+          updateData = {};
+          for (const [k, v] of data.entries()) {
+            if (k !== '_method') updateData[k] = v;
+          }
+        }
+        const updated = mockDb.update(key, id, updateData || {});
+        if (key === 'admins' && updated) {
+          const currentAdmin = mockDb.get('admin');
+          if (currentAdmin && (String(currentAdmin.id) === String(id) || !currentAdmin.id)) {
+            mockDb.set('admin', { ...currentAdmin, ...updated });
+          }
+        }
+        return { status: 200, data: { success: true, data: updated, message: 'تم التحديث بنجاح' } };
       }
 
-      if (method === 'put' || method === 'patch') {
-        const updated = mockDb.update(key, id, data || {});
-        return { status: 200, data: { success: true, data: updated, message: 'تم التحديث بنجاح' } };
+      if (method === 'post') {
+        let createData = data;
+        if (data && typeof data.entries === 'function') {
+          createData = {};
+          for (const [k, v] of data.entries()) {
+            createData[k] = v;
+          }
+        }
+        const created = mockDb.add(key, createData || {});
+        return { status: 200, data: { success: true, data: created, message: 'تمت الإضافة بنجاح' } };
       }
 
       if (method === 'delete') {

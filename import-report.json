@@ -1,0 +1,354 @@
+{
+  "startedAt": "2026-09-20T11:08:26.735Z",
+  "dryRun": false,
+  "source": {
+    "contentRoot": "/Users/omarragab/Projects/bekite/src/data/content",
+    "imageRoot": "/Users/omarragab/Projects/bekite/dist/images",
+    "apiBase": "https://site-backend.be-kite.com/api/v1"
+  },
+  "totals": {
+    "projects": 12,
+    "products": 6,
+    "solutions": 9,
+    "brands": 2,
+    "jobs": 5,
+    "localImages": 0
+  },
+  "results": [
+    {
+      "resource": "projects",
+      "slug": "iris-flowers",
+      "action": "update",
+      "status": "success",
+      "id": 4,
+      "response": "Project updated successfully."
+    },
+    {
+      "resource": "projects",
+      "slug": "al-mzon-schools",
+      "action": "update",
+      "status": "success",
+      "id": 5,
+      "response": "Project updated successfully."
+    },
+    {
+      "resource": "projects",
+      "slug": "kudos-events",
+      "action": "update",
+      "status": "success",
+      "id": 6,
+      "response": "Project updated successfully."
+    },
+    {
+      "resource": "projects",
+      "slug": "birma-water",
+      "action": "update",
+      "status": "success",
+      "id": 7,
+      "response": "Project updated successfully."
+    },
+    {
+      "resource": "projects",
+      "slug": "diplomatic-sweets",
+      "action": "update",
+      "status": "success",
+      "id": 8,
+      "response": "Project updated successfully."
+    },
+    {
+      "resource": "projects",
+      "slug": "sanabel-al-salam",
+      "action": "update",
+      "status": "success",
+      "id": 9,
+      "response": "Project updated successfully."
+    },
+    {
+      "resource": "projects",
+      "slug": "military-consumer-corporation",
+      "action": "update",
+      "status": "success",
+      "id": 10,
+      "response": "Project updated successfully."
+    },
+    {
+      "resource": "projects",
+      "slug": "al-ruwad-chemicals-factory",
+      "action": "update",
+      "status": "success",
+      "id": 11,
+      "response": "Project updated successfully."
+    },
+    {
+      "resource": "projects",
+      "slug": "tawa",
+      "action": "update",
+      "status": "success",
+      "id": 12,
+      "response": "Project updated successfully."
+    },
+    {
+      "resource": "projects",
+      "slug": "kyan-land",
+      "action": "update",
+      "status": "success",
+      "id": 13,
+      "response": "Project updated successfully."
+    },
+    {
+      "resource": "projects",
+      "slug": "arafat-sweets",
+      "action": "update",
+      "status": "success",
+      "id": 14,
+      "response": "Project updated successfully."
+    },
+    {
+      "resource": "projects",
+      "slug": "cherry-rent-a-car",
+      "action": "update",
+      "status": "success",
+      "id": 15,
+      "response": "Project updated successfully."
+    },
+    {
+      "resource": "products",
+      "slug": "tijara",
+      "action": "update",
+      "status": "success",
+      "id": 3,
+      "response": "ok"
+    },
+    {
+      "resource": "products",
+      "slug": "wajha",
+      "action": "update",
+      "status": "success",
+      "id": 4,
+      "response": "ok"
+    },
+    {
+      "resource": "products",
+      "slug": "masar",
+      "action": "update",
+      "status": "success",
+      "id": 5,
+      "response": "ok"
+    },
+    {
+      "resource": "products",
+      "slug": "madrasati",
+      "action": "update",
+      "status": "success",
+      "id": 6,
+      "response": "ok"
+    },
+    {
+      "resource": "products",
+      "slug": "dawrat",
+      "action": "update",
+      "status": "success",
+      "id": 7,
+      "response": "ok"
+    },
+    {
+      "resource": "products",
+      "slug": "mawed",
+      "action": "update",
+      "status": "success",
+      "id": 8,
+      "response": "ok"
+    },
+    {
+      "resource": "solutions",
+      "slug": "web-development",
+      "action": "update",
+      "status": "success",
+      "id": 3,
+      "response": "Solution updated successfully."
+    },
+    {
+      "resource": "solutions",
+      "slug": "mobile-apps",
+      "action": "update",
+      "status": "success",
+      "id": 4,
+      "response": "Solution updated successfully."
+    },
+    {
+      "resource": "solutions",
+      "slug": "erp-systems",
+      "action": "update",
+      "status": "success",
+      "id": 5,
+      "response": "Solution updated successfully."
+    },
+    {
+      "resource": "solutions",
+      "slug": "cloud-infrastructure",
+      "action": "update",
+      "status": "success",
+      "id": 6,
+      "response": "Solution updated successfully."
+    },
+    {
+      "resource": "solutions",
+      "slug": "branding-identity",
+      "action": "update",
+      "status": "success",
+      "id": 7,
+      "response": "Solution updated successfully."
+    },
+    {
+      "resource": "solutions",
+      "slug": "social-media",
+      "action": "update",
+      "status": "success",
+      "id": 8,
+      "response": "Solution updated successfully."
+    },
+    {
+      "resource": "solutions",
+      "slug": "digital-campaigns",
+      "action": "update",
+      "status": "success",
+      "id": 9,
+      "response": "Solution updated successfully."
+    },
+    {
+      "resource": "solutions",
+      "slug": "content-production",
+      "action": "update",
+      "status": "success",
+      "id": 10,
+      "response": "Solution updated successfully."
+    },
+    {
+      "resource": "solutions",
+      "slug": "photo-video-production",
+      "action": "update",
+      "status": "success",
+      "id": 11,
+      "response": "Solution updated successfully."
+    },
+    {
+      "resource": "brands",
+      "slug": "zalameh-app",
+      "action": "update",
+      "status": "success",
+      "id": 2,
+      "response": "Brand showcase updated successfully."
+    },
+    {
+      "resource": "brands",
+      "slug": "hadayapp",
+      "action": "update",
+      "status": "success",
+      "id": 3,
+      "response": "Brand showcase updated successfully."
+    },
+    {
+      "resource": "jobs",
+      "slug": "senior-full-stack-developer",
+      "action": "update",
+      "status": "success",
+      "id": 3,
+      "response": "Job site updated successfully."
+    },
+    {
+      "resource": "jobs",
+      "slug": "flutter-developer",
+      "action": "update",
+      "status": "success",
+      "id": 4,
+      "response": "Job site updated successfully."
+    },
+    {
+      "resource": "jobs",
+      "slug": "ux-ui-designer",
+      "action": "update",
+      "status": "success",
+      "id": 5,
+      "response": "Job site updated successfully."
+    },
+    {
+      "resource": "jobs",
+      "slug": "digital-marketing-specialist",
+      "action": "update",
+      "status": "success",
+      "id": 6,
+      "response": "Job site updated successfully."
+    },
+    {
+      "resource": "jobs",
+      "slug": "business-development-executive",
+      "action": "update",
+      "status": "success",
+      "id": 7,
+      "response": "Job site updated successfully."
+    }
+  ],
+  "warnings": [
+    {
+      "field": "client_logo_file",
+      "value": "/images/projects/al-mzon-schools.svg",
+      "message": "Skipped SVG client logo because the backend image validator rejects SVG for this field"
+    },
+    {
+      "field": "client_logo_file",
+      "value": "/images/projects/kudos-events.svg",
+      "message": "Skipped SVG client logo because the backend image validator rejects SVG for this field"
+    },
+    {
+      "field": "client_logo_file",
+      "value": "/images/projects/birma-water.svg",
+      "message": "Skipped SVG client logo because the backend image validator rejects SVG for this field"
+    },
+    {
+      "field": "client_logo_file",
+      "value": "/images/projects/diplomatic-sweets.svg",
+      "message": "Skipped SVG client logo because the backend image validator rejects SVG for this field"
+    },
+    {
+      "field": "client_logo_file",
+      "value": "/images/projects/sanabel-al-salam.svg",
+      "message": "Skipped SVG client logo because the backend image validator rejects SVG for this field"
+    },
+    {
+      "field": "client_logo_file",
+      "value": "/images/projects/military-consumer.svg",
+      "message": "Skipped SVG client logo because the backend image validator rejects SVG for this field"
+    },
+    {
+      "field": "client_logo_file",
+      "value": "/images/projects/al-ruwad.svg",
+      "message": "Skipped SVG client logo because the backend image validator rejects SVG for this field"
+    },
+    {
+      "field": "client_logo_file",
+      "value": "/images/projects/tawa.svg",
+      "message": "Skipped SVG client logo because the backend image validator rejects SVG for this field"
+    },
+    {
+      "field": "client_logo_file",
+      "value": "/images/projects/kyan-land.svg",
+      "message": "Skipped SVG client logo because the backend image validator rejects SVG for this field"
+    },
+    {
+      "field": "client_logo_file",
+      "value": "/images/projects/arafat-sweets.svg",
+      "message": "Skipped SVG client logo because the backend image validator rejects SVG for this field"
+    },
+    {
+      "field": "client_logo_file",
+      "value": "/images/projects/cherry-rentacar.svg",
+      "message": "Skipped SVG client logo because the backend image validator rejects SVG for this field"
+    }
+  ],
+  "finishedAt": "2026-09-20T11:09:18.750Z",
+  "summary": {
+    "success": 34,
+    "failed": 0,
+    "dryRun": 0
+  }
+}

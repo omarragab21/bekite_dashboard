@@ -365,6 +365,7 @@ import ProductCard from '../../components/ProductCard.vue';
 import { cartState } from '../../store/cart';
 import { useLocalized } from '../../composables/useLocalized';
 import { useSettings } from '../../composables/useSettings';
+import { sanitizeHtml } from '../../utils/sanitizer';
 
 const router = useRouter();
 
@@ -490,9 +491,9 @@ const formatTitle = (title) => {
   if (yearMatch) {
     const year = yearMatch[0];
     const text = title.replace(year, '').trim();
-    return `${text} <br> <span class="title-year">${year}</span>`;
+    return sanitizeHtml(`${text} <br> <span class="title-year">${year}</span>`);
   }
-  return title;
+  return sanitizeHtml(title);
 };
 
 const scrollCategories = (direction) => {

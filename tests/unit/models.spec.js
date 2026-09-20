@@ -103,5 +103,54 @@ describe('Domain Models Unit Tests', () => {
       expect(solution.technologies).toContain('AWS');
       expect(solution.is_active).toBe(1);
     });
+
+    it('should correctly normalize live API structure with challenges, exits, framework, and why-us', () => {
+      const liveApiSolution = {
+        id: 10,
+        title: 'حلول الميديا والإنتاج المرئي',
+        headline: 'إنتاج سينمائي بمعدات هوليوود',
+        problem_section: {
+          badge: 'THE CHALLENGE',
+          department_title: 'عقبات الميديا والإنتاج',
+          challenges: [
+            { title: 'ضعف الجودة', description: 'تصوير بكاميرات رديئة يقلل الثقة' }
+          ]
+        },
+        solve_section: {
+          badge: 'OUR APPROACH',
+          department_title: 'كيف ننتج المحتوى',
+          department_description: 'نستخدم كاميرات سينمائية RED و ARRI بدقة 8K',
+          image_url: 'https://site-backend.be-kite.com/storage/solve.jpg',
+          cta_text: 'احجز جلسة تصوير'
+        },
+        deliver_section: {
+          department_title: 'المخرجات',
+          exits: [
+            { title: 'إعلانات تلفزيونية ورقمية', description: 'إعلانات مصممة للبث' }
+          ],
+          proven_execution_framework: [
+            { title: 'الفكرة والسيناريو', description: 'كتابة النص واللوحات' }
+          ],
+          why_choose_us: [
+            { title: 'معدات سينمائية', description: 'أحدث الكاميرات والإضاءة' }
+          ]
+        }
+      };
+
+      const model = createSolutionModel(liveApiSolution);
+      expect(model.title).toBe('حلول الميديا والإنتاج المرئي');
+      expect(model.problem_section.challenges).toHaveLength(1);
+      expect(model.problem_section.items).toHaveLength(1);
+      expect(model.problem_section.items[0].title).toBe('ضعف الجودة');
+
+      expect(model.solve_section.department_description).toBe('نستخدم كاميرات سينمائية RED و ARRI بدقة 8K');
+      expect(model.solve_section.image_url).toBe('https://site-backend.be-kite.com/storage/solve.jpg');
+      expect(model.solve_section.cta_text).toBe('احجز جلسة تصوير');
+
+      expect(model.deliver_section.exits).toHaveLength(1);
+      expect(model.deliver_section.items).toHaveLength(1);
+      expect(model.process_section.steps).toHaveLength(1);
+      expect(model.why_section.items).toHaveLength(1);
+    });
   });
 });

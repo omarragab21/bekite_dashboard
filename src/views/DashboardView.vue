@@ -227,6 +227,327 @@
 
       </div>
 
+      <!-- ===== ROW 4: STRATEGIC TECHNOLOGY PARTNERS ===== -->
+      <div id="partners-section" class="dash-partners-section section-card">
+        <div class="section-header">
+          <div class="section-title-wrap">
+            <div class="partner-header-icon-box">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/>
+              </svg>
+            </div>
+            <div>
+              <div class="dash-partners-title-row">
+                <span class="section-title">شركاء التكنولوجيا والاعتماد الدولي (Technology Partners)</span>
+                <span class="dash-partner-count-pill">{{ strategicPartners.length }} شركاء معتمدين</span>
+              </div>
+              <p class="dash-section-desc">تحالفات Be Kite التقنية المعتمدة دولياً مع كبرى شركات التكنولوجيا السحابية والمنصات (Google, Apple, Microsoft, AWS, Oracle, Stripe)</p>
+            </div>
+          </div>
+          <router-link to="/admin/partners" class="view-all-link">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+            صفحة الشركاء المعتمدين ({{ strategicPartners.length }})
+          </router-link>
+        </div>
+
+        <!-- Tech Partners Grid -->
+        <div v-if="strategicPartners.length" class="dash-tech-partners-grid">
+          <div
+            v-for="partner in strategicPartners"
+            :key="partner.id"
+            class="dash-tech-card"
+          >
+            <div class="dash-tech-top-stripe" :style="{ background: partner.brand_color }"></div>
+            <div class="dash-tech-body">
+              <!-- Header: Logo, Status, Tier -->
+              <div class="dash-tech-head">
+                <div class="dash-tech-logo-wrap">
+                  <!-- Google Logo -->
+                  <svg v-if="partner.logoType === 'google'" width="26" height="26" viewBox="0 0 24 24">
+                    <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/>
+                    <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z"/>
+                    <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.98 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
+                    <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
+                  </svg>
+                  <!-- Apple Logo -->
+                  <svg v-else-if="partner.logoType === 'apple'" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.37c.62-.75 1.04-1.8 0.92-2.85-.9.04-2 0.6-2.65 1.35-.58.66-1.08 1.73-0.95 2.76 1.01.08 2.05-.51 2.68-1.26z"/>
+                  </svg>
+                  <!-- Microsoft Logo -->
+                  <svg v-else-if="partner.logoType === 'microsoft'" width="24" height="24" viewBox="0 0 24 24">
+                    <path fill="#F25022" d="M1 1h10v10H1z"/>
+                    <path fill="#00A4EF" d="M1 13h10v10H1z"/>
+                    <path fill="#7FBA00" d="M13 1h10v10H13z"/>
+                    <path fill="#FFB900" d="M13 13h10v10H13z"/>
+                  </svg>
+                  <!-- AWS Logo -->
+                  <svg v-else-if="partner.logoType === 'aws'" width="26" height="26" viewBox="0 0 24 24" fill="#FF9900">
+                    <path d="M19.467 14.545c-2.427 1.787-5.97 2.733-8.99 2.733-4.246 0-8.067-1.545-10.95-4.122-.227-.202-.047-.48.22-.325 3.12 1.796 6.88 2.88 10.73 2.88 2.68 0 5.617-.604 8.273-1.854.407-.193.747.275.717.688zm.97-1.127c-.31-.397-2.02-.187-2.793-.095-.236.028-.27-.16-.06-.307 1.393-.974 3.666-.694 4.02-.258.354.436-.09 2.713-1.397 3.8-.198.165-.386.077-.298-.14.286-.714.838-2.603.528-3zm-9.84-2.868c-.615-.494-1.258-.93-1.258-1.868 0-1.18 1.01-1.996 2.37-1.996 1.48 0 2.39.815 2.45 2.115l.006.18h2.09c-.066-2.186-1.748-3.79-4.546-3.79-2.584 0-4.484 1.544-4.484 3.705 0 1.942 1.344 2.86 2.617 3.738 1.096.758 1.48 1.155 1.48 2.054 0 1.25-1.15 2.14-2.71 2.14-1.782 0-2.83-.984-2.92-2.37l-.008-.184h-2.15c.1 2.42 1.97 4.05 5.078 4.05 2.796 0 4.832-1.636 4.832-3.96 0-2.15-1.464-3.136-2.847-4.074z"/>
+                  </svg>
+                  <!-- Oracle Logo -->
+                  <svg v-else-if="partner.logoType === 'oracle'" width="26" height="26" viewBox="0 0 24 24" fill="#C74634">
+                    <path d="M16.42 4H7.58C3.39 4 0 7.42 0 11.66s3.39 7.66 7.58 7.66h8.84c4.19 0 7.58-3.42 7.58-7.66S20.61 4 16.42 4zm-.24 11.75H7.82c-2.31 0-4.18-1.88-4.18-4.19 0-2.3 1.87-4.18 4.18-4.18h8.36c2.31 0 4.18 1.88 4.18 4.18 0 2.31-1.87 4.19-4.18 4.19z"/>
+                  </svg>
+                  <!-- Stripe Logo -->
+                  <svg v-else width="24" height="24" viewBox="0 0 24 24" fill="#635BFF">
+                    <path d="M13.976 9.15c-2.172-.806-3.356-1.426-3.356-2.409 0-.831.683-1.305 1.901-1.305 2.227 0 4.515.858 6.09 1.631l.89-5.494C17.652.822 15.112.25 12.353.25 6.44.25 2.38 3.39 2.38 8.163c0 6.16 6.05 6.77 8.188 7.545 2.457.893 3.3 1.657 3.3 2.754 0 1.082-.962 1.706-2.502 1.706-2.42 0-5.32-.994-7.398-2.227l-.934 5.688c2.254 1.157 5.258 1.621 8.082 1.621 6.304 0 10.648-2.923 10.648-8.158 0-6.177-5.918-6.994-7.788-7.942z"/>
+                  </svg>
+                </div>
+
+                <div class="dash-tech-meta">
+                  <span class="dash-tech-badge" :style="{ borderColor: partner.brand_color, color: partner.brand_color }">
+                    {{ partner.badge }}
+                  </span>
+                  <div class="dash-partner-verified">
+                    <span class="status-dot"></span>
+                    <span>شريك معتمد</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Titles -->
+              <div class="dash-tech-titles">
+                <h4 class="dash-tech-name">{{ partner.name }}</h4>
+                <span class="dash-tech-tier">{{ partner.tier }}</span>
+                <p class="dash-tech-sub">{{ partner.subtitle }}</p>
+              </div>
+
+              <!-- Description -->
+              <p class="dash-tech-desc">{{ partner.description }}</p>
+
+              <!-- Features / Integrations -->
+              <div class="dash-tech-features-wrap">
+                <span v-for="feat in partner.features" :key="feat" class="dash-tech-feat-pill">
+                  ✓ {{ feat }}
+                </span>
+              </div>
+
+              <!-- Links -->
+              <div class="dash-tech-links-row">
+                <a
+                  v-for="link in partner.links"
+                  :key="link.label"
+                  :href="link.href"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="dash-tech-link-btn"
+                  :class="link.type === 'primary' ? 'primary-link' : 'secondary-link'"
+                >
+                  <span>{{ link.label }}</span>
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+                  </svg>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div v-else class="empty-dash-brands">
+          <p>لا يوجد شركاء مسجلون حالياً في المنظومة</p>
+        </div>
+      </div>
+
+      <!-- ===== ROW 5: VENTURE BRANDS & CONSUMER APPS ===== -->
+      <div id="brands-section" class="dash-brands-section section-card">
+        <div class="section-header">
+          <div class="section-title-wrap">
+            <div class="brand-header-icon-box">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ea580c" stroke-width="2">
+                <polygon points="12 2 2 7 12 12 22 7 12 2"/>
+                <polyline points="2 17 12 22 22 17"/>
+                <polyline points="2 12 12 17 22 12"/>
+              </svg>
+            </div>
+            <div>
+              <div class="dash-brands-title-row">
+                <span class="section-title">العلامات التجارية والشركات التابعة (Venture Brands & Showcases)</span>
+                <span class="dash-brand-count-pill">{{ brands.length }} علامة واستثمار</span>
+              </div>
+              <p class="dash-section-desc">العلامات الاستهلاكية وتطبيقات المتاجر الإلكترونية الرسمية (Google Play & App Store) التابعة لمنظومة Be Kite</p>
+            </div>
+          </div>
+          <router-link to="/admin/brands" class="view-all-link">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+            إدارة كافة العلامات التجارية ({{ brands.length }})
+          </router-link>
+        </div>
+
+        <div v-if="!brands.length" class="empty-dash-brands">
+          <p>لا توجد علامات تجارية مسجلة حالياً</p>
+        </div>
+
+        <div v-else class="dash-brands-grid">
+          <div
+            v-for="brand in brands"
+            :key="brand.id"
+            class="dash-brand-card"
+          >
+            <!-- Top color accent stripe -->
+            <div class="dash-brand-stripe" :style="{ background: brand.brand_color || '#ea580c' }"></div>
+
+            <div class="dash-brand-body">
+              <!-- Header Meta: Badge & Status -->
+              <div class="dash-brand-meta">
+                <span
+                  class="dash-brand-badge"
+                  :style="{
+                    color: brand.brand_color || '#ea580c',
+                    backgroundColor: getAlphaColor(brand.brand_color, '15'),
+                    borderColor: getAlphaColor(brand.brand_color, '35')
+                  }"
+                >
+                  {{ brand.badge || (brand.is_coming_soon ? 'قيد التطوير' : 'VENTURE') }}
+                </span>
+                <span class="dash-brand-status" :class="brand.is_active ? 'status-active' : 'status-inactive'">
+                  <span class="status-dot"></span>
+                  {{ brand.is_active ? 'نشط بالسوق' : 'معطل' }}
+                </span>
+              </div>
+
+              <!-- Mockup Image Preview -->
+              <div class="dash-brand-mockup-box">
+                <img
+                  v-if="brand.image"
+                  :src="brand.image"
+                  :alt="brand.name"
+                  class="dash-brand-mockup-img"
+                  @error="onImgError"
+                />
+                <div v-else class="dash-brand-mockup-placeholder">
+                  <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <polygon points="12 2 2 7 12 12 22 7 12 2"/>
+                    <polyline points="2 17 12 22 22 17"/>
+                    <polyline points="2 12 12 17 22 12"/>
+                  </svg>
+                </div>
+                <div v-if="brand.is_coming_soon" class="dash-brand-pipeline-pill">
+                  {{ brand.pipeline_status || 'قيد التطوير والإعداد' }}
+                </div>
+              </div>
+
+              <!-- Title & Tagline -->
+              <div class="dash-brand-header-text">
+                <h4 class="dash-brand-title">{{ brand.name }}</h4>
+                <div
+                  v-if="brand.subtitle"
+                  class="dash-brand-sub"
+                  :style="{ color: brand.brand_color || '#ea580c' }"
+                >
+                  {{ brand.subtitle }}
+                </div>
+              </div>
+
+              <!-- Description -->
+              <p class="dash-brand-desc">{{ brand.description }}</p>
+
+              <!-- Tags -->
+              <div v-if="brand.tags && brand.tags.length" class="dash-brand-tags-row">
+                <span v-for="tag in brand.tags" :key="tag" class="dash-brand-tag-chip">
+                  #{{ tag }}
+                </span>
+              </div>
+
+              <!-- Store & Platform Links Section -->
+              <div class="dash-brand-links-box">
+                <div class="dash-links-head">
+                  <span>منصات ومتاجر التحميل:</span>
+                </div>
+                <div class="dash-stores-row">
+                  <!-- Google Play Button -->
+                  <a
+                    v-if="getGooglePlayLink(brand)"
+                    :href="getGooglePlayLink(brand)"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="store-badge-btn google-play-btn"
+                    title="تنزيل من متجر Google Play"
+                  >
+                    <svg class="store-icon" viewBox="0 0 24 24" width="17" height="17" fill="currentColor">
+                      <path d="M3.609 1.814L13.793 12 3.61 22.186a2.38 2.38 0 0 1-.61-1.636V3.45c0-.626.223-1.206.61-1.636zM15.207 13.414l2.774 2.774-12.87 7.373 10.096-10.147zm0-2.828L5.111.44l12.87 7.373-2.774 2.773zm1.414 1.414l3.87 2.217c.945.541.945 1.425 0 1.966l-3.87 2.217-2.434-2.434 2.434-2.434z"/>
+                    </svg>
+                    <div class="store-labels">
+                      <span class="store-action">متوفر على</span>
+                      <span class="store-name">Google Play</span>
+                    </div>
+                  </a>
+
+                  <!-- Apple App Store Button -->
+                  <a
+                    v-if="getAppleStoreLink(brand)"
+                    :href="getAppleStoreLink(brand)"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="store-badge-btn apple-store-btn"
+                    title="تنزيل من متجر App Store"
+                  >
+                    <svg class="store-icon" viewBox="0 0 24 24" width="17" height="17" fill="currentColor">
+                      <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.37c.62-.75 1.04-1.8 0.92-2.85-.9.04-2 0.6-2.65 1.35-.58.66-1.08 1.73-0.95 2.76 1.01.08 2.05-.51 2.68-1.26z"/>
+                    </svg>
+                    <div class="store-labels">
+                      <span class="store-action">تنزيل من</span>
+                      <span class="store-name">App Store</span>
+                    </div>
+                  </a>
+
+                  <!-- Website Button -->
+                  <a
+                    v-if="getWebsiteLink(brand)"
+                    :href="getWebsiteLink(brand)"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="store-badge-btn web-store-btn"
+                    title="زيارة الموقع الإلكتروني الرسمي"
+                  >
+                    <svg class="store-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                      <circle cx="12" cy="12" r="10"/>
+                      <line x1="2" y1="12" x2="22" y2="12"/>
+                      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                    </svg>
+                    <div class="store-labels">
+                      <span class="store-action">زيارة</span>
+                      <span class="store-name">الموقع الرسمي</span>
+                    </div>
+                  </a>
+
+                  <!-- Additional Custom Links -->
+                  <template v-for="lnk in getOtherLinks(brand)" :key="lnk.label">
+                    <a
+                      :href="lnk.href"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="store-badge-btn custom-store-btn"
+                    >
+                      <svg class="store-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+                      </svg>
+                      <div class="store-labels">
+                        <span class="store-name">{{ lnk.label }}</span>
+                      </div>
+                    </a>
+                  </template>
+
+                  <!-- Empty state for pipeline brands with no links yet -->
+                  <div v-if="!getGooglePlayLink(brand) && !getAppleStoreLink(brand) && !getWebsiteLink(brand)" class="no-links-note">
+                    <span>قيد الإعداد للإطلاق والتوزيع على المتاجر الرقمية</span>
+                  </div>
+                </div>
+
+                <!-- Card Bottom Manage Action -->
+                <div class="dash-brand-actions-bar">
+                  <router-link to="/admin/brands" class="manage-brand-link">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                    </svg>
+                    <span>تعديل وإدارة تفاصيل العلامة</span>
+                  </router-link>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </template>
   </div>
 </template>
@@ -234,7 +555,7 @@
 <script setup>
 import { ref, computed, onMounted, nextTick, watch } from 'vue';
 import { Chart, registerables } from 'chart.js';
-import { ProjectService, ProductService, SolutionService, InquiryService, ContentService } from '../services';
+import { ProjectService, ProductService, SolutionService, BrandService, InquiryService, ContentService, MessageService, PartnerService } from '../services';
 import api from '../config/axios';
 import { useTheme } from '../composables/useTheme';
 
@@ -248,7 +569,7 @@ const lineCanvas  = ref(null);
 let donutChartInstance = null;
 let lineChartInstance  = null;
 
-// ─── State ─────────────────────────────────────────────────────────────────────
+// ─── State ────────────────────────────────────────────────────────────────     
 const loading   = ref(true);
 const error     = ref(null);
 const solutions = ref([]);
@@ -257,6 +578,13 @@ const inquiries = ref([]);
 const products  = ref([]);
 const careers   = ref([]);
 const messages  = ref([]);
+const brands    = ref([]);
+
+// Filter tab for partners section: 'all' | 'tech' | 'ventures'
+const partnerTab = ref('all');
+
+// Global Strategic Technology & Cloud Partners (Dynamic from API)
+const strategicPartners = ref([]);
 
 const formattedDate = computed(() => {
   return new Date().toLocaleDateString('ar-SA', { year: 'numeric', month: 'long', day: 'numeric' });
@@ -275,12 +603,14 @@ const totalSystemItems = computed(() => {
     projects.value.length +
     inquiries.value.length +
     products.value.length +
+    brands.value.length +
+    strategicPartners.value.length +
     careers.value.length +
     messages.value.length
   );
 });
 
-// 6 Core Stat Cards directly linked to live database counts
+// 7 Core Stat Cards directly linked to live database counts
 const statCards = computed(() => [
   {
     key: 'solutions',
@@ -304,23 +634,43 @@ const statCards = computed(() => [
   },
   {
     key: 'services',
-    label: 'خدمات (طلبات)',
+    label: 'الطلبات والخدمات',
     value: String(inquiries.value.length),
-    pill: newInquiriesCount.value > 0 ? `${newInquiriesCount.value} جديد` : 'مكتمل',
-    pillClass: newInquiriesCount.value > 0 ? 'pill-danger' : 'pill-success',
+    pill: `${newInquiriesCount.value} طلب جديد`,
+    pillClass: newInquiriesCount.value > 0 ? 'pill-danger' : 'pill-neutral',
     link: '/admin/service-requests',
     iconBg: 'rgba(16, 185, 129, 0.1)',
-    icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="1.8"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>`,
+    icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="1.8"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>`,
   },
   {
     key: 'products',
-    label: 'منتجات',
+    label: 'المنتجات',
     value: String(products.value.length),
-    pill: 'أنظمة رقمية',
+    pill: 'كتالوج المنتجات',
     pillClass: 'pill-neutral',
     link: '/admin/products',
     iconBg: 'rgba(255, 199, 0, 0.15)',
     icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#e6b400" stroke-width="1.8"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>`,
+  },
+  {
+    key: 'partners',
+    label: 'الشركاء',
+    value: String(strategicPartners.value.length),
+    pill: 'تحالفات معتمدة',
+    pillClass: 'pill-info',
+    link: '/admin/partners',
+    iconBg: 'rgba(37, 99, 235, 0.1)',
+    icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="1.8"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>`,
+  },
+  {
+    key: 'brands',
+    label: 'العلامات التجارية',
+    value: String(brands.value.length),
+    pill: 'استثمارات Be Kite',
+    pillClass: 'pill-neutral',
+    link: '/admin/brands',
+    iconBg: 'rgba(234, 88, 12, 0.1)',
+    icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ea580c" stroke-width="1.8"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>`,
   },
   {
     key: 'careers',
@@ -350,6 +700,8 @@ const dynamicDistribution = computed(() => [
   { label: 'مشاريع', count: projects.value.length, color: '#0891b2' },
   { label: 'خدمات', count: inquiries.value.length, color: '#10b981' },
   { label: 'منتجات', count: products.value.length, color: '#ffc700' },
+  { label: 'الشركاء', count: strategicPartners.value.length, color: '#2563eb' },
+  { label: 'العلامات التجارية', count: brands.value.length, color: '#ea580c' },
   { label: 'الوظائف', count: careers.value.length, color: '#7c3aed' },
   { label: 'الرسائل', count: messages.value.length, color: '#f43f5e' },
 ]);
@@ -374,17 +726,80 @@ const formatShortDate = (dateString) => {
   return d.toLocaleDateString('ar-SA', { month: 'short', day: 'numeric' });
 };
 
+// Brand helpers for styling & store links
+const getAlphaColor = (colorHex, alphaHex = '15') => {
+  if (!colorHex || typeof colorHex !== 'string' || !colorHex.startsWith('#')) {
+    return 'rgba(234, 88, 12, 0.1)';
+  }
+  if (colorHex.length === 7) {
+    return `${colorHex}${alphaHex}`;
+  }
+  return colorHex;
+};
+
+const getGooglePlayLink = (brand) => {
+  if (brand.google_play_url && brand.google_play_url !== '#') return brand.google_play_url;
+  const link = (brand.links || []).find(l => {
+    const lbl = (l.label || '').toLowerCase();
+    const lblEn = (l.label_en || '').toLowerCase();
+    const href = (l.href || '').toLowerCase();
+    return lbl.includes('android') || lbl.includes('google') || lbl.includes('أندرويد') || lbl.includes('جوجل') || lblEn.includes('android') || href.includes('play.google');
+  });
+  return link && link.href !== '#' ? link.href : null;
+};
+
+const getAppleStoreLink = (brand) => {
+  if (brand.apple_store_url && brand.apple_store_url !== '#') return brand.apple_store_url;
+  const link = (brand.links || []).find(l => {
+    const lbl = (l.label || '').toLowerCase();
+    const lblEn = (l.label_en || '').toLowerCase();
+    const href = (l.href || '').toLowerCase();
+    return lbl.includes('ios') || lbl.includes('apple') || lbl.includes('آبل') || lblEn.includes('ios') || href.includes('apps.apple');
+  });
+  return link && link.href !== '#' ? link.href : null;
+};
+
+const getWebsiteLink = (brand) => {
+  if (brand.website_url && brand.website_url !== '#') return brand.website_url;
+  const link = (brand.links || []).find(l => {
+    const lbl = (l.label || '').toLowerCase();
+    const lblEn = (l.label_en || '').toLowerCase();
+    return lbl.includes('موقع') || lblEn.includes('web') || l.type === 'primary';
+  });
+  return link && link.href !== '#' ? link.href : null;
+};
+
+const getOtherLinks = (brand) => {
+  const gPlay = getGooglePlayLink(brand);
+  const apple = getAppleStoreLink(brand);
+  const web = getWebsiteLink(brand);
+
+  return (brand.links || []).filter(l => {
+    if (!l.href || l.href === '#') return false;
+    if (gPlay && l.href === gPlay) return false;
+    if (apple && l.href === apple) return false;
+    if (web && l.href === web) return false;
+    return true;
+  });
+};
+
+const onImgError = (e) => {
+  e.target.style.display = 'none';
+};
+
 const fetchAll = async () => {
   loading.value = true;
   error.value = null;
   try {
-    const [solData, projData, inqData, prodData, carData, msgRes] = await Promise.all([
+    const [solData, projData, inqData, prodData, carData, msgRes, brandData, partnerData] = await Promise.all([
       SolutionService.getAll().catch(() => []),
       ProjectService.getAll().catch(() => []),
       InquiryService.getAll().catch(() => []),
       ProductService.getAll().catch(() => []),
       ContentService.getCareers().catch(() => []),
-      api.get('/dashboard/contact-messages').then(r => r.data?.data || []).catch(() => []),
+      MessageService.getAll().catch(() => []),
+      BrandService.getAll().catch(() => []),
+      PartnerService.getAll().catch(() => []),
     ]);
 
     solutions.value = solData || [];
@@ -393,6 +808,8 @@ const fetchAll = async () => {
     products.value  = prodData || [];
     careers.value   = carData || [];
     messages.value  = msgRes || [];
+    brands.value    = brandData || [];
+    strategicPartners.value = Array.isArray(partnerData) ? partnerData : [];
 
     await nextTick();
     renderDonutChart();
@@ -445,12 +862,14 @@ const renderBarChart = () => {
   if (lineChartInstance) lineChartInstance.destroy();
 
   const ctx = lineCanvas.value.getContext('2d');
-  const labels = ['حلول', 'مشاريع', 'خدمات', 'منتجات', 'الوظائف', 'الرسائل'];
+  const labels = ['حلول', 'مشاريع', 'خدمات', 'منتجات', 'الشركاء', 'علامات', 'الوظائف', 'الرسائل'];
   const counts = [
     solutions.value.length,
     projects.value.length,
     inquiries.value.length,
     products.value.length,
+    strategicPartners.value.length,
+    brands.value.length,
     careers.value.length,
     messages.value.length,
   ];
@@ -463,7 +882,7 @@ const renderBarChart = () => {
         {
           label: 'إجمالي العناصر المسجلة',
           data: counts,
-          backgroundColor: ['#4f008c', '#0891b2', '#10b981', '#ffc700', '#7c3aed', '#f43f5e'],
+          backgroundColor: ['#4f008c', '#0891b2', '#10b981', '#ffc700', '#2563eb', '#ea580c', '#7c3aed', '#f43f5e'],
           borderRadius: 8,
           barThickness: 28,
         },
@@ -590,17 +1009,23 @@ onMounted(fetchAll);
   cursor: pointer;
 }
 
-/* Row 1: Stat Cards (6 Columns) */
+/* Row 1: Stat Cards (7 Columns / Responsive Grid) */
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
+  grid-template-columns: repeat(7, 1fr);
   gap: 1rem;
 }
-@media (max-width: 1300px) {
+@media (max-width: 1400px) {
+  .stats-grid { grid-template-columns: repeat(4, 1fr); }
+}
+@media (max-width: 992px) {
   .stats-grid { grid-template-columns: repeat(3, 1fr); }
 }
-@media (max-width: 768px) {
+@media (max-width: 640px) {
   .stats-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 400px) {
+  .stats-grid { grid-template-columns: 1fr; }
 }
 
 .stat-card {
@@ -945,4 +1370,742 @@ onMounted(fetchAll);
 .status-in_progress { background: #ede9fe; color: #7c3aed; }
 .status-converted { background: #dcfce7; color: #16a34a; }
 .status-archived { background: var(--bg-main); color: var(--text-muted); }
+
+/* ===== ROW 4: BRAND SHOWCASES SECTION ===== */
+.dash-brands-section {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.02);
+}
+
+.partner-header-icon-box {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: rgba(37, 99, 235, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.dash-partners-title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.dash-partner-count-pill {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.2rem 0.65rem;
+  background: rgba(37, 99, 235, 0.12);
+  color: #2563eb;
+  border-radius: 9999px;
+  border: 1px solid rgba(37, 99, 235, 0.25);
+}
+
+.dash-partners-section {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.brand-header-icon-box {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: rgba(234, 88, 12, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.dash-brands-title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.dash-brand-count-pill {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.2rem 0.65rem;
+  background: rgba(234, 88, 12, 0.12);
+  color: #ea580c;
+  border-radius: 9999px;
+  border: 1px solid rgba(234, 88, 12, 0.25);
+}
+
+.dash-section-desc {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-top: 0.2rem;
+}
+
+.empty-dash-brands {
+  text-align: center;
+  padding: 2.5rem;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.dash-brands-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.25rem;
+}
+
+.dash-brand-card {
+  background: var(--bg-main);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.dash-brand-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(234, 88, 12, 0.4);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+}
+
+.dash-brand-stripe {
+  height: 4px;
+  width: 100%;
+}
+
+.dash-brand-body {
+  padding: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  flex: 1;
+}
+
+.dash-brand-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dash-brand-badge {
+  font-size: 0.68rem;
+  font-weight: 800;
+  padding: 0.2rem 0.6rem;
+  border-radius: 6px;
+  border: 1px solid;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.dash-brand-status {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.2rem 0.55rem;
+  border-radius: 9999px;
+}
+
+.dash-brand-status.status-active {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.dark .dash-brand-status.status-active {
+  background: rgba(22, 163, 74, 0.2);
+  color: #4ade80;
+}
+
+.dash-brand-status.status-inactive {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.dash-brand-mockup-box {
+  position: relative;
+  width: 100%;
+  height: 160px;
+  border-radius: 10px;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.03);
+  border: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dark .dash-brand-mockup-box {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.dash-brand-mockup-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.dash-brand-card:hover .dash-brand-mockup-img {
+  transform: scale(1.04);
+}
+
+.dash-brand-pipeline-pill {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(4px);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 0.2rem 0.55rem;
+  border-radius: 6px;
+}
+
+.dash-brand-header-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.dash-brand-title {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--text-main);
+  margin: 0;
+  line-height: 1.3;
+}
+
+.dash-brand-sub {
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.dash-brand-desc {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.dash-brand-tags-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.dash-brand-tag-chip {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+}
+
+/* Store Buttons & Links */
+.dash-brand-links-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: auto;
+}
+
+.dash-links-head {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.dash-stores-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.store-badge-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 0.75rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-family: inherit;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+  flex: 1;
+  min-width: 130px;
+}
+
+.store-icon {
+  flex-shrink: 0;
+}
+
+.store-labels {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+  text-align: right;
+}
+
+.store-action {
+  font-size: 0.62rem;
+  opacity: 0.85;
+}
+
+.store-name {
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.2px;
+}
+
+/* Google Play specific styling */
+.google-play-btn {
+  background: #0f172a;
+  color: #ffffff;
+  border-color: #334155;
+}
+
+.google-play-btn:hover {
+  background: #1e293b;
+  border-color: #10b981;
+  color: #34d399;
+  transform: translateY(-1px);
+}
+
+/* Apple Store specific styling */
+.apple-store-btn {
+  background: #18181b;
+  color: #ffffff;
+  border-color: #3f3f46;
+}
+
+.apple-store-btn:hover {
+  background: #27272a;
+  border-color: #a1a1aa;
+  color: #f4f4f5;
+  transform: translateY(-1px);
+}
+
+/* Web button */
+.web-store-btn {
+  background: rgba(79, 0, 140, 0.08);
+  color: #4f008c;
+  border-color: rgba(79, 0, 140, 0.25);
+}
+
+.dark .web-store-btn {
+  background: rgba(255, 199, 0, 0.1);
+  color: #ffc700;
+  border-color: rgba(255, 199, 0, 0.25);
+}
+
+.web-store-btn:hover {
+  background: #4f008c;
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.dark .web-store-btn:hover {
+  background: #ffc700;
+  color: #000000;
+}
+
+/* Custom Link button */
+.custom-store-btn {
+  background: var(--bg-main);
+  color: var(--text-main);
+  border-color: var(--border-color);
+}
+
+.custom-store-btn:hover {
+  border-color: #ea580c;
+  color: #ea580c;
+}
+
+.no-links-note {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  padding: 0.35rem;
+  text-align: center;
+  width: 100%;
+}
+
+.dash-brand-actions-bar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-top: 0.4rem;
+  border-top: 1px dashed var(--border-color);
+}
+
+.manage-brand-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #ea580c;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+
+.manage-brand-link:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}
+
+/* ========================================================
+   PARTNERS & BRANDS SUBGROUPS & TECH PARTNERS GRID
+   ======================================================== */
+.dash-partners-filter-pills {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-top: 0.25rem;
+  margin-bottom: 0.75rem;
+}
+
+.dash-filter-pill {
+  padding: 0.42rem 0.95rem;
+  border-radius: 9999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  background: var(--bg-main);
+  border: 1px solid var(--border-color);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.dash-filter-pill:hover {
+  border-color: #4f008c;
+  color: var(--text-main);
+}
+
+.dark .dash-filter-pill:hover {
+  border-color: #ffc700;
+}
+
+.dash-filter-pill.active {
+  background: #4f008c;
+  color: #ffffff;
+  border-color: #4f008c;
+  box-shadow: 0 2px 8px rgba(79, 0, 140, 0.25);
+}
+
+.dark .dash-filter-pill.active {
+  background: #ffc700;
+  color: #000000;
+  border-color: #ffc700;
+  box-shadow: 0 2px 8px rgba(255, 199, 0, 0.25);
+}
+
+.dash-subgroup-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  margin-top: 0.35rem;
+}
+
+.dash-subgroup-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.dash-subgroup-title-box {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.dash-subgroup-badge {
+  font-size: 0.68rem;
+  font-weight: 800;
+  padding: 0.2rem 0.6rem;
+  border-radius: 6px;
+  background: rgba(59, 130, 246, 0.12);
+  color: #2563eb;
+  border: 1px solid rgba(59, 130, 246, 0.25);
+}
+
+.dark .dash-subgroup-badge {
+  background: rgba(96, 165, 250, 0.15);
+  color: #60a5fa;
+  border-color: rgba(96, 165, 250, 0.3);
+}
+
+.dash-subgroup-badge.venture-badge-style {
+  background: rgba(234, 88, 12, 0.12);
+  color: #ea580c;
+  border-color: rgba(234, 88, 12, 0.25);
+}
+
+.dark .dash-subgroup-badge.venture-badge-style {
+  background: rgba(251, 146, 60, 0.15);
+  color: #fb923c;
+  border-color: rgba(251, 146, 60, 0.3);
+}
+
+.dash-subgroup-title {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--text-main);
+  margin: 0;
+}
+
+.dash-subgroup-desc {
+  font-size: 0.76rem;
+  color: var(--text-muted);
+}
+
+.dash-tech-partners-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.25rem;
+}
+
+.dash-tech-card {
+  background: var(--bg-main);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.dash-tech-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(79, 0, 140, 0.35);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+}
+
+.dark .dash-tech-card:hover {
+  border-color: rgba(255, 199, 0, 0.35);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
+}
+
+.dash-tech-top-stripe {
+  height: 4px;
+  width: 100%;
+}
+
+.dash-tech-body {
+  padding: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  flex: 1;
+}
+
+.dash-tech-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.dash-tech-logo-wrap {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.03);
+}
+
+.dash-tech-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.25rem;
+}
+
+.dash-tech-badge {
+  font-size: 0.68rem;
+  font-weight: 800;
+  padding: 0.18rem 0.55rem;
+  border-radius: 6px;
+  border: 1px solid;
+  letter-spacing: 0.3px;
+  font-family: 'Outfit', sans-serif;
+}
+
+.dash-partner-verified {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #16a34a;
+  background: #dcfce7;
+  padding: 0.15rem 0.5rem;
+  border-radius: 9999px;
+}
+
+.dark .dash-partner-verified {
+  background: rgba(22, 163, 74, 0.2);
+  color: #4ade80;
+}
+
+.dash-tech-titles {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.dash-tech-name {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--text-main);
+  margin: 0;
+  line-height: 1.3;
+}
+
+.dash-tech-tier {
+  font-size: 0.76rem;
+  font-weight: 800;
+  color: #4f008c;
+  font-family: 'Outfit', sans-serif;
+}
+
+.dark .dash-tech-tier {
+  color: #ffc700;
+}
+
+.dash-tech-sub {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin: 0;
+  font-weight: 600;
+}
+
+.dash-tech-desc {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.dash-tech-features-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.dash-tech-feat-pill {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--text-main);
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  padding: 0.2rem 0.5rem;
+  border-radius: 6px;
+}
+
+.dash-tech-links-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: auto;
+  padding-top: 0.6rem;
+  border-top: 1px dashed var(--border-color);
+}
+
+.dash-tech-link-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.45rem 0.75rem;
+  border-radius: 7px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  flex: 1;
+  min-width: 120px;
+  justify-content: center;
+  font-family: inherit;
+}
+
+.dash-tech-link-btn.primary-link {
+  background: #4f008c;
+  color: #ffffff;
+  border: 1px solid #4f008c;
+}
+
+.dash-tech-link-btn.primary-link:hover {
+  background: #3c006b;
+  border-color: #3c006b;
+}
+
+.dark .dash-tech-link-btn.primary-link {
+  background: #ffc700;
+  color: #000000;
+  border-color: #ffc700;
+}
+
+.dark .dash-tech-link-btn.primary-link:hover {
+  background: #e5b300;
+  border-color: #e5b300;
+}
+
+.dash-tech-link-btn.secondary-link {
+  background: var(--bg-card);
+  color: var(--text-main);
+  border: 1px solid var(--border-color);
+}
+
+.dash-tech-link-btn.secondary-link:hover {
+  border-color: #4f008c;
+  color: #4f008c;
+}
+
+.dark .dash-tech-link-btn.secondary-link:hover {
+  border-color: #ffc700;
+  color: #ffc700;
+}
 </style>

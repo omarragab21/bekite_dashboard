@@ -1,4 +1,5 @@
 import { ref } from 'vue';
+import { formatApiError } from '../utils/errorHandler';
 
 const toasts = ref([]);
 
@@ -7,7 +8,11 @@ let toastId = 0;
 export function useToast() {
   const showToast = (message, type = 'success', duration = 3500) => {
     const id = ++toastId;
-    const toast = { id, message, type };
+    let safeMessage = message;
+    if (type === 'error') {
+      safeMessage = formatApiError(message);
+    }
+    const toast = { id, message: safeMessage, type };
     toasts.value.push(toast);
 
     setTimeout(() => {

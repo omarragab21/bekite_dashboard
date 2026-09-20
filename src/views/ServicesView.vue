@@ -234,11 +234,29 @@
               <div class="form-grid-2">
                 <div class="form-group">
                   <label class="form-label">عنوان الحل (بالعربية) *</label>
-                  <input type="text" v-model="formData.title" class="form-input" required placeholder="مثال: تصميم وتطوير المواقع والمنصات" />
+                  <input
+                    type="text"
+                    v-model="formData.title"
+                    class="form-input"
+                    :class="{ 'input-error': formErrors.title }"
+                    @input="formErrors.title = null"
+                    required
+                    placeholder="مثال: تصميم وتطوير المواقع والمنصات"
+                  />
+                  <span v-if="formErrors.title" class="field-error-msg">{{ formErrors.title }}</span>
                 </div>
                 <div class="form-group">
                   <label class="form-label">عنوان الحل (English) *</label>
-                  <input type="text" v-model="formData.title_en" class="form-input ltr-text" required placeholder="e.g. Web Design & Development" />
+                  <input
+                    type="text"
+                    v-model="formData.title_en"
+                    class="form-input ltr-text"
+                    :class="{ 'input-error': formErrors.title_en }"
+                    @input="formErrors.title_en = null"
+                    required
+                    placeholder="e.g. Web Design & Development"
+                  />
+                  <span v-if="formErrors.title_en" class="field-error-msg">{{ formErrors.title_en }}</span>
                 </div>
               </div>
 
@@ -256,15 +274,22 @@
               <div class="form-grid-3">
                 <div class="form-group">
                   <label class="form-label">القطاع الرئيسي *</label>
-                  <select v-model="formData.category" class="form-input" required>
+                  <select
+                    v-model="formData.category"
+                    class="form-input"
+                    :class="{ 'input-error': formErrors.category }"
+                    @change="formErrors.category = null"
+                    required
+                  >
                     <option value="technology">الحلول التقنية والبرمجية (Technology)</option>
                     <option value="marketing">التسويق ونمو العلامات (Marketing)</option>
                     <option value="creative">الإنتاج الإبداعي والمرئي (Creative)</option>
                   </select>
+                  <span v-if="formErrors.category" class="field-error-msg">{{ formErrors.category }}</span>
                 </div>
                 <div class="form-group">
                   <label class="form-label">الرابط المخصص (Slug) *</label>
-                  <input type="text" v-model="formData.slug" class="form-input ltr-text" required placeholder="web-development" />
+                  <input type="text" v-model="formData.slug" class="form-input ltr-text" placeholder="web-development" />
                 </div>
                 <div class="form-group">
                   <label class="form-label">الشارة (Badge)</label>
@@ -452,11 +477,19 @@
                   <input type="text" v-model="formData.problem_section.subtitle" class="form-input" placeholder="معظم الشركات تعاني من مواقع بطيئة وصعبة التحديث..." />
                 </div>
 
+                <div class="sub-section-header-bar">
+                  <span class="sub-section-title">تحديات الأعمال ونقاط الألم (The Business Challenges)</span>
+                  <button type="button" class="btn-add-sub-item" @click="addChallengeItem">
+                    + إضافة نقطة ألم / تحدي
+                  </button>
+                </div>
+
                 <div class="challenge-cards-editor">
                   <div v-for="(item, pIdx) in formData.problem_section.items" :key="pIdx" class="challenge-edit-card">
                     <div class="card-edit-header">
                       <span class="card-num-badge">تحدي {{ pIdx + 1 }}</span>
                       <span class="warn-badge">⚠️ نقطة ألم</span>
+                      <button type="button" class="btn-delete-card" @click="removeChallengeItem(pIdx)" title="حذف هذا التحدي">✕ حذف</button>
                     </div>
                     <div class="form-group">
                       <label class="form-label">عنوان التحدي *</label>
@@ -593,11 +626,19 @@
                   </div>
                 </div>
 
+                <div class="sub-section-header-bar">
+                  <span class="sub-section-title">المخرجات ونطاق التسليم الملموس (Exits / Deliverables)</span>
+                  <button type="button" class="btn-add-sub-item" @click="addDeliverItem">
+                    + إضافة مخرج تسليم جديد
+                  </button>
+                </div>
+
                 <div class="deliver-cards-editor">
                   <div v-for="(item, dIdx) in formData.deliver_section.items" :key="dIdx" class="deliver-edit-card">
                     <div class="card-edit-header">
                       <span class="card-num-badge">مخرج {{ dIdx + 1 }}</span>
                       <span class="check-badge">✓ تسليم مؤكد</span>
+                      <button type="button" class="btn-delete-card" @click="removeDeliverItem(dIdx)" title="حذف هذا المخرج">✕ حذف</button>
                     </div>
                     <div class="form-group">
                       <label class="form-label">عنوان المخرج *</label>
@@ -614,14 +655,20 @@
 
             <!-- ================= TAB 5: Process & Why Be Kite ================= -->
             <div v-show="activeTab === 'process_why'" class="tab-pane">
-              <!-- Execution Process (5 Steps) -->
+              <!-- Execution Process (Framework Steps) -->
               <div class="sub-card-section mb-4">
                 <div class="sub-card-header">
-                  <span class="sub-card-title">🔄 منهجية التنفيذ (Proven Execution Framework - 5 Steps)</span>
+                  <span class="sub-card-title">🔄 منهجية التنفيذ (Proven Execution Framework)</span>
+                  <button type="button" class="btn-add-sub-item" @click="addProcessStep">
+                    + إضافة مرحلة تنفيذ
+                  </button>
                 </div>
                 <div v-if="formData.process_section" class="process-steps-editor">
                   <div v-for="(step, sIdx) in formData.process_section.steps" :key="sIdx" class="step-edit-card">
-                    <div class="step-badge-num">{{ step.number || ('0' + (sIdx + 1)) }}</div>
+                    <div class="card-edit-header" style="margin-bottom: 0.5rem;">
+                      <div class="step-badge-num">{{ step.number || ('0' + (sIdx + 1)) }}</div>
+                      <button type="button" class="btn-delete-card" @click="removeProcessStep(sIdx)" title="حذف هذه المرحلة">✕ حذف</button>
+                    </div>
                     <div class="form-group">
                       <label class="form-label">اسم المرحلة *</label>
                       <input type="text" v-model="step.title" class="form-input" placeholder="مثال: الاكتشاف والتخطيط" />
@@ -634,13 +681,20 @@
                 </div>
               </div>
 
-              <!-- Why Be Kite (4 Cards) -->
+              <!-- Why Be Kite -->
               <div class="sub-card-section">
                 <div class="sub-card-header">
-                  <span class="sub-card-title">⭐ لماذا تختار BE KITE؟ (Why Choose Us - 4 Reasons)</span>
+                  <span class="sub-card-title">⭐ لماذا تختار BE KITE؟ (Why Choose Us)</span>
+                  <button type="button" class="btn-add-sub-item" @click="addWhyItem">
+                    + إضافة ميزة تنافسية
+                  </button>
                 </div>
                 <div v-if="formData.why_section" class="why-cards-editor">
                   <div v-for="(why, wIdx) in formData.why_section.items" :key="wIdx" class="why-edit-card">
+                    <div class="card-edit-header" style="margin-bottom: 0.5rem;">
+                      <span class="card-num-badge">ميزة {{ wIdx + 1 }}</span>
+                      <button type="button" class="btn-delete-card" @click="removeWhyItem(wIdx)" title="حذف هذه الميزة">✕ حذف</button>
+                    </div>
                     <div class="form-group">
                       <label class="form-label">السبب {{ wIdx + 1 }} - العنوان *</label>
                       <input type="text" v-model="why.title" class="form-input" placeholder="مثال: فريق هندسي نخبوي" />
@@ -698,114 +752,122 @@
     <!-- ================= SOLUTION PREVIEW MODAL (1:1 WITH BEKITE WEBSITE) ================= -->
     <div v-if="previewModalOpen && previewSolution" class="modal-overlay" @click.self="previewModalOpen = false">
       <div class="modal-card modal-preview-card modal-preview-solution">
-        <!-- 1. Hero Header Section -->
-        <div class="preview-hero-header" style="background: linear-gradient(135deg, #4f008c, #150522);">
-          <button class="preview-close-btn" @click="previewModalOpen = false">✕</button>
-          
-          <div class="preview-hero-content">
-            <div class="preview-hero-top-row">
-              <span class="preview-client-badge">{{ previewSolution.badge || 'DIGITAL SOLUTION' }}</span>
-              <div v-if="previewSolution.icon_image" class="preview-hero-icon-pill">
-                <img :src="previewSolution.icon_image" alt="icon" class="preview-hero-icon-img" />
-              </div>
-            </div>
-            <h2 class="preview-hero-title">{{ previewSolution.title }}</h2>
-            <h3 v-if="previewSolution.title_highlight" class="preview-highlight-headline">
-              {{ previewSolution.title_highlight }}
-            </h3>
-            <p v-if="previewSolution.description" class="preview-hero-desc">{{ previewSolution.description }}</p>
-            
-            <div class="preview-meta-chips">
-              <span v-for="tech in (previewSolution.technologies || [])" :key="tech" class="preview-tech-chip">
-                {{ tech }}
-              </span>
-              <span class="preview-chip status-chip" :class="previewSolution.is_active ? 'active' : 'inactive'">
-                {{ previewSolution.is_active ? 'حل مفعل ونشط' : 'معطل' }}
-              </span>
-            </div>
-          </div>
+        <button class="preview-close-btn" @click="previewModalOpen = false" title="إغلاق المعاينة">✕</button>
 
-          <div v-if="previewSolution.hero_image" class="preview-hero-mockup-wrap">
-            <img :src="previewSolution.hero_image" :alt="previewSolution.title" @error="onImgError" />
-          </div>
-        </div>
-
-        <div class="preview-body">
-          <!-- 1. The Business Problem (التحديات ونقاط الألم) -->
-          <div v-if="previewSolution.problem_section?.items?.length" class="preview-section">
-            <div class="section-pill-tag red-pill">{{ previewSolution.problem_section.badge || 'التحدي والمشكلة' }}</div>
-            <h3 class="preview-sec-title">{{ previewSolution.problem_section.title || 'لماذا تفشل الحلول التقليدية؟' }}</h3>
-            <p v-if="previewSolution.problem_section.subtitle" class="preview-sec-sub">{{ previewSolution.problem_section.subtitle }}</p>
-
-            <div class="preview-problem-grid">
-              <div v-for="(prob, pIdx) in previewSolution.problem_section.items" :key="pIdx" class="problem-card">
-                <div class="problem-warn-icon">⚠️</div>
-                <h4 class="problem-card-title">{{ prob.title }}</h4>
-                <p class="problem-card-desc">{{ prob.description }}</p>
-              </div>
-            </div>
-          </div>
-
-          <!-- 2. How We Solve It (كيف نعيد صياغة الحل) -->
-          <div v-if="previewSolution.solve_section" class="preview-section solve-preview-section">
-            <div class="section-pill-tag">{{ previewSolution.solve_section.badge || 'الحل المبتكر' }}</div>
-            <h3 class="preview-sec-title">{{ previewSolution.solve_section.title || 'كيف نعيد صياغة الحل؟' }}</h3>
-            <p v-if="previewSolution.solve_section.subtitle" class="preview-sec-sub">{{ previewSolution.solve_section.subtitle }}</p>
-
-            <div class="solve-content-box">
-              <div class="solve-text-col">
-                <p class="solve-desc-text">{{ previewSolution.solve_section.description }}</p>
-                <div v-if="previewSolution.solve_section.ctaText" class="solve-cta-badge">
-                  🚀 {{ previewSolution.solve_section.ctaText }}
+        <div class="preview-scrollable-content">
+          <!-- 1. Hero Header Section -->
+          <div class="preview-hero-header" style="background: linear-gradient(135deg, #4f008c, #150522);">
+            <div class="preview-hero-content">
+              <div class="preview-hero-top-row">
+                <span class="preview-client-badge">{{ previewSolution.badge || previewSolution.department || 'DIGITAL SOLUTION' }}</span>
+                <div v-if="previewSolution.icon_image" class="preview-hero-icon-pill">
+                  <img :src="previewSolution.icon_image" alt="icon" class="preview-hero-icon-img" />
                 </div>
               </div>
-              <div v-if="previewSolution.solve_section.image" class="solve-image-col">
-                <img :src="previewSolution.solve_section.image" alt="How We Solve It" @error="onImgError" />
+              <h2 class="preview-hero-title">{{ previewSolution.title }}</h2>
+              <h3 v-if="previewSolution.title_highlight" class="preview-highlight-headline">
+                {{ previewSolution.title_highlight }}
+              </h3>
+              <p v-if="previewSolution.description" class="preview-hero-desc">{{ previewSolution.description }}</p>
+              
+              <div class="preview-meta-chips">
+                <span v-for="tech in (previewSolution.technologies || [])" :key="tech" class="preview-tech-chip">
+                  {{ tech }}
+                </span>
+                <span class="preview-chip status-chip" :class="previewSolution.is_active ? 'active' : 'inactive'">
+                  {{ previewSolution.is_active ? 'حل مفعل ونشط' : 'معطل' }}
+                </span>
               </div>
+            </div>
+
+            <div v-if="previewSolution.hero_image" class="preview-hero-mockup-wrap">
+              <img :src="previewSolution.hero_image" :alt="previewSolution.title" @error="onImgError" />
             </div>
           </div>
 
-          <!-- 3. What We Deliver (ما ستحصل عليه / نطاق التسليم) -->
-          <div v-if="previewSolution.deliver_section?.items?.length" class="preview-section">
-            <div class="section-pill-tag">{{ previewSolution.deliver_section.badge || 'المخرجات ونطاق التسليم' }}</div>
-            <h3 class="preview-sec-title">{{ previewSolution.deliver_section.title || 'ما ستحصل عليه بدقة واحترافية' }}</h3>
-            <p v-if="previewSolution.deliver_section.subtitle" class="preview-sec-sub">{{ previewSolution.deliver_section.subtitle }}</p>
+          <div class="preview-body">
+            <!-- 1. The Business Problem (التحديات ونقاط الألم) -->
+            <div v-if="previewSolution.problem_section?.items?.length || previewSolution.problem_section?.challenges?.length" class="preview-section">
+              <div class="section-pill-tag red-pill">{{ previewSolution.problem_section.badge || 'التحدي والمشكلة' }}</div>
+              <h3 class="preview-sec-title">{{ previewSolution.problem_section.department_title || previewSolution.problem_section.title || 'لماذا تفشل الحلول التقليدية؟' }}</h3>
+              <p v-if="previewSolution.problem_section.department_subtitle || previewSolution.problem_section.subtitle" class="preview-sec-sub">
+                {{ previewSolution.problem_section.department_subtitle || previewSolution.problem_section.subtitle }}
+              </p>
 
-            <div class="preview-deliver-grid">
-              <div v-for="(del, dIdx) in previewSolution.deliver_section.items" :key="dIdx" class="deliver-card">
-                <div class="deliver-check-badge">✓</div>
-                <h4 class="deliver-card-title">{{ del.title }}</h4>
-                <p class="deliver-card-desc">{{ del.description }}</p>
-              </div>
-            </div>
-          </div>
-
-          <!-- 4. Execution Process (منهجية العمل) -->
-          <div v-if="previewSolution.process_section?.steps?.length" class="preview-section">
-            <div class="section-pill-tag">{{ previewSolution.process_section.badge || 'منهجية التنفيذ' }}</div>
-            <h3 class="preview-sec-title">{{ previewSolution.process_section.title || 'مسار عمل هندسي دقيق من 5 مراحل' }}</h3>
-            <p v-if="previewSolution.process_section.subtitle" class="preview-sec-sub">{{ previewSolution.process_section.subtitle }}</p>
-
-            <div class="preview-process-steps">
-              <div v-for="(step, sIdx) in previewSolution.process_section.steps" :key="sIdx" class="process-step-item">
-                <div class="step-circle">{{ step.number || (sIdx + 1) }}</div>
-                <div class="step-content">
-                  <h4 class="step-item-title">{{ step.title }}</h4>
-                  <p class="step-item-desc">{{ step.description }}</p>
+              <div class="preview-problem-grid">
+                <div v-for="(prob, pIdx) in (previewSolution.problem_section.items?.length ? previewSolution.problem_section.items : previewSolution.problem_section.challenges)" :key="pIdx" class="problem-card">
+                  <div class="problem-warn-icon">⚠️</div>
+                  <h4 class="problem-card-title">{{ prob.title }}</h4>
+                  <p class="problem-card-desc">{{ prob.description || prob.desc }}</p>
                 </div>
               </div>
             </div>
-          </div>
 
-          <!-- 5. Why Be Kite (لماذا Be Kite) -->
-          <div v-if="previewSolution.why_section?.items?.length" class="preview-section">
-            <div class="section-pill-tag">{{ previewSolution.why_section.badge || 'لماذا BE KITE' }}</div>
-            <h3 class="preview-sec-title">{{ previewSolution.why_section.title || 'لماذا تختار شراكتنا؟' }}</h3>
+            <!-- 2. How We Solve It (كيف نعيد صياغة الحل) -->
+            <div v-if="previewSolution.solve_section" class="preview-section solve-preview-section">
+              <div class="section-pill-tag">{{ previewSolution.solve_section.badge || 'الحل المبتكر' }}</div>
+              <h3 class="preview-sec-title">{{ previewSolution.solve_section.department_title || previewSolution.solve_section.title || 'كيف نعيد صياغة الحل؟' }}</h3>
+              <p v-if="previewSolution.solve_section.department_subtitle || previewSolution.solve_section.subtitle" class="preview-sec-sub">
+                {{ previewSolution.solve_section.department_subtitle || previewSolution.solve_section.subtitle }}
+              </p>
 
-            <div class="preview-why-grid">
-              <div v-for="(why, wIdx) in previewSolution.why_section.items" :key="wIdx" class="solution-why-card">
-                <h4 class="sol-why-title">⭐ {{ why.title }}</h4>
-                <p class="sol-why-desc">{{ why.description }}</p>
+              <div class="solve-content-box">
+                <div class="solve-text-col">
+                  <p class="solve-desc-text">{{ previewSolution.solve_section.department_description || previewSolution.solve_section.description }}</p>
+                  <div v-if="previewSolution.solve_section.cta_text || previewSolution.solve_section.ctaText" class="solve-cta-badge">
+                    🚀 {{ previewSolution.solve_section.cta_text || previewSolution.solve_section.ctaText }}
+                  </div>
+                </div>
+                <div v-if="previewSolution.solve_section.image_url || previewSolution.solve_section.image" class="solve-image-col">
+                  <img :src="previewSolution.solve_section.image_url || previewSolution.solve_section.image" alt="How We Solve It" @error="onImgError" />
+                </div>
+              </div>
+            </div>
+
+            <!-- 3. What We Deliver (ما ستحصل عليه / نطاق التسليم) -->
+            <div v-if="previewSolution.deliver_section?.items?.length || previewSolution.deliver_section?.exits?.length" class="preview-section">
+              <div class="section-pill-tag">{{ previewSolution.deliver_section.badge || 'المخرجات ونطاق التسليم' }}</div>
+              <h3 class="preview-sec-title">{{ previewSolution.deliver_section.department_title || previewSolution.deliver_section.title || 'ما ستحصل عليه بدقة واحترافية' }}</h3>
+              <p v-if="previewSolution.deliver_section.department_subtitle || previewSolution.deliver_section.subtitle" class="preview-sec-sub">
+                {{ previewSolution.deliver_section.department_subtitle || previewSolution.deliver_section.subtitle }}
+              </p>
+
+              <div class="preview-deliver-grid">
+                <div v-for="(del, dIdx) in (previewSolution.deliver_section.items?.length ? previewSolution.deliver_section.items : previewSolution.deliver_section.exits)" :key="dIdx" class="deliver-card">
+                  <div class="deliver-check-badge">✓</div>
+                  <h4 class="deliver-card-title">{{ del.title }}</h4>
+                  <p class="deliver-card-desc">{{ del.description || del.desc }}</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- 4. Execution Process (منهجية العمل) -->
+            <div v-if="previewSolution.process_section?.steps?.length || previewSolution.deliver_section?.proven_execution_framework?.length || previewSolution.proven_execution_framework?.length" class="preview-section">
+              <div class="section-pill-tag">{{ previewSolution.process_section?.badge || 'منهجية التنفيذ' }}</div>
+              <h3 class="preview-sec-title">{{ previewSolution.process_section?.title || 'مسار عمل هندسي دقيق من 5 مراحل' }}</h3>
+              <p v-if="previewSolution.process_section?.subtitle" class="preview-sec-sub">{{ previewSolution.process_section.subtitle }}</p>
+
+              <div class="preview-process-steps">
+                <div v-for="(step, sIdx) in (previewSolution.process_section?.steps?.length ? previewSolution.process_section.steps : (previewSolution.deliver_section?.proven_execution_framework || previewSolution.proven_execution_framework))" :key="sIdx" class="process-step-item">
+                  <div class="step-circle">{{ step.number || (sIdx + 1) }}</div>
+                  <div class="step-content">
+                    <h4 class="step-item-title">{{ step.title }}</h4>
+                    <p class="step-item-desc">{{ step.description || step.desc }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 5. Why Be Kite (لماذا Be Kite) -->
+            <div v-if="previewSolution.why_section?.items?.length || previewSolution.deliver_section?.why_choose_us?.length || previewSolution.why_choose_us?.length" class="preview-section">
+              <div class="section-pill-tag">{{ previewSolution.why_section?.badge || 'لماذا BE KITE' }}</div>
+              <h3 class="preview-sec-title">{{ previewSolution.why_section?.title || 'لماذا تختار شراكتنا؟' }}</h3>
+
+              <div class="preview-why-grid">
+                <div v-for="(why, wIdx) in (previewSolution.why_section?.items?.length ? previewSolution.why_section.items : (previewSolution.deliver_section?.why_choose_us || previewSolution.why_choose_us))" :key="wIdx" class="solution-why-card">
+                  <h4 class="sol-why-title">⭐ {{ why.title }}</h4>
+                  <p class="sol-why-desc">{{ why.description || why.desc }}</p>
+                </div>
               </div>
             </div>
           </div>
@@ -864,65 +926,61 @@ function onImgError(e) {
 }
 
 const defaultSolutionForm = () => ({
-  title: 'تصميم وتطوير المواقع والمنصات',
-  title_en: 'Web Design & Development',
-  title_highlight: 'والمنصات الرقمية المتطورة',
-  title_highlight_en: 'Digital Platforms',
-  slug: 'web-development',
+  title: '',
+  title_en: '',
+  title_highlight: '',
+  title_highlight_en: '',
+  slug: '',
   category: 'technology',
-  badge: 'DEVELOPMENT',
-  icon_name: 'Custom',
+  badge: 'ENTERPRISE SOLUTION',
+  icon_name: 'Code',
   icon_image: '',
   hero_image: '',
-  description: 'نطور مواقع وتطبيقات ويب استثنائية تجمع بين التصميم المبتكر والأداء الفائق وأعلى معايير الأمان.',
-  technologies: ['React 18', 'Vue 3', 'TailwindCSS', 'Node.js', 'PostgreSQL'],
+  description: '',
+  technologies: ['Vue.js', 'Node.js', 'Cloud Infrastructure'],
   is_active: 1,
 
   problem_section: {
     badge: 'التحدي والمشكلة',
-    title: 'لماذا تفشل معظم المواقع والمنصات؟',
-    subtitle: 'معظم الشركات تعاني من مواقع بطيئة، صعبة التحديث، ولا تحقق أي مبيعات أو تحويلات فعلية.',
+    title: 'لماذا تفشل الحلول التقليدية في السوق؟',
+    subtitle: 'تواجه المنظمات عقبات تشغيلية وتقنية تعيق نموها وتبطئ وصولها للنتائج المرجوة',
     items: [
-      { title: 'بطء التحميل وسوء تجربة المستخدم', description: 'كل ثانية تأخير في تحميل الموقع تفقدك ما يصل إلى 20% من عملائك المحتملين.' },
-      { title: 'تصاميم قوالب مكررة وغير احترافية', description: 'المواقع المبنية على قوالب جاهزة تفتقر للهوية المميزة وتفقد ثقة العملاء المؤسسيين.' },
-      { title: 'صعوبة التوسع والأمان الهش', description: 'البنى التحتية الضعيفة تنهار عند زيادة الزيارات وتكون عرضة للاختراقات المتكررة.' },
-      { title: 'غياب التحسين لمحركات البحث (SEO)', description: 'موقع غير مهيأ تقنياً لمحركات البحث يعني عدم ظهورك أمام العملاء الذين يبحثون عنك.' }
+      { title: 'بطء الاستجابة ومحدودية التوسع', description: 'الأنظمة القديمة غير قادرة على استيعاب الزيادة في أعداد المستخدمين والطلبات المتسارعة.' },
+      { title: 'غياب التكامل بين الأنظمة والبيانات', description: 'تشتت البيانات بين أدوات متعددة يعيق اتخاذ قرارات دقيقة ويزيد التكاليف التشغيلية.' },
+      { title: 'ضعف الأمان وحماية الأصول الرقمية', description: 'الثغرات الأمنية المتكررة تهدد استمرارية الأعمال وثقة العملاء والشركاء.' }
     ]
   },
 
   solve_section: {
     badge: 'الحل المبتكر',
-    title: 'كيف نعيد هندسة حضورك الرقمي؟',
-    subtitle: 'نهج شامل يجمع بين الفن البرمجي والأداء التجاري القابل للتوسع.',
-    description: 'نبني منصات ويب مخصصة بالكامل وفق أعلى المعايير العالمية، مع التركيز على سرعة استجابة فائقة، تجربة مستخدم سلسة، وتهيئة متكاملة لمحركات البحث لضمان تحقيق أعلى عوائد استثمار.',
+    title: 'كيف نعيد هندسة وتطوير الحل باحترافية؟',
+    subtitle: 'بنية تحتية مرنة، تجارب تفاعلية غامرة، وتقنيات سحابية عالية الكفاءة',
+    description: 'نبتكر حلولاً متكاملة تجمع بين التصميم المبتكر وهندسة البرمجيات المتقدمة، لتقديم تجارب رقمية سلسة تعزز نمو أعمالك وتحقق أعلى عوائد استثمارية.',
     image: '',
-    ctaText: 'ابدأ مشروعك الآن مع استشارة مجانية'
+    ctaText: 'طلب استشارة مخصصة للحل'
   },
 
   deliver_section: {
     badge: 'المخرجات ونطاق التسليم',
     title: 'ما ستحصل عليه بدقة واحترافية',
-    subtitle: 'مخرجات متكاملة تضمن لك التفوق الرقمي والاستقرار التام.',
+    subtitle: 'مخرجات متكاملة تضمن لك التفوق والريادة في قطاعك',
     items: [
-      { title: 'تصميم واجهات مخصص (UI/UX)', description: 'تصاميم فريدة تعكس هوية علامتك وتضمن أعلى معدلات تحويل.' },
-      { title: 'أداء فائق وسرعة قياسية', description: 'درجات 95+ في تقييمات Google Core Web Vitals لضمان سرعة لحظية.' },
-      { title: 'لوحة تحكم مخصصة لإدارة المحتوى', description: 'إدارة كاملة لمنتجاتك ومحتواك بسهولة تامة وبدون تعقيد تقني.' },
-      { title: 'تكامل كامل مع بوابات الدفع وERP', description: 'ربط سلس مع أنظمة الفواتير، بوابات الدفع، وإدارة المخزون.' },
-      { title: 'تهيئة متقدمة لمحركات البحث (SEO)', description: 'بنية تقنية متوافقة مع أحدث معايير Google لضمان الصدارة.' },
-      { title: 'استضافة سحابية وأمان مشدد', description: 'حماية SSL وشهادات حماية متقدمة مع نسخ احتياطي آلي يومي.' }
+      { title: 'بنية معمارية سحابية متقدمة', description: 'تصميم وتنفيذ أنظمة مرنة وقابلة للتوسع بأعلى معايير الأمان والاستقرار.' },
+      { title: 'واجهات مستخدم فائقة الدقة والسرعة', description: 'تجارب تفاعلية مخصصة ترفع معدلات التفاعل وتحسن رحلة العميل.' },
+      { title: 'توثيق تقني ودعم فني مستمر', description: 'كتيبات إرشادية وتدريب شامل لفريقك مع دعم فني وضمان استقرار على مدار الساعة.' }
     ]
   },
 
   process_section: {
     badge: 'منهجية التنفيذ',
     title: 'مسار عمل هندسي دقيق من 5 مراحل',
-    subtitle: 'من الفكرة حتى الإطلاق والنمو المستمر.',
+    subtitle: 'خطوات استراتيجية واضحة من الفكرة وحتى الإطلاق والنمو المستمر',
     steps: [
-      { number: '01', title: 'الاكتشاف والتخطيط', description: 'تحليل أهداف المشروع، دراسة المنافسين، وبناء المخطط الهيكلي.' },
-      { number: '02', title: 'التصميم وتجربة المستخدم', description: 'تصميم النماذج التفاعلية (Figma Prototypes) واعتماد هوية الواجهات.' },
-      { number: '03', title: 'التطوير البرمجي المتقدم', description: 'كتابة كود نظيف وقابل للتوسع باستخدام أحدث أطر العمل العالمية.' },
-      { number: '04', title: 'فحص الجودة والأمان (QA)', description: 'اختبارات مكثفة للأداء والتوافق والأمان على مختلف الأجهزة.' },
-      { number: '05', title: 'الإطلاق والدعم المستمر', description: 'نشر النظام على السحابة مع تدريب الفريق ودعم فني ممتد.' }
+      { number: '01', title: 'الاكتشاف والتخطيط الاستراتيجي', description: 'تحليل أهداف المشروع ودراسة المتطلبات ورسم خريطة الطريق.' },
+      { number: '02', title: 'التصميم وهندسة التجربة (UI/UX)', description: 'بناء النماذج الأولية واختبار رحلة المستخدم لضمان أعلى كفاءة.' },
+      { number: '03', title: 'التطوير البرمجي والاختبار المكثف', description: 'كتابة كود عالي الجودة مع إجراء اختبارات أمان وأداء صارمة.' },
+      { number: '04', title: 'الإطلاق والربط التشغيلي', description: 'نشر الحل على بيئات الإنتاج وربط الخدمات دون أي توقف في العمليات.' },
+      { number: '05', title: 'المتابعة والتحسين المستمر', description: 'مراقبة الأداء وتقديم التحديثات والدعم لضمان أفضل عائد استثماري.' }
     ]
   },
 
@@ -930,14 +988,14 @@ const defaultSolutionForm = () => ({
     badge: 'لماذا BE KITE',
     title: 'لماذا تختار شراكتنا؟',
     items: [
-      { title: 'فريق هندسي نخبوي', description: 'مهندسون ومصممون ذوو خبرات عميقة في بناء المنصات المؤسسية الضخمة.' },
-      { title: 'التزام صارم بالمواعيد والجودة', description: 'تسليم المشاريع في جداول زمنية محددة وفق معايير تسليم دولية.' },
-      { title: 'كود نظيف وملكية كاملة', description: 'ملكية تامة بنسبة 100% للشفرة المصدرية وحقوق الملكية الفكرية.' },
-      { title: 'شراكة استراتيجية مستمرة', description: 'لا نتوقف عند الإطلاق؛ بل نرافقك في التحديث والتطوير والنمو.' }
+      { title: 'فريق هندسي نخبوي', description: 'خبرات متميزة في أحدث التقنيات وأفضل الممارسات العالمية.' },
+      { title: 'التزام بالمواعيد والجودة', description: 'تسليم المخرجات وفق أعلى معايير الدقة وفي المواعيد المحددة.' },
+      { title: 'حلول مخصصة لأهدافك', description: 'تصميم كل تفصيلة لتلائم نموذج عملك وتحقق أهدافك التوسعية.' }
     ]
   }
 });
 
+const formErrors = ref({});
 const formData = ref(defaultSolutionForm());
 
 // Custom Icon Upload Handling
@@ -1071,17 +1129,163 @@ const removeSolveImage = () => {
   success('تمت إزالة صورة الحل');
 };
 
-const openPreviewModal = (sol) => {
-  previewSolution.value = JSON.parse(JSON.stringify(sol));
-  const def = defaultSolutionForm();
-  if (!previewSolution.value.icon_image) {
-    previewSolution.value.icon_image = sol.icon_image || (sol.icon && (sol.icon.startsWith('data:') || sol.icon.startsWith('http') || sol.icon.startsWith('/')) ? sol.icon : '');
+// Dynamic Sub-Items Management (Challenges, Deliverables, Steps, Why Us)
+const addChallengeItem = () => {
+  if (!formData.value.problem_section) formData.value.problem_section = { items: [] };
+  if (!Array.isArray(formData.value.problem_section.items)) formData.value.problem_section.items = [];
+  formData.value.problem_section.items.push({
+    title: '',
+    description: ''
+  });
+};
+
+const removeChallengeItem = (idx) => {
+  if (formData.value.problem_section?.items) {
+    formData.value.problem_section.items.splice(idx, 1);
   }
-  if (!previewSolution.value.problem_section) previewSolution.value.problem_section = def.problem_section;
-  if (!previewSolution.value.solve_section) previewSolution.value.solve_section = def.solve_section;
-  if (!previewSolution.value.deliver_section) previewSolution.value.deliver_section = def.deliver_section;
-  if (!previewSolution.value.process_section) previewSolution.value.process_section = def.process_section;
-  if (!previewSolution.value.why_section) previewSolution.value.why_section = def.why_section;
+};
+
+const addDeliverItem = () => {
+  if (!formData.value.deliver_section) formData.value.deliver_section = { items: [] };
+  if (!Array.isArray(formData.value.deliver_section.items)) formData.value.deliver_section.items = [];
+  formData.value.deliver_section.items.push({
+    title: '',
+    description: ''
+  });
+};
+
+const removeDeliverItem = (idx) => {
+  if (formData.value.deliver_section?.items) {
+    formData.value.deliver_section.items.splice(idx, 1);
+  }
+};
+
+const addProcessStep = () => {
+  if (!formData.value.process_section) formData.value.process_section = { steps: [] };
+  if (!Array.isArray(formData.value.process_section.steps)) formData.value.process_section.steps = [];
+  const nextNum = String(formData.value.process_section.steps.length + 1).padStart(2, '0');
+  formData.value.process_section.steps.push({
+    number: nextNum,
+    title: '',
+    description: ''
+  });
+};
+
+const removeProcessStep = (idx) => {
+  if (formData.value.process_section?.steps) {
+    formData.value.process_section.steps.splice(idx, 1);
+  }
+};
+
+const addWhyItem = () => {
+  if (!formData.value.why_section) formData.value.why_section = { items: [] };
+  if (!Array.isArray(formData.value.why_section.items)) formData.value.why_section.items = [];
+  formData.value.why_section.items.push({
+    title: '',
+    description: ''
+  });
+};
+
+const removeWhyItem = (idx) => {
+  if (formData.value.why_section?.items) {
+    formData.value.why_section.items.splice(idx, 1);
+  }
+};
+
+const openPreviewModal = (sol) => {
+  const def = defaultSolutionForm();
+  const s = JSON.parse(JSON.stringify(sol));
+
+  const prob = s.problem_section || {};
+  const rawChallenges = Array.isArray(prob.challenges) && prob.challenges.length
+    ? prob.challenges
+    : (Array.isArray(prob.items) && prob.items.length ? prob.items : def.problem_section.items);
+  const challenges = rawChallenges.map(c => ({
+    title: c.title || '',
+    description: c.description || c.desc || ''
+  }));
+
+  const slv = s.solve_section || {};
+
+  const del = s.deliver_section || {};
+  const rawExits = Array.isArray(del.exits) && del.exits.length
+    ? del.exits
+    : (Array.isArray(del.items) && del.items.length ? del.items : def.deliver_section.items);
+  const exits = rawExits.map(e => ({
+    title: e.title || '',
+    description: e.description || e.desc || ''
+  }));
+
+  const rawSteps = Array.isArray(del.proven_execution_framework) && del.proven_execution_framework.length
+    ? del.proven_execution_framework
+    : (Array.isArray(s.proven_execution_framework) && s.proven_execution_framework.length
+      ? s.proven_execution_framework
+      : (Array.isArray(s.process_section?.steps) && s.process_section.steps.length
+        ? s.process_section.steps
+        : (Array.isArray(s.process_section?.items) && s.process_section.items.length
+          ? s.process_section.items
+          : def.process_section.steps)));
+  const steps = rawSteps.map((step, idx) => ({
+    number: step.number || ('0' + (idx + 1)),
+    title: step.title || '',
+    description: step.description || step.desc || ''
+  }));
+
+  const rawWhy = Array.isArray(del.why_choose_us) && del.why_choose_us.length
+    ? del.why_choose_us
+    : (Array.isArray(s.why_choose_us) && s.why_choose_us.length
+      ? s.why_choose_us
+      : (Array.isArray(s.why_section?.items) && s.why_section.items.length ? s.why_section.items : def.why_section.items));
+  const whyItems = rawWhy.map(w => ({
+    title: w.title || '',
+    description: w.description || w.desc || ''
+  }));
+
+  previewSolution.value = {
+    ...s,
+    title: s.title_ar || s.title || '',
+    title_highlight: s.headline_ar || s.title_highlight || s.headline || '',
+    description: s.description_ar || s.description || '',
+    badge: s.badge || s.department || 'ENTERPRISE SOLUTION',
+    hero_image: s.hero_image_url || s.hero_image || '',
+    icon_image: s.icon_image_url || s.icon_image || (s.icon && (s.icon.startsWith('data:') || s.icon.startsWith('http') || s.icon.startsWith('/')) ? s.icon : ''),
+    technologies: Array.isArray(s.technologies) ? s.technologies : [],
+    problem_section: {
+      badge: prob.badge || 'التحدي والمشكلة',
+      title: prob.department_title || prob.title || 'لماذا تفشل الحلول التقليدية؟',
+      subtitle: prob.department_subtitle || prob.subtitle || '',
+      items: challenges,
+      challenges
+    },
+    solve_section: {
+      badge: slv.badge || 'الحل المبتكر',
+      title: slv.department_title || slv.title || 'كيف نعيد صياغة الحل؟',
+      subtitle: slv.department_subtitle || slv.subtitle || '',
+      description: slv.department_description || slv.description || '',
+      ctaText: slv.cta_text || slv.ctaText || 'طلب استشارة مخصصة للحل',
+      cta_text: slv.cta_text || slv.ctaText || 'طلب استشارة مخصصة للحل',
+      image: slv.image_url || slv.image || '',
+      image_url: slv.image_url || slv.image || ''
+    },
+    deliver_section: {
+      badge: del.badge || 'المخرجات ونطاق التسليم',
+      title: del.department_title || del.title || 'ما ستحصل عليه بدقة واحترافية',
+      subtitle: del.department_subtitle || del.subtitle || '',
+      items: exits,
+      exits
+    },
+    process_section: {
+      badge: s.process_section?.badge || 'منهجية التنفيذ',
+      title: s.process_section?.title || 'مسار عمل هندسي دقيق من 5 مراحل',
+      subtitle: s.process_section?.subtitle || '',
+      steps
+    },
+    why_section: {
+      badge: s.why_section?.badge || 'لماذا BE KITE',
+      title: s.why_section?.title || 'لماذا تختار شراكتنا؟',
+      items: whyItems
+    }
+  };
   previewModalOpen.value = true;
 };
 
@@ -1094,6 +1298,7 @@ const openAddModal = () => {
   isEdit.value = false;
   currentEditId.value = null;
   activeTab.value = 'general';
+  formErrors.value = {};
   formData.value = defaultSolutionForm();
   formData.value.hero_image = '';
   if (formData.value.solve_section) formData.value.solve_section.image = '';
@@ -1107,20 +1312,105 @@ const openEditModal = (sol) => {
   isEdit.value = true;
   currentEditId.value = sol.id;
   activeTab.value = 'general';
-  formData.value = JSON.parse(JSON.stringify(sol));
-  
+  formErrors.value = {};
+
   const def = defaultSolutionForm();
-  if (!formData.value.technologies) formData.value.technologies = [];
-  if (!formData.value.title_highlight) formData.value.title_highlight = '';
-  if (formData.value.hero_image === undefined) formData.value.hero_image = '';
-  if (!formData.value.icon_image) {
-    formData.value.icon_image = sol.icon_image || (sol.icon && (sol.icon.startsWith('data:') || sol.icon.startsWith('http') || sol.icon.startsWith('/')) ? sol.icon : '');
-  }
-  if (!formData.value.problem_section) formData.value.problem_section = def.problem_section;
-  if (!formData.value.solve_section) formData.value.solve_section = def.solve_section;
-  if (!formData.value.deliver_section) formData.value.deliver_section = def.deliver_section;
-  if (!formData.value.process_section) formData.value.process_section = def.process_section;
-  if (!formData.value.why_section) formData.value.why_section = def.why_section;
+  const s = JSON.parse(JSON.stringify(sol));
+
+  const prob = s.problem_section || {};
+  const rawChallenges = Array.isArray(prob.challenges) && prob.challenges.length
+    ? prob.challenges
+    : (Array.isArray(prob.items) && prob.items.length ? prob.items : def.problem_section.items);
+  const challenges = rawChallenges.map(c => ({
+    title: c.title || '',
+    description: c.description || c.desc || ''
+  }));
+
+  const slv = s.solve_section || {};
+
+  const del = s.deliver_section || {};
+  const rawExits = Array.isArray(del.exits) && del.exits.length
+    ? del.exits
+    : (Array.isArray(del.items) && del.items.length ? del.items : def.deliver_section.items);
+  const exits = rawExits.map(e => ({
+    title: e.title || '',
+    description: e.description || e.desc || ''
+  }));
+
+  const rawSteps = Array.isArray(del.proven_execution_framework) && del.proven_execution_framework.length
+    ? del.proven_execution_framework
+    : (Array.isArray(s.proven_execution_framework) && s.proven_execution_framework.length
+      ? s.proven_execution_framework
+      : (Array.isArray(s.process_section?.steps) && s.process_section.steps.length
+        ? s.process_section.steps
+        : (Array.isArray(s.process_section?.items) && s.process_section.items.length
+          ? s.process_section.items
+          : def.process_section.steps)));
+  const steps = rawSteps.map((step, idx) => ({
+    number: step.number || ('0' + (idx + 1)),
+    title: step.title || '',
+    description: step.description || step.desc || ''
+  }));
+
+  const rawWhy = Array.isArray(del.why_choose_us) && del.why_choose_us.length
+    ? del.why_choose_us
+    : (Array.isArray(s.why_choose_us) && s.why_choose_us.length
+      ? s.why_choose_us
+      : (Array.isArray(s.why_section?.items) && s.why_section.items.length ? s.why_section.items : def.why_section.items));
+  const whyItems = rawWhy.map(w => ({
+    title: w.title || '',
+    description: w.description || w.desc || ''
+  }));
+
+  formData.value = {
+    ...def,
+    ...s,
+    title: s.title_ar || s.title || '',
+    title_en: s.title_en || '',
+    title_highlight: s.headline_ar || s.title_highlight || s.headline || '',
+    title_highlight_en: s.headline_en || s.title_highlight_en || '',
+    slug: s.slug || '',
+    category: s.category || 'technology',
+    department: s.department || '',
+    badge: s.badge || 'ENTERPRISE SOLUTION',
+    description: s.description_ar || s.description || '',
+    description_en: s.description_en || '',
+    technologies: Array.isArray(s.technologies) ? [...s.technologies] : [],
+    is_active: s.is_active !== undefined ? (s.is_active ? 1 : 0) : 1,
+    hero_image: s.hero_image_url || s.hero_image || '',
+    icon_image: s.icon_image_url || s.icon_image || (s.icon && (s.icon.startsWith('data:') || s.icon.startsWith('http') || s.icon.startsWith('/')) ? s.icon : ''),
+    problem_section: {
+      badge: prob.badge || 'التحدي والمشكلة',
+      title: prob.department_title || prob.title || 'لماذا تفشل معظم المواقع والمنصات؟',
+      subtitle: prob.department_subtitle || prob.subtitle || '',
+      items: challenges
+    },
+    solve_section: {
+      badge: slv.badge || 'الحل المبتكر',
+      title: slv.department_title || slv.title || 'كيف نعيد هندسة حضورك الرقمي؟',
+      subtitle: slv.department_subtitle || slv.subtitle || '',
+      description: slv.department_description || slv.description || '',
+      ctaText: slv.cta_text || slv.ctaText || 'طلب استشارة مخصصة للحل',
+      image: slv.image_url || slv.image || ''
+    },
+    deliver_section: {
+      badge: del.badge || 'المخرجات ونطاق التسليم',
+      title: del.department_title || del.title || 'ما ستحصل عليه بدقة واحترافية',
+      subtitle: del.department_subtitle || del.subtitle || '',
+      items: exits
+    },
+    process_section: {
+      badge: s.process_section?.badge || 'منهجية التنفيذ',
+      title: s.process_section?.title || 'مسار عمل هندسي دقيق من 5 مراحل',
+      subtitle: s.process_section?.subtitle || '',
+      steps
+    },
+    why_section: {
+      badge: s.why_section?.badge || 'لماذا BE KITE',
+      title: s.why_section?.title || 'لماذا تختار شراكتنا؟',
+      items: whyItems
+    }
+  };
 
   if (iconFileInput.value) iconFileInput.value.value = '';
   if (heroImageInput.value) heroImageInput.value.value = '';
@@ -1168,18 +1458,56 @@ const toggleSolutionStatus = async (sol) => {
   }
 };
 
-
-
 const closeModal = () => {
   modalOpen.value = false;
+  formErrors.value = {};
 };
 
 const saveSolution = async () => {
+  formErrors.value = {};
+  const title_ar = (formData.value.title || '').trim();
+  const title_en = (formData.value.title_en || '').trim();
+  const category = (formData.value.category || '').trim();
+
+  let hasError = false;
+  if (!title_ar) {
+    formErrors.value.title = 'يرجى إدخال عنوان الحل بالعربية';
+    hasError = true;
+  }
+  if (!title_en) {
+    formErrors.value.title_en = 'يرجى إدخال عنوان الحل بالإنجليزية (English Title)';
+    hasError = true;
+  }
+  if (!category) {
+    formErrors.value.category = 'يرجى اختيار القطاع الرئيسي للحل';
+    hasError = true;
+  }
+
+  if (hasError) {
+    activeTab.value = 'general';
+    toastError('يرجى ملء جميع الحقول الإلزامية المطلوبة (المحددة باللون الأحمر)');
+    return;
+  }
+
+  // Auto-generate slug if missing
+  if (!formData.value.slug || !formData.value.slug.trim()) {
+    formData.value.slug = title_en.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || `solution-${Date.now()}`;
+  }
+
   saving.value = true;
   try {
     if (formData.value.icon_image) {
       formData.value.icon = formData.value.icon_image;
     }
+    if (formData.value.problem_section) {
+      formData.value.problem_section.challenges = formData.value.problem_section.items || [];
+    }
+    if (formData.value.deliver_section) {
+      formData.value.deliver_section.exits = formData.value.deliver_section.items || [];
+    }
+    formData.value.proven_execution_framework = formData.value.process_section?.steps || [];
+    formData.value.why_choose_us = formData.value.why_section?.items || [];
+
     if (isEdit.value) {
       const updated = await SolutionService.update(currentEditId.value, formData.value);
       const idx = solutions.value.findIndex(s => s.id === currentEditId.value);
@@ -1193,7 +1521,8 @@ const saveSolution = async () => {
     closeModal();
   } catch (err) {
     console.error('Failed to save solution', err);
-    toastError('حدث خطأ أثناء حفظ الخدمة');
+    const msg = err.response?.data?.message || 'حدث خطأ أثناء حفظ الخدمة';
+    toastError(msg);
   } finally {
     saving.value = false;
   }
@@ -1218,6 +1547,20 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.input-error {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.18) !important;
+  background-color: rgba(239, 68, 68, 0.02) !important;
+}
+
+.field-error-msg {
+  display: block;
+  font-size: 0.75rem;
+  color: #ef4444;
+  font-weight: 700;
+  margin-top: 0.35rem;
+}
+
 .solutions-page {
   display: flex;
   flex-direction: column;
@@ -1732,25 +2075,73 @@ onMounted(() => {
 /* Solution Preview Modal */
 .modal-preview-solution {
   max-width: 950px;
+  height: 90vh;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+
+.preview-scrollable-content {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+  display: flex;
+  flex-direction: column;
+}
+
+.preview-scrollable-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.preview-scrollable-content::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.preview-scrollable-content::-webkit-scrollbar-thumb {
+  background: rgba(79, 0, 140, 0.4);
+  border-radius: 4px;
+}
+
+.preview-scrollable-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(79, 0, 140, 0.7);
 }
 
 .preview-hero-header {
   position: relative;
   padding: 2rem;
   color: #fff;
+  flex-shrink: 0;
 }
 
 .preview-close-btn {
   position: absolute;
-  top: 1.25rem;
-  left: 1.25rem;
-  background: rgba(255, 255, 255, 0.15);
-  border: none;
-  width: 32px;
-  height: 32px;
+  top: 1rem;
+  left: 1rem;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   color: #fff;
+  font-size: 1.1rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
+  z-index: 50;
+  transition: all 0.2s ease;
+}
+
+.preview-close-btn:hover {
+  background: rgba(239, 68, 68, 0.9);
+  transform: scale(1.08);
 }
 
 .preview-client-badge {
@@ -1829,8 +2220,8 @@ onMounted(() => {
 
 .preview-body {
   padding: 1.75rem;
-  overflow-y: auto;
-  max-height: 65vh;
+  overflow: visible;
+  max-height: none;
   display: flex;
   flex-direction: column;
   gap: 2rem;
@@ -2100,6 +2491,59 @@ onMounted(() => {
   margin-bottom: 0.5rem;
   font-size: 0.75rem;
   font-weight: 700;
+}
+
+.sub-section-header-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.85rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px dashed var(--border-color);
+}
+
+.sub-section-title {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--text-main);
+}
+
+.btn-add-sub-item {
+  background: rgba(79, 0, 140, 0.08);
+  border: 1px solid rgba(79, 0, 140, 0.25);
+  color: #4f008c;
+  padding: 0.35rem 0.85rem;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.btn-add-sub-item:hover {
+  background: #4f008c;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(79, 0, 140, 0.25);
+}
+
+.btn-delete-card {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  color: #ef4444;
+  padding: 0.2rem 0.55rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-delete-card:hover {
+  background: #ef4444;
+  color: #fff;
 }
 
 .card-num-badge {

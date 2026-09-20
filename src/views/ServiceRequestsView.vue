@@ -44,6 +44,42 @@
           <option value="digital-marketing">التسويق الرقمي</option>
         </select>
       </div>
+
+      <!-- Export Action -->
+      <div class="export-dropdown-wrapper" ref="exportMenuRef">
+        <button class="export-btn" @click.stop="toggleExportMenu" :disabled="isExporting" title="تصدير السجلات">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          <span>{{ isExporting ? 'جاري التصدير...' : 'تصدير السجلات' }}</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="dropdown-arrow">
+            <polyline points="6 9 12 15 18 9"/>
+          </svg>
+        </button>
+
+        <div v-if="showExportMenu" class="export-menu">
+          <button class="export-menu-item" @click="handleExport('xlsx')">
+            <span class="export-icon xlsx">
+              <i class="fas fa-file-excel"></i>
+            </span>
+            <div class="export-item-meta">
+              <span class="export-title">تصدير كملف Excel (.xlsx)</span>
+              <span class="export-desc">جدول طلبات واستفسارات العملاء CRM</span>
+            </div>
+          </button>
+          <button class="export-menu-item" @click="handleExport('csv')">
+            <span class="export-icon csv">
+              <i class="fas fa-file-csv"></i>
+            </span>
+            <div class="export-item-meta">
+              <span class="export-title">تصدير كملف CSV (.csv)</span>
+              <span class="export-desc">ترميز UTF-8 سليم لأنظمة المحاسبة وشيتس</span>
+            </div>
+          </button>
+        </div>
+      </div>
     </div>
 
     <!-- Leads Table -->
@@ -200,9 +236,10 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { InquiryService } from '../services/InquiryService';
 import { useToast } from '../composables/useToast';
+import { exportToExcel, exportToCsv, getTimestampedFilename } from '../utils/exporter';
 
 const { success, error: toastError } = useToast();
 
@@ -285,9 +322,97 @@ const confirmDelete = async (lead) => {
   }
 };
 
+// Export functionality
+const showExportMenu = ref(false);
+const isExporting = ref(false);
+const exportMenuRef = ref(null);
+
+const toggleExportMenu = () => {
+  showExportMenu.value = !showExportMenu.value;
+};
+
+const handleOutsideClick = (e) => {
+  if (exportMenuRef.value && !exportMenuRef.value.contains(e.target)) {
+    showExportMenu.value = false;
+  }
+};
+
 onMounted(() => {
+  window.addEventListener('click', handleOutsideClick);
   fetchInquiries();
 });
+
+onUnmounted(() => {
+  window.removeEventListener('click', handleOutsideClick);
+});
+
+const serviceNameMap = {
+  'web-development': 'تطوير المواقع والمنصات',
+  'mobile-apps': 'تطبيقات الهواتف الذكية',
+  'erp-systems': 'أنظمة ERP السحابية',
+  'tijara': 'نظام تجارة (Tijara)',
+  'branding': 'الهوية البصرية والعلامة',
+  'digital-marketing': 'التسويق الرقمي'
+};
+
+const statusNameMap = {
+  'new': 'جديد (New)',
+  'contacted': 'تم التواصل (Contacted)',
+  'in_progress': 'قيد التنفيذ (In Progress)',
+  'converted': 'تم التحويل لعقد (Converted)',
+  'archived': 'مؤرشف (Archived)'
+};
+
+const leadExportColumns = [
+  { header: 'رقم الطلب', key: 'id' },
+  { header: 'اسم العميل', key: 'full_name' },
+  { header: 'الشركة / المؤسسة', field: (l) => l.company || 'عميل فردي / ناشئ' },
+  { header: 'البريد الإلكتروني', key: 'email' },
+  { header: 'رقم الهاتف / واتساب', key: 'phone' },
+  { header: 'الخدمة المطلوبة', field: (l) => l.service_name || serviceNameMap[l.service_type] || l.service_type || 'غير محدد' },
+  { header: 'الميزانية المتوقعة', field: (l) => l.budget_range || 'غير محدد' },
+  { header: 'حالة الطلب', field: (l) => statusNameMap[l.status] || l.status },
+  { header: 'نطاق وتفاصيل المشروع', field: (l) => l.message || '-' },
+  { header: 'ملاحظات فريق العمل (CRM)', field: (l) => l.admin_notes || '-' },
+  { header: 'تاريخ الطلب', key: 'created_at' }
+];
+
+const handleExport = (format = 'xlsx') => {
+  const dataToExport = filteredInquiries.value.length > 0 ? filteredInquiries.value : inquiries.value;
+  if (!dataToExport || dataToExport.length === 0) {
+    toastError('لا توجد طلبات لتصديرها حالياً');
+    showExportMenu.value = false;
+    return;
+  }
+
+  isExporting.value = true;
+  showExportMenu.value = false;
+
+  try {
+    const filename = getTimestampedFilename('bekite_crm_leads', format);
+    if (format === 'xlsx') {
+      exportToExcel({
+        data: dataToExport,
+        columns: leadExportColumns,
+        filename,
+        sheetName: 'طلبات العملاء CRM'
+      });
+      success(`تم تصدير ${dataToExport.length} طلب إلى ملف Excel بنجاح!`);
+    } else {
+      exportToCsv({
+        data: dataToExport,
+        columns: leadExportColumns,
+        filename
+      });
+      success(`تم تصدير ${dataToExport.length} طلب إلى ملف CSV بنجاح!`);
+    }
+  } catch (err) {
+    console.error('Export failed:', err);
+    toastError('حدث خطأ أثناء تصدير السجلات');
+  } finally {
+    isExporting.value = false;
+  }
+};
 </script>
 
 <style scoped>
@@ -673,5 +798,100 @@ onMounted(() => {
   color: #fff;
   font-weight: 700;
   cursor: pointer;
+}
+
+/* Export Dropdown Styles */
+.export-dropdown-wrapper {
+  position: relative;
+  margin-right: auto;
+}
+.export-btn {
+  background: var(--card-bg, #ffffff);
+  color: var(--text-main, #374151);
+  border: 1px solid var(--border-color, #e5e7eb);
+  padding: 0.6rem 1.1rem;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.25s ease;
+  font-size: 0.85rem;
+}
+.export-btn:hover {
+  background: #f9fafb;
+  border-color: #d1d5db;
+  color: #111827;
+}
+.dropdown-arrow {
+  transition: transform 0.2s ease;
+}
+.export-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  min-width: 290px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  padding: 8px;
+  z-index: 50;
+  animation: fadeInMenu 0.15s ease-out;
+}
+@keyframes fadeInMenu {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.export-menu-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  text-align: right;
+  transition: background 0.2s;
+  font-family: inherit;
+}
+.export-menu-item:hover {
+  background: #f5f3ff;
+}
+.export-icon {
+  font-size: 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: #f3f4f6;
+  flex-shrink: 0;
+}
+.export-icon.xlsx {
+  background: #ecfdf5;
+  color: #107c41;
+}
+.export-icon.csv {
+  background: #eff6ff;
+  color: #0284c7;
+}
+.export-item-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.export-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #1f2937;
+}
+.export-desc {
+  font-size: 0.75rem;
+  color: #6b7280;
 }
 </style>

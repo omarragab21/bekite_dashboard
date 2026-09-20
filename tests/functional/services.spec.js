@@ -6,7 +6,8 @@ import { InquiryService } from '../../src/services/InquiryService.js';
 import { BrandService } from '../../src/services/BrandService.js';
 import { SolutionService } from '../../src/services/SolutionService.js';
 import { SettingsService } from '../../src/services/SettingsService.js';
-import { mockDb } from '../../src/mock/mockAdapter.js';
+import { MessageService } from '../../src/services/MessageService.js';
+import { mockDb } from '../mocks/mockAdapter.js';
 
 describe('Functional Services & API Adapter Integration Tests', () => {
   beforeEach(() => {
@@ -189,6 +190,33 @@ describe('Functional Services & API Adapter Integration Tests', () => {
         contact_email: 'ops@bekite.com'
       });
       expect(saveRes).toBeDefined();
+    });
+  });
+
+  describe('MessageService Functional Suite', () => {
+    it('should retrieve all contact messages', async () => {
+      const messages = await MessageService.getAll();
+      expect(Array.isArray(messages)).toBe(true);
+      expect(messages.length).toBeGreaterThan(0);
+      expect(messages[0]).toHaveProperty('id');
+    });
+
+    it('should submit a public contact message from website', async () => {
+      const msgData = {
+        name: 'زائر تجريبي',
+        email: 'visitor@test.com',
+        phone_number: '+962791234567',
+        message: '[استفسار] تجربة إرسال رسالة من صفحة اتصل بنا'
+      };
+      const res = await MessageService.submitPublicMessage(msgData);
+      expect(res).toBeDefined();
+    });
+
+    it('should update message read/unread status', async () => {
+      const messages = await MessageService.getAll();
+      const target = messages[0];
+      const res = await MessageService.updateStatus(target.id, 'read');
+      expect(res).toBeDefined();
     });
   });
 });

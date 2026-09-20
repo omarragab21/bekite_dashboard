@@ -13,3 +13,11 @@ global.localStorage = {
   clear: () => storage.clear(),
   get length() { return storage.size; }
 };
+
+const { apiClient } = await import('../src/infrastructure/api/client.js');
+const { handleMockRequest } = await import('./mocks/mockAdapter.js');
+
+// Route vitest requests to isolated test mock adapter
+apiClient.defaults.adapter = async (config) => {
+  return handleMockRequest(config);
+};

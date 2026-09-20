@@ -130,57 +130,49 @@
         :key="job.id"
         class="career-card"
       >
-        <!-- Top Branded Accent Bar (Unified Be Kite Brand) -->
-        <div class="career-top-bar"></div>
+        <!-- Top Branded Accent Bar -->
+        <div class="career-top-bar" :class="getDeptClass(job.department)"></div>
 
         <div class="career-card-inner">
-          <!-- Card Header (Badge & Status) -->
-          <div class="career-header-flex">
-            <span class="career-badge-tag">
-              {{ job.badge || job.department_en || 'JOB OPENING' }}
-            </span>
-
-            <div class="career-status-chip" :class="job.is_active ? 'active' : 'inactive'">
-              <span class="status-dot"></span>
-              <span>{{ job.is_active ? 'متاح للتقديم' : 'مغلق' }}</span>
+          <!-- Top Row: Icon Box + Header Badges -->
+          <div class="career-top">
+            <div class="career-icon-box" :class="getDeptClass(job.department)">
+              <img v-if="job.icon_image || job.icon" :src="job.icon_image || job.icon" class="career-custom-icon" alt="Icon" />
+              <svg v-else-if="getDeptClass(job.department) === 'dept-design'" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/>
+                <circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/>
+                <circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/>
+                <circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/>
+                <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.563-2.512 5.563-5.563C22 6.5 17.5 2 12 2z"/>
+              </svg>
+              <svg v-else-if="getDeptClass(job.department) === 'dept-marketing'" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+                <polyline points="17 6 23 6 23 12"/>
+              </svg>
+              <svg v-else-if="getDeptClass(job.department) === 'dept-business'" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+              </svg>
+              <svg v-else width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="16 18 22 12 16 6"/>
+                <polyline points="8 6 2 12 8 18"/>
+              </svg>
             </div>
-          </div>
 
-          <!-- Artwork Image Showcase Frame -->
-          <div class="career-mockup-wrap" @click="openPreviewModal(job)" title="اضغط للمعاينة الحية للوظيفة">
-            <img
-              :src="job.image || job.heroImage || '/images/careers/job_hero_infinity.jpg'"
-              :alt="job.title"
-              class="career-mockup-img"
-              @error="onImgError"
-            />
-            <div class="mockup-overlay">
-              <span class="btn-overlay-preview">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
-                </svg>
-                معاينة تفاصيل الوظيفة
+            <div class="career-header-meta">
+              <span class="career-badge-tag">
+                {{ job.badge || job.department || 'JOB OPENING' }}
               </span>
-            </div>
-            <div class="department-ribbon">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
-                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
-              </svg>
-              <span>{{ job.department }}</span>
+
+              <div class="career-status-chip" :class="job.is_active ? 'active' : 'inactive'">
+                <span class="status-dot"></span>
+                <span>{{ job.is_active ? 'متاح للتقديم' : 'مغلق' }}</span>
+              </div>
             </div>
           </div>
 
-          <!-- Titles & Department (Single Line Clean Display) -->
+          <!-- Titles & Department -->
           <div class="career-titles-wrap">
-            <div class="career-cat-row">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
-                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
-              </svg>
-              <span class="career-dept-label">{{ job.department }}</span>
-            </div>
-
             <h3 class="career-card-title single-line" :title="job.title">{{ job.title }}</h3>
 
             <span
@@ -328,23 +320,47 @@
           <div class="form-grid-2">
             <div class="form-group">
               <label class="form-label">المسمى الوظيفي (بالعربية) *</label>
-              <input type="text" v-model="formData.title" class="form-input" required placeholder="مثال: مطور Full-Stack أول" />
+              <input
+                type="text"
+                v-model="formData.title"
+                class="form-input"
+                :class="{ 'input-error': formErrors.title }"
+                @input="formErrors.title = null"
+                required
+                placeholder="مثال: مطور Full-Stack أول"
+              />
+              <span v-if="formErrors.title" class="field-error-msg">{{ formErrors.title }}</span>
             </div>
             <div class="form-group">
               <label class="form-label">المسمى الوظيفي (English) *</label>
-              <input type="text" v-model="formData.title_en" class="form-input ltr-text" required placeholder="Senior Full-Stack Developer" />
+              <input
+                type="text"
+                v-model="formData.title_en"
+                class="form-input ltr-text"
+                :class="{ 'input-error': formErrors.title_en }"
+                @input="formErrors.title_en = null"
+                required
+                placeholder="Senior Full-Stack Developer"
+              />
+              <span v-if="formErrors.title_en" class="field-error-msg">{{ formErrors.title_en }}</span>
             </div>
           </div>
 
           <div class="form-grid-2">
             <div class="form-group">
               <label class="form-label">القسم / الإدارة (بالعربية) *</label>
-              <select v-model="formData.department" class="form-input">
+              <select
+                v-model="formData.department"
+                class="form-input"
+                :class="{ 'input-error': formErrors.department }"
+                @change="formErrors.department = null"
+              >
                 <option value="الهندسة والتطوير">الهندسة والتطوير (Engineering)</option>
                 <option value="التصميم والإبداع">التصميم والإبداع (Design)</option>
                 <option value="التسويق الرقمي">التسويق الرقمي (Marketing)</option>
                 <option value="تطوير الأعمال والمبيعات">تطوير الأعمال والمبيعات (Business Development)</option>
               </select>
+              <span v-if="formErrors.department" class="field-error-msg">{{ formErrors.department }}</span>
             </div>
             <div class="form-group">
               <label class="form-label">المعرف البرمجي للرابط (Slug) *</label>
@@ -414,78 +430,84 @@
     <!-- ================= LIVE PREVIEW MODAL (Matching JobDetailsPage.jsx) ================= -->
     <div v-if="previewModalOpen && previewJob" class="modal-overlay" @click.self="previewModalOpen = false">
       <div class="modal-card modal-preview-card">
-        <div class="preview-hero-banner">
-          <div class="preview-hero-content">
-            <div class="preview-top-row">
-              <span class="preview-badge-pill">
-                ● {{ previewJob.badge || 'JOB OPENING' }}
-              </span>
-              <button class="close-preview-btn" @click="previewModalOpen = false">✕</button>
+        <!-- Floating Fixed Close Button -->
+        <button class="preview-close-btn" @click="previewModalOpen = false" title="إغلاق المعاينة">✕</button>
+
+        <!-- Entire Scrollable Content Wrapper -->
+        <div class="preview-scrollable-content">
+          <div class="preview-hero-banner">
+            <div class="preview-hero-content">
+              <div class="preview-top-row">
+                <span class="preview-badge-pill">
+                  ● {{ previewJob.badge || 'JOB OPENING' }}
+                </span>
+              </div>
+
+              <h1 class="preview-job-title">{{ previewJob.title || previewJob.job_title_ar }}</h1>
+              <h3 class="preview-job-title-en ltr-text">{{ previewJob.title_en || previewJob.job_title_en }}</h3>
+              <p class="preview-job-sub">{{ previewJob.subtitle || previewJob.description }}</p>
+
+              <div class="preview-meta-chips">
+                <span class="p-chip">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+                  </svg>
+                  <span>{{ previewJob.location || previewJob.job_location }}</span>
+                </span>
+                <span class="p-chip">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                  </svg>
+                  <span>{{ previewJob.type || previewJob.job_type }}</span>
+                </span>
+                <span class="p-chip">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+                    <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+                  </svg>
+                  <span>{{ previewJob.experience }}</span>
+                </span>
+              </div>
             </div>
 
-            <h1 class="preview-job-title">{{ previewJob.title }}</h1>
-            <h3 class="preview-job-title-en ltr-text">{{ previewJob.title_en }}</h3>
-            <p class="preview-job-sub">{{ previewJob.subtitle || previewJob.description }}</p>
-
-            <div class="preview-meta-chips">
-              <span class="p-chip">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
-                </svg>
-                <span>{{ previewJob.location }}</span>
-              </span>
-              <span class="p-chip">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
-                </svg>
-                <span>{{ previewJob.type }}</span>
-              </span>
-              <span class="p-chip">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
-                  <path d="M6 12v5c3 3 9 3 12 0v-5"/>
-                </svg>
-                <span>{{ previewJob.experience }}</span>
-              </span>
+            <div class="preview-hero-image-wrap">
+              <img
+                :src="previewJob.image || previewJob.heroImage || previewJob.job_image_url || '/images/careers/job_hero_infinity.jpg'"
+                :alt="previewJob.title"
+                class="preview-hero-img"
+                @error="onImgError"
+              />
             </div>
           </div>
 
-          <div class="preview-hero-image-wrap">
-            <img
-              :src="previewJob.image || previewJob.heroImage || '/images/careers/job_hero_infinity.jpg'"
-              :alt="previewJob.title"
-              class="preview-hero-img"
-              @error="onImgError"
-            />
+          <div class="preview-body">
+            <div class="preview-section">
+              <h4 class="preview-sec-title">نبذة عن الدور والمهام (About the Role)</h4>
+              <p class="preview-desc-text">{{ previewJob.description }}</p>
+            </div>
+
+            <div v-if="previewJob.requirements && previewJob.requirements.length" class="preview-section">
+              <h4 class="preview-sec-title">المتطلبات والخبرات (Key Qualifications)</h4>
+              <ul class="preview-req-list">
+                <li v-for="(req, idx) in previewJob.requirements" :key="idx">
+                  <span class="check-icon">✓</span>
+                  <span>{{ req }}</span>
+                </li>
+              </ul>
+            </div>
+
+            <div v-if="previewJob.skills && previewJob.skills.length" class="preview-section">
+              <h4 class="preview-sec-title">المهارات والتقنيات المطلوبة</h4>
+              <div class="preview-skills-flex">
+                <span v-for="(s, idx) in previewJob.skills" :key="idx" class="preview-skill-badge">
+                  {{ s }}
+                </span>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div class="preview-body">
-          <div class="preview-section">
-            <h4 class="preview-sec-title">نبذة عن الدور والمهام (About the Role)</h4>
-            <p class="preview-desc-text">{{ previewJob.description }}</p>
-          </div>
-
-          <div v-if="previewJob.requirements && previewJob.requirements.length" class="preview-section">
-            <h4 class="preview-sec-title">المتطلبات والخبرات (Key Qualifications)</h4>
-            <ul class="preview-req-list">
-              <li v-for="(req, idx) in previewJob.requirements" :key="idx">
-                <span class="check-icon">✓</span>
-                <span>{{ req }}</span>
-              </li>
-            </ul>
-          </div>
-
-          <div v-if="previewJob.skills && previewJob.skills.length" class="preview-section">
-            <h4 class="preview-sec-title">المهارات والتقنيات المطلوبة</h4>
-            <div class="preview-skills-flex">
-              <span v-for="(s, idx) in previewJob.skills" :key="idx" class="preview-skill-badge">
-                {{ s }}
-              </span>
-            </div>
-          </div>
-        </div>
-
+        <!-- Fixed Bottom Footer -->
         <div class="preview-footer">
           <div class="footer-actions-flex">
             <span class="status-indicator-badge" :class="previewJob.is_active ? 'active' : 'inactive'">
@@ -528,19 +550,22 @@ const skillsInput = ref('');
 const defaultForm = () => ({
   title: '',
   title_en: '',
+  job_title_ar: '',
+  job_title_en: '',
   department: 'الهندسة والتطوير',
+  departement: 'الهندسة والتطوير',
   department_en: 'Engineering',
   slug: '',
   badge: 'TECH & ENGINEERING',
   accent_color: '#4f008c',
-  image: '/images/careers/job_hero_infinity.jpg',
-  heroImage: '/images/careers/job_hero_infinity.jpg',
-  location: 'عمان، الأردن — هجين',
-  location_en: 'Amman, Jordan — Hybrid',
+  image: '',
+  heroImage: '',
+  job_image_file: null,
+  location: 'الرياض / عمان — هجين',
+  job_location: 'الرياض / عمان — هجين',
   type: 'دوام كامل / دائم',
-  type_en: 'Full-time / Permanent',
+  job_type: 'دوام كامل / دائم',
   experience: '+3 سنوات خبرة',
-  experience_en: 'Exp: 3+ Years',
   subtitle: '',
   description: '',
   skills: ['Vue.js', 'React', 'TypeScript'],
@@ -548,6 +573,7 @@ const defaultForm = () => ({
   is_active: 1,
 });
 
+const formErrors = ref({});
 const formData = ref(defaultForm());
 
 // Computed Stats
@@ -584,6 +610,14 @@ const filteredCareers = computed(() => {
 
 
 
+const getDeptClass = (dept) => {
+  if (!dept) return 'dept-engineering';
+  if (dept.includes('تصميم') || dept.includes('إبداع') || dept.toLowerCase().includes('design')) return 'dept-design';
+  if (dept.includes('تسويق') || dept.toLowerCase().includes('market')) return 'dept-marketing';
+  if (dept.includes('أعمال') || dept.includes('مبيعات') || dept.toLowerCase().includes('business')) return 'dept-business';
+  return 'dept-engineering';
+};
+
 function resetFilters() {
   searchQuery.value = '';
   selectedDepartment.value = '';
@@ -597,6 +631,7 @@ function onImgError(e) {
 function handleImageUpload(e) {
   const file = e.target.files?.[0];
   if (!file) return;
+  formData.value.job_image_file = file;
   const reader = new FileReader();
   reader.onload = (event) => {
     formData.value.image = event.target.result;
@@ -634,22 +669,48 @@ const toggleStatus = async (job) => {
 const openAddModal = () => {
   isEdit.value = false;
   currentEditId.value = null;
+  formErrors.value = {};
   formData.value = defaultForm();
-  skillsInput.value = formData.value.skills.join(', ');
+  skillsInput.value = (formData.value.skills || []).join(', ');
   modalOpen.value = true;
 };
 
 const openEditModal = (job) => {
   isEdit.value = true;
   currentEditId.value = job.id;
+  formErrors.value = {};
   formData.value = JSON.parse(JSON.stringify(job));
-  if (!formData.value.image) formData.value.image = formData.value.heroImage || '/images/careers/job_hero_infinity.jpg';
+
+  formData.value.title = job.title || job.job_title_ar || '';
+  formData.value.title_en = job.title_en || job.job_title_en || '';
+  formData.value.job_title_ar = formData.value.title;
+  formData.value.job_title_en = formData.value.title_en;
+  formData.value.department = job.department || job.departement || 'الهندسة والتطوير';
+  formData.value.departement = formData.value.department;
+  formData.value.location = job.location || job.job_location || 'الرياض / عمان — هجين';
+  formData.value.job_location = formData.value.location;
+  formData.value.type = job.type || job.job_type || 'دوام كامل / دائم';
+  formData.value.job_type = formData.value.type;
+  formData.value.experience = job.experience || '+3 سنوات خبرة';
+  formData.value.image = job.image || job.heroImage || job.job_image_url || '';
+  formData.value.heroImage = formData.value.image;
+  formData.value.job_image_file = null;
+
   skillsInput.value = (formData.value.skills || []).join(', ');
   modalOpen.value = true;
 };
 
 const openPreviewModal = (job) => {
-  previewJob.value = job;
+  previewJob.value = {
+    ...job,
+    title: job.title || job.job_title_ar || '',
+    title_en: job.title_en || job.job_title_en || '',
+    department: job.department || job.departement || 'الهندسة والتطوير',
+    location: job.location || job.job_location || 'الرياض / عمان — هجين',
+    type: job.type || job.job_type || 'دوام كامل / دائم',
+    experience: job.experience || '+3 سنوات خبرة',
+    image: job.image || job.heroImage || job.job_image_url || '/images/careers/job_hero_infinity.jpg',
+  };
   previewModalOpen.value = true;
 };
 
@@ -663,6 +724,48 @@ const closeModal = () => {
 };
 
 const saveJob = async () => {
+  formErrors.value = {};
+  // Front-end Validation
+  const title_ar = (formData.value.title || formData.value.job_title_ar || '').trim();
+  const title_en = (formData.value.title_en || formData.value.job_title_en || '').trim();
+  const department = (formData.value.department || formData.value.departement || '').trim();
+
+  let hasError = false;
+  if (!title_ar) {
+    formErrors.value.title = 'يرجى إدخال المسمى الوظيفي بالعربية';
+    hasError = true;
+  }
+  if (!title_en) {
+    formErrors.value.title_en = 'يرجى إدخال المسمى الوظيفي بالإنجليزية (English Job Title)';
+    hasError = true;
+  }
+  if (!department) {
+    formErrors.value.department = 'يرجى اختيار أو تحديد القسم المعني';
+    hasError = true;
+  }
+
+  if (hasError) {
+    toastError('يرجى ملء الحقول الإجبارية المحددة باللون الأحمر');
+    return;
+  }
+
+  // Auto-generate slug if empty
+  if (!formData.value.slug || !formData.value.slug.trim()) {
+    formData.value.slug = title_en.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || `job-${Date.now()}`;
+  }
+
+  // Populate aliases
+  formData.value.job_title_ar = title_ar;
+  formData.value.job_title_en = title_en;
+  formData.value.title = title_ar;
+  formData.value.title_en = title_en;
+  formData.value.departement = department;
+  formData.value.department = department;
+  formData.value.job_location = formData.value.location || 'الرياض / عمان — هجين';
+  formData.value.location = formData.value.job_location;
+  formData.value.job_type = formData.value.type || 'دوام كامل / دائم';
+  formData.value.type = formData.value.job_type;
+
   saving.value = true;
   try {
     // Process skills
@@ -685,7 +788,8 @@ const saveJob = async () => {
     closeModal();
   } catch (err) {
     console.error('Failed to save career', err);
-    toastError('حدث خطأ أثناء حفظ الشاغر');
+    const msg = err.response?.data?.message || 'حدث خطأ أثناء حفظ الشاغر';
+    toastError(msg);
   } finally {
     saving.value = false;
   }
@@ -847,71 +951,106 @@ onMounted(() => {
   outline: none;
 }
 
-/* ================= CAREERS CARDS GRID (Exact Match to Products & Projects) ================= */
+/* ================= CAREERS CARDS GRID (Compact Fixed Layout with Department Icons) ================= */
 .careers-cards-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 330px));
+  gap: 1.25rem;
+  justify-content: start;
 }
 
 .career-card {
+  width: 100%;
+  max-width: 330px;
   background: var(--bg-card);
   border: 1px solid var(--border-color);
-  border-radius: 20px;
+  border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
   display: flex;
   flex-direction: column;
-  transition: all 0.25s ease;
+  justify-content: space-between;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
   position: relative;
 }
 .career-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
 }
 
 .career-top-bar {
-  height: 5px;
+  height: 4px;
   width: 100%;
-  background: linear-gradient(90deg, #4f008c, #7c3aed);
 }
+.career-top-bar.dept-engineering { background: linear-gradient(90deg, #4f008c, #7c3aed); }
+.career-top-bar.dept-design { background: linear-gradient(90deg, #db2777, #f43f5e); }
+.career-top-bar.dept-marketing { background: linear-gradient(90deg, #0891b2, #06b6d4); }
+.career-top-bar.dept-business { background: linear-gradient(90deg, #d97706, #f59e0b); }
 
 .career-card-inner {
-  padding: 1.35rem;
+  padding: 1.2rem;
   display: flex;
   flex-direction: column;
-  gap: 0.85rem;
+  gap: 0.8rem;
   flex: 1;
 }
 
-.career-header-flex {
+.career-top {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 0.5rem;
+  gap: 0.75rem;
+}
+
+.career-icon-box {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.career-custom-icon {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+}
+
+.dept-engineering { background: rgba(124, 58, 237, 0.12); color: #7c3aed; }
+.dept-design { background: rgba(219, 39, 119, 0.12); color: #db2777; }
+.dept-marketing { background: rgba(8, 145, 178, 0.12); color: #0891b2; }
+.dept-business { background: rgba(245, 158, 11, 0.12); color: #d97706; }
+
+.career-header-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.35rem;
 }
 
 .career-badge-tag {
   display: inline-flex;
   align-items: center;
-  padding: 0.25rem 0.75rem;
-  border-radius: 999px;
-  font-size: 0.72rem;
+  padding: 0.2rem 0.65rem;
+  border-radius: 6px;
+  font-size: 0.68rem;
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  color: #7c3aed;
-  background: rgba(124, 58, 237, 0.08);
-  border: 1px solid rgba(124, 58, 237, 0.22);
+  color: var(--text-muted);
+  background: var(--bg-main);
+  border: 1px solid var(--border-color);
+  font-family: 'Outfit', sans-serif;
 }
 
 .career-status-chip {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
-  padding: 0.2rem 0.65rem;
+  padding: 0.15rem 0.55rem;
   border-radius: 999px;
-  font-size: 0.7rem;
+  font-size: 0.68rem;
   font-weight: 700;
   white-space: nowrap !important;
 }
@@ -934,84 +1073,10 @@ onMounted(() => {
 .career-status-chip.active .status-dot {
   background: #10b981;
   box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.25);
-  animation: pulse-green 2s infinite;
 }
 .career-status-chip.inactive .status-dot {
   background: #ef4444;
 }
-
-@keyframes pulse-green {
-  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5); }
-  70% { transform: scale(1); box-shadow: 0 0 0 4px rgba(16, 185, 129, 0); }
-  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
-}
-
-/* Artwork Frame */
-.career-mockup-wrap {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 16 / 10;
-  border-radius: 14px;
-  overflow: hidden;
-  background: #0f172a;
-  border: 1px solid var(--border-color);
-  cursor: pointer;
-}
-
-.career-mockup-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.4s ease;
-}
-.career-mockup-wrap:hover .career-mockup-img {
-  transform: scale(1.04);
-}
-
-.mockup-overlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(15, 23, 42, 0.6);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  transition: opacity 0.2s ease;
-}
-.career-mockup-wrap:hover .mockup-overlay {
-  opacity: 1;
-}
-
-.btn-overlay-preview {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  padding: 0.55rem 1rem;
-  border-radius: 999px;
-  background: #fff;
-  color: #0f172a;
-  font-size: 0.78rem;
-  font-weight: 800;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
-}
-
-.department-ribbon {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  background: rgba(15, 23, 42, 0.85);
-  color: #fff;
-  font-size: 0.7rem;
-  font-weight: 800;
-  padding: 0.25rem 0.65rem;
-  border-radius: 6px;
-  backdrop-filter: blur(6px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-}
-.department-ribbon svg { flex-shrink: 0; }
 
 /* Titles */
 .career-titles-wrap {
@@ -1436,9 +1501,65 @@ onMounted(() => {
 /* ================= LIVE PREVIEW MODAL ================= */
 .modal-preview-card {
   max-width: 900px;
+  height: 90vh;
+  max-height: 90vh;
   border: none;
   background: #0f172a;
   color: #fff;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+
+.preview-close-btn {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 60;
+  transition: all 0.2s ease;
+}
+.preview-close-btn:hover {
+  background: rgba(239, 68, 68, 0.9);
+  transform: scale(1.08);
+}
+
+.preview-scrollable-content {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+  display: flex;
+  flex-direction: column;
+}
+
+.preview-scrollable-content::-webkit-scrollbar {
+  width: 8px;
+}
+.preview-scrollable-content::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+}
+.preview-scrollable-content::-webkit-scrollbar-thumb {
+  background: rgba(124, 58, 237, 0.4);
+  border-radius: 4px;
+}
+.preview-scrollable-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(124, 58, 237, 0.7);
 }
 
 .preview-hero-banner {
@@ -1449,6 +1570,7 @@ onMounted(() => {
   align-items: center;
   position: relative;
   background: linear-gradient(135deg, #150522 0%, #2e0854 50%, #4f008c 100%);
+  flex-shrink: 0;
 }
 @media (max-width: 768px) { .preview-hero-banner { grid-template-columns: 1fr; padding: 1.5rem; } }
 
@@ -1467,18 +1589,6 @@ onMounted(() => {
   color: #ffce00;
   border: 1px solid rgba(255, 206, 0, 0.4);
   background: rgba(255, 206, 0, 0.1);
-}
-.close-preview-btn {
-  background: rgba(255, 255, 255, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  color: #fff;
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
 }
 
 .preview-job-title {
@@ -1537,10 +1647,10 @@ onMounted(() => {
   background: #ffffff;
   color: #1e293b;
   padding: 2rem;
-  overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+  flex: 1 0 auto;
 }
 
 .preview-section {
@@ -1612,6 +1722,7 @@ onMounted(() => {
   padding: 1.25rem 2rem;
   background: #0f172a;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
+  flex-shrink: 0;
 }
 .footer-actions-flex {
   display: flex;
@@ -1634,4 +1745,18 @@ onMounted(() => {
   transition: 0.2s;
 }
 .btn-edit-from-preview:hover { background: #6d28d9; }
+
+.input-error {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.18) !important;
+  background-color: rgba(239, 68, 68, 0.02) !important;
+}
+
+.field-error-msg {
+  display: block;
+  font-size: 0.75rem;
+  color: #ef4444;
+  font-weight: 700;
+  margin-top: 0.35rem;
+}
 </style>

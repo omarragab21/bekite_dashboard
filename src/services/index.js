@@ -7,3 +7,6 @@ export { ContentService } from './ContentService';
 export { SettingsService } from './SettingsService';
 export { AdminService } from './AdminService';
 export { NotificationService } from './NotificationService';
+export { MessageService } from './MessageService';
+export { JobService } from './JobService';
+export { PartnerService, DEFAULT_PARTNERS } from './PartnerService';
